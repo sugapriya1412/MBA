@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	
+	<script th:inline="javascript">
+	/*<![CDATA[*/		
+		/* var url =  location.protocol + "//" + location.hostname +  ":" + location.port; */
+		var href = location.href;
+	    var url = href.substring(0, href.lastIndexOf('/'));
+		var flag1 = [[${flag}]];
+		if (flag1!=null)
+		{			
+			if (flag1==1)
+			{
+				document.location.href= url+"/SessionTimedOut";	
+			}
+			else if (flag1==2)
+			{
+				document.location.href= url+"/processLogout";
+			}
+			else if (flag1==4)
+			{
+				document.location.href= url+"/signOut";
+			}
+		}
+		else
+		{
+			document.location.href= url+"/SessionTimedOut";
+		}		
+	
+	/*]]>*/		
+	</script>
+	
+	<script>
+
+	</script>
+</body>
+
+</html>

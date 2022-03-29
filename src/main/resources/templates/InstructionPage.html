@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<!--
+  Author: Sivaraman C & Kishore B
+  Date : 11/05/2020
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<base th:href="@{${session.baseURL}}" />
+<link href="assets/img/favicon1.png" rel="icon" type="image/x-icon" />
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<title>VIT - VTOP REGISTRATION</title>
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+<link rel="stylesheet" href="assets/css/lightweight.css"/>
+</head>
+<body oncontextmenu="return false;" >
+		<div class="">		
+		<div class="" id="page-wrapper">
+			<header class="main-header" th:include="layouts/Header::Header"></header>
+			<div class="" th:fragment="section">
+				<section class="">
+					<div class="instructions">
+						<div class="main-container">
+							<div class="instr-box" style="box-shadow:10px 10px 5px #888888; border-radius: 10px;">
+								<div class="panel-heading panel-head-custom" style="text-align:center; 
+									border-top-left-radius: 10px; border-top-right-radius: 10px;
+									background: #000428;  /* fallback for old browsers */
+									background: -webkit-linear-gradient(to right, #004e92, #000428);  /* Chrome 10-25, Safari 5.1-6 */
+									background: linear-gradient(to right, #004e92, #000428); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	 								color: #fff; padding: 10px 0; width: 100%; font-weight:bold; font-size: 15px;">INSTRUCTIONS</div>
+									<div class="panel-body">									
+									<h2><span style="color: red; font-size: 13px;">DO NOT SKIP READING THESE IMPORTANT INSTRUCTIONS</span></h2><br/>
+									<ul style="font-size: 12px;"> 
+										<li style="text-align: justify;">Registration link will available <b>from 10:00 AM of 14-FEB-2022 to mid night of 16-FEB-2022</b>.</li>
+									 	<li style="text-align: justify;"><b>Only B.Tech. (Except BBS), M.Sc., M.Sc.(5 Years Integrated), MCA, M.Tech., M.S.(SE), M.Tech.(5 Years Integrated) &amp; Research programme Fresher students (i.e. 2021 Batch) are allowed for registration.</b></li>
+									 	<li style="text-align: justify;"><b>All types of category courses &amp; options are permitted for registration.  Grade Improvement/ Audit/ Additional courses are not allowed.</b></li>
+									 	<li style="text-align: justify;"><Strong style="color: red;">Login with Username &amp; Password (as per your VTOP credentials).</Strong></li>
+									 	<li style="text-align: justify;"><Strong style="color: red;">An OTP will be sent to your E-Mail Id (as per your VTOP Student Profile) for each Course Delete or Modify.</Strong></li>		
+										<li style="text-align: justify;"><span>The students should <strong style="color: red;">not share their credentials</strong> with their friends.  
+	 							 			The <strong  style="color: red;">University does not take any responsibility if their course registrations are altered/ deleted</strong>.</span></li>
+									 	<li style="text-align: justify;">For <strong style="color: red;">issues related to course scheduling and availability</strong>, please contact your <strong style="color: red;">Head of the Department.</strong></li>
+									 	<li style="text-align: justify;">For <b>any further clarifications please contact <span style="color: blue;">helpdesk.acad@vit.ac.in</span></b>.</li>
+									 	<li style="text-align: justify;">Recommended browsers are <b style="color:red;">“MOZILLA FIREFOX”</b> and <b style="color:red;">“GOOGLE CHROME”</b></li>
+									 	<li style="text-align: justify;">Session will be timed out automatically after 3 minutes of idle time period. To re-login without proper ‘Log out’ the student has to wait for 3 minutes.</li>
+									 	<li style="text-align: justify;"><strong  style="color: red;">If "Multi-Tab" error or "Session Timed Out" message displayed, close your web browser or clear the cache and then "Re-Login" to website.</strong></li>
+									</ul>							
+
+									<div class="small-info" style="text-align:center;
+										border-bottom-left-radius:10px; border-bottom-right-radius:10px; 
+										background: #000428;  /* fallback for old browsers */
+										background: -webkit-linear-gradient(to right, #004e92, #000428);  /* Chrome 10-25, Safari 5.1-6 */
+										background: linear-gradient(to right, #004e92, #000428); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	 									color: #fff; padding: 10px 0; width: 100%; font-weight:bold;  font-size: 13px;">
+	 									<span>I have read the above Instructions/ Conditions and ready to proceed for Course Add/Drop.</span>
+									 
+									 <form method="post">
+									 	<button class="btn-success w3-btn w3-btn-green w3-round-large" type="button" onclick="callLoginPage('Agree');">Agree</button>&nbsp;&nbsp;
+									 </form>
+									 								 
+								 	</div>
+								 
+								</div>
+												
+					</div>
+				</div>
+
+			<script th:inline="javascript">
+			/*<![CDATA[*/
+
+				
+				function callLoginPage(logStatus) 
+				{			
+					if (logStatus == 'Disagree')
+					{						
+						window.close();
+					}
+			
+					if (logStatus == 'Agree')
+					{
+						$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
+						$.ajax({
+						url : "viewStudentLogin",
+						type : "POST",
+						cache : false,
+						processData : false,
+						contentType : false,												
+						success : function(response) 
+							{														
+								$("#page-wrapper").html(response);
+								$.unblockUI();
+								//openRequestedPopup(response);
+							}
+						});					
+					}
+				}
+			
+			
+			
+			
+		/*]]>*/
+		</script>	
+			
+			<script src="assets/js/jquery-2.2.3.min.js"></script> 
+			<script src="assets/js/jquery.blockUI.js"></script>
+			</div>	
+		</section>
+		
+		</div>
+		
+		</div>
+		
+		
+				<!-- /.content -->
+			</div>
+			<!-- /.container -->
+		<!-- /.content-wrapper -->
+				
+		
+	<!-- ./wrapper -->
+	
+	<script>
+		history.pushState(null, null, document.URL);
+		window.addEventListener('popstate', function () {
+		    history.pushState(null, null, document.URL);
+		});
+	</script>
+	
+</body>
+<footer>
+   		<div style="padding:10px 0;">
+    			Copyright &copy; 2021 Software Development Cell (VIT)
+		</div>
+</footer>
+</html>
