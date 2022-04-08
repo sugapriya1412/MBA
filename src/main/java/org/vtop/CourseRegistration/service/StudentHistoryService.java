@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.vtop.CourseRegistration.model.HistoryCourseData;
 import org.vtop.CourseRegistration.model.StudentCGPAData;
 import org.vtop.CourseRegistration.model.StudentHistoryModel;
 import org.vtop.CourseRegistration.repository.CourseEquivalanceRegRepository;
@@ -60,12 +61,12 @@ public class StudentHistoryService
 		{
 			if (pCourseSystem.equals("CAL") || pCourseSystem.equals("CBCS"))
 			{
-				cgpaData = cgpaCalcService.calculateCalCGPA(pRegisterNumber, "CGPA", "CGPA", 
+				cgpaData = calculateCalCGPA(pRegisterNumber, "CGPA", "CGPA", 
 								new Date(), new Date(), pSpecId.shortValue());
 			}
 			else
 			{
-				cgpaData = cgpaNonCalService.calculateNonCalCGPA(pRegisterNumber, "CGPA", "CGPA", 
+				cgpaData = calculateNonCalCGPA(pRegisterNumber, "CGPA", "CGPA", 
 								new Date(), new Date(), pSpecId.shortValue());
 			}
 		}
@@ -492,7 +493,97 @@ public class StudentHistoryService
 										
 		return returnCourseCodeList;
 	}
-
+	
+	public StudentCGPAData calculateCalCGPA(String PRegNo, String PType, String PAdlPra, Date PFromExamMonth, 
+								Date PToExamMonth, Short PProgSplnId)
+	{
+		List<HistoryCourseData> historyCourseList = new ArrayList<>();
+	
+		try
+		{
+			List<Object[]>  tempHistoryList = null;
+			
+			if ((PType.equals("CGPA") || PType.equals("HOSTEL_NCGPA")) &&  PRegNo !=null)
+			{
+				tempHistoryList = getStudentHistoryForCgpaCalc(PRegNo, PProgSplnId);
+			}
+			
+			else if (PType.equals("GPA") &&  PRegNo!=null &&  PFromExamMonth!=null &&  PProgSplnId!=null)
+			{
+				tempHistoryList = getStudentHistoryForGpaCalc(PRegNo, PProgSplnId, PFromExamMonth);
+			}
+			else if( PType.equals("CGPA_UPTO_EXAMMONTH") && PRegNo!=null && PToExamMonth!=null && PProgSplnId != null)
+			{
+				tempHistoryList = getStudentHistoryForCgpaCalc(PRegNo, PProgSplnId,PToExamMonth);
+			}
+			
+			if(tempHistoryList!=null)
+			{
+				for (Object[] row : tempHistoryList) {
+					HistoryCourseData hData = new HistoryCourseData();
+					hData.setRegno(row[0].toString());
+					hData.setCourseCode(row[1].toString());
+					hData.setCourseType(row[2].toString());
+					hData.setCredits(Float.parseFloat(row[3].toString()));
+					hData.setGrade(row[4].toString());
+					hData.setCourseOption(row[5]!=null?row[5].toString():null);
+					historyCourseList.add(hData);
+				}
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return cgpaCalcService.doProcess(PRegNo, PType, PAdlPra, historyCourseList,PProgSplnId);
+	}
+	
+	public StudentCGPAData calculateNonCalCGPA(String PRegNo, String PType, String PAdlPra, Date PFromExamMonth, 
+								Date PToExamMonth, Short PProgSplnId)
+	{
+		List<HistoryCourseData> historyCourseList = new ArrayList<>();
+			
+		try
+		{
+			List<Object[]>  tempHistoryList = null;
+			
+			if ((PType.equals("CGPA") || PType.equals("HOSTEL_NCGPA")) &&  PRegNo!=null )
+			{
+				tempHistoryList = getStudentHistoryForCgpaNonCalCalc(PRegNo, PProgSplnId);
+				//----Only Upto 2004 BTech IYear Credits not Included SPSRC:='select distinct a.regno,a.sem,a.subcode,a.credits,a.grade,a.papertype,a.exammonth,A.COURSEOPT from (SELECT a.cid,a.regno,a.sem,a.subcode, a.subjects,a.papertype,a.credits, a.grade, a.exammonth,A.COURSEOPT FROM (SELECT * FROM coehistoryadmin.finalresult x where not exists (select * from coehistoryadmin.coursechange where x.cid=cid and x.regno=regno and x.subcode=osubcode) and REGNO = ''' || substr(PREGNO,1,instr(PREGNO,'|')-1) || ''' AND CID=' || PProgSplnId ||' and  CREDITS IS NOT NULL AND COURSEOPT=''NIL'' AND GRADE<>''---'') a, (select * from coehistoryadmin.finalresult where REGNO = ''' || substr(PREGNO,1,instr(PREGNO,'|')-1) || ''' AND CID=' || PProgSplnId ||' and CREDITS IS NOT NULL AND COURSEOPT=''NIL'' AND GRADE<>''---'' AND UPPER(SEM)<>''I YEAR'' and SEM<>''I'' AND SEM<>''II'') b where  a.regno=b.regno and a.subcode=b.subcode GROUP BY a.cid,a.regno,a.sem,a.subcode, a.subjects, a.credits,a.papertype, a.grade, a.exammonth,A.COURSEOPT Having a.exammonth >= Max(b.exammonth))a ';
+			}
+			else if( PType.equals("GPA") && PRegNo!=null &&  PFromExamMonth != null  &&  PProgSplnId!=null)
+			{
+				tempHistoryList = getStudentHistoryForGpaNonCalCalc(PRegNo, PProgSplnId, PFromExamMonth);
+			}
+			else if (PType.equals("CGPA_UPTO_EXAMMONTH") && PRegNo != null &&  PToExamMonth !=null  &&   PProgSplnId!=null )//THEN --PAdlPra ProgId|ExamMonth RequiredExammonthWise CGPA --if_001    
+			{
+				tempHistoryList = getStudentHistoryForCgpaNonCalCalc(PRegNo, PProgSplnId,PToExamMonth);
+			}
+			
+			if(tempHistoryList!=null)
+			{
+				for (Object[] row : tempHistoryList) {
+					HistoryCourseData hData = new HistoryCourseData();
+					hData.setRegno(row[0].toString());
+					hData.setCourseCode(row[1].toString());
+					hData.setCourseType(row[2].toString());
+					hData.setCredits(Float.parseFloat(row[3].toString()));
+					hData.setGrade(row[4].toString());
+					hData.setCourseOption(row[5]!=null?row[5].toString():null);
+					historyCourseList.add(hData);
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		return cgpaNonCalService.doProcess(PRegNo, PType, PAdlPra,PProgSplnId, historyCourseList);
+	}
+	
+	
 	/*public StudentHistoryModel getOne(StudentHistoryPKModel studentHistoryPKModel)
 	{
 		return studentHistoryRepository.findOne(studentHistoryPKModel);

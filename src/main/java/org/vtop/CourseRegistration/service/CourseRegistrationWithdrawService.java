@@ -9,7 +9,7 @@ import org.vtop.CourseRegistration.repository.CourseRegistrationWithdrawReposito
 
 
 @Service
-@Transactional("academicsTransactionManager")
+@Transactional("transactionManager")
 public class CourseRegistrationWithdrawService
 {	
 	@Autowired private CourseRegistrationWithdrawRepository courseRegistrationWithdrawRepository;

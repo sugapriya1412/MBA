@@ -1,8 +1,6 @@
 package org.vtop.CourseRegistration.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,50 +12,8 @@ import org.vtop.CourseRegistration.model.StudentCGPAData;
 @Service
 public class CGPANonCalService
 {
-	@Autowired private StudentHistoryService studentHistoryService;
-	 
-	public StudentCGPAData calculateNonCalCGPA(String PRegNo, String PType, String PAdlPra, 
-								Date PFromExamMonth, Date PToExamMonth, Short PProgSplnId)
-	{
-		List<HistoryCourseData> historyCourseList = new ArrayList<>();
-		
-		try
-		{
-			List<Object[]>  tempHistoryList = null;
-			if ((PType.equals("CGPA") || PType.equals("HOSTEL_NCGPA")) &&  PRegNo!=null )
-			{
-				tempHistoryList = studentHistoryService.getStudentHistoryForCgpaNonCalCalc(PRegNo, PProgSplnId);
-				//----Only Upto 2004 BTech IYear Credits not Included SPSRC:='select distinct a.regno,a.sem,a.subcode,a.credits,a.grade,a.papertype,a.exammonth,A.COURSEOPT from (SELECT a.cid,a.regno,a.sem,a.subcode, a.subjects,a.papertype,a.credits, a.grade, a.exammonth,A.COURSEOPT FROM (SELECT * FROM coehistoryadmin.finalresult x where not exists (select * from coehistoryadmin.coursechange where x.cid=cid and x.regno=regno and x.subcode=osubcode) and REGNO = ''' || substr(PREGNO,1,instr(PREGNO,'|')-1) || ''' AND CID=' || PProgSplnId ||' and  CREDITS IS NOT NULL AND COURSEOPT=''NIL'' AND GRADE<>''---'') a, (select * from coehistoryadmin.finalresult where REGNO = ''' || substr(PREGNO,1,instr(PREGNO,'|')-1) || ''' AND CID=' || PProgSplnId ||' and CREDITS IS NOT NULL AND COURSEOPT=''NIL'' AND GRADE<>''---'' AND UPPER(SEM)<>''I YEAR'' and SEM<>''I'' AND SEM<>''II'') b where  a.regno=b.regno and a.subcode=b.subcode GROUP BY a.cid,a.regno,a.sem,a.subcode, a.subjects, a.credits,a.papertype, a.grade, a.exammonth,A.COURSEOPT Having a.exammonth >= Max(b.exammonth))a ';
-			}
-			else if( PType.equals("GPA") && PRegNo!=null &&  PFromExamMonth != null  &&  PProgSplnId!=null)
-			{
-				tempHistoryList = studentHistoryService.getStudentHistoryForGpaNonCalCalc(PRegNo, PProgSplnId, PFromExamMonth);
-			}
-			else if (PType.equals("CGPA_UPTO_EXAMMONTH") && PRegNo != null &&  PToExamMonth !=null  &&   PProgSplnId!=null )//THEN --PAdlPra ProgId|ExamMonth RequiredExammonthWise CGPA --if_001    
-			{
-				tempHistoryList = studentHistoryService.getStudentHistoryForCgpaNonCalCalc(PRegNo, PProgSplnId,PToExamMonth);
-			}
-			
-			if(tempHistoryList!=null)
-			{
-					for (Object[] row : tempHistoryList) {
-						HistoryCourseData hData = new HistoryCourseData();
-						hData.setRegno(row[0].toString());
-						hData.setCourseCode(row[1].toString());
-						hData.setCourseType(row[2].toString());
-						hData.setCredits(Float.parseFloat(row[3].toString()));
-						hData.setGrade(row[4].toString());
-						hData.setCourseOption(row[5]!=null?row[5].toString():null);
-						historyCourseList.add(hData);
-					}
-				}
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-			return doProcess(PRegNo, PType, PAdlPra,PProgSplnId, historyCourseList);
-		}
-
+	@Autowired private SemesterMasterService semesterMasterService;	 
+	
 	public StudentCGPAData doProcess(String PRegNo,String PType,String PAdlPra,Short PProgSplnId,List<HistoryCourseData> historyCourseList)
 	{
 		Integer LoopCounter;
@@ -150,7 +106,7 @@ public class CGPANonCalService
 			}
 			tot_sub=tot_sub+1;
 			LoopCounter=LoopCounter+1;
-			vGradePoint=studentHistoryService.getGradePoint(hCourse.getGrade(),hCourse.getCredits());
+			vGradePoint = semesterMasterService.getGradePoint(hCourse.getGrade(),hCourse.getCredits());
 			if (!hCourse.getGrade().equals("W") && !hCourse.getGrade().equals("U") && !hCourse.getGrade().equals("P"))
 			{
 				if (vGradePoint==0)

@@ -13,7 +13,7 @@ import org.vtop.CourseRegistration.repository.CourseRegistrationRepository;
 
 
 @Service
-@Transactional("academicsTransactionManager")
+@Transactional("transactionManager")
 public class CourseRegistrationService
 {
 	@Autowired private CourseRegistrationRepository courseRegistrationRepository;
@@ -168,7 +168,7 @@ public class CourseRegistrationService
 	{
 		return courseRegistrationRepository.registration_insert_prc(psemsubid, pclassid, pregno, pcourseid, 
 					pcomponent_type, pcourse_option, pregstatus, pregcomponent_type, ploguserid, plogipaddress, 
-					pregtype, pold_course_code, pcalltype, pold_course_type, pold_exam_month, "NONE");
+					pregtype, pold_course_code, pcalltype, pold_course_type, pold_exam_month, "","NONE");
 	}
 	
 	public String courseRegistrationUpdate2(String psemsubid, String pregno, String pcourseid, String pcomponent_type,
@@ -178,7 +178,7 @@ public class CourseRegistrationService
 	{
 		return courseRegistrationRepository.registration_update_prc(psemsubid, pregno, pcourseid, pcomponent_type,
 					pcourse_option, poldclassid, pnewclassid, ploguserid, plogipaddress, pregstatus, pregcomponent_type, 
-					pregtype, pold_course_code, pold_course_type, pold_exam_month, "NONE");
+					pregtype, pold_course_code, pold_course_type, pold_exam_month,"", "NONE");
 	}
 	
 	public String courseRegistrationDelete(String psemsubid, String pregno, String pcourseid, String pcalltype, 

@@ -8,7 +8,7 @@ import org.vtop.CourseRegistration.repository.ProjectRegistrationRepository;
 
 
 @Service
-@Transactional("academicsTransactionManager")
+@Transactional("transactionManager")
 public class ProjectRegistrationService
 {		
 	@Autowired private ProjectRegistrationRepository projectRegistrationRepository;

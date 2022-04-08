@@ -7,7 +7,7 @@ import org.vtop.CourseRegistration.repository.WishlistRegistrationRepository;
 
 
 @Service
-@Transactional("academicsTransactionManager")
+@Transactional("transactionManager")
 public class WishlistRegistrationService
 {	
 	@Autowired private WishlistRegistrationRepository wishlistRegistrationRepository;

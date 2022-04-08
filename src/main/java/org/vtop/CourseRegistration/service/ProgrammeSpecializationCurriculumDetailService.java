@@ -13,7 +13,7 @@ import org.vtop.CourseRegistration.repository.ProgrammeSpecializationCurriculumD
 
 
 @Service
-@Transactional("academicsTransactionManager")
+@Transactional("transactionManager")
 public class ProgrammeSpecializationCurriculumDetailService
 {
 	@Autowired private ProgrammeSpecializationCurriculumDetailRepository programmeSpecializationCurriculumDetailRepository;

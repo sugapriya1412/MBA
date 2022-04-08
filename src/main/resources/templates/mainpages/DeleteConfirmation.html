@@ -162,10 +162,15 @@
 									
 									<h3 style="color:red;margin-bottom:10px;">Do you want to delete above mentioned course ?</h3>
 									<button type="button" class="btn-warning w3-btn w3-btn-green w3-round-large" 
-										th:onclick="'javascript: processDeleteConfirmationCourseRegistration(\''+ ${courseId} +'\')'" >
+										th:data-parameter1="${courseId}" 
+										th:onclick="javascript: processDeleteConfirmationCourseRegistration(this.getAttribute('data-parameter1'))" >
 								    		<i class="fa fa-check"></i>Yes
 									</button>
 									&nbsp;&nbsp;
+									<!-- <button type="button" class="btn-warning w3-btn w3-btn-green w3-round-large" 
+										th:onclick="'javascript: processDeleteConfirmationCourseRegistration(\''+ ${courseId} +'\')'" >
+								    		<i class="fa fa-check"></i>Yes
+									</button> -->
 									<button type="button" class="btn-success w3-btn w3-btn-red w3-round-large" 
 										th:onclick="'javascript: processDeleteConfirmationCourseRegistrationRirect();'" >
 									    	<i class="fa fa-close"></i>No
@@ -174,8 +179,14 @@
 								
 								<th:block th:if="${tlDeleteAllowStatus == 1}">
 									<h3 style="color:red;margin-bottom:10px;">Do you want to delete above mentioned course ?</h3>
+								<!-- 	<button type="button" class="btn-warning w3-btn w3-btn-green w3-round-large" 
+									th:onclick="'javascript: processDeleteOTPCourseRegistration(\''+ ${courseId} +'\');'" >
+							    		<i class="fa fa-check"></i>Yes
+									</button> -->
+									
 									<button type="button" class="btn-warning w3-btn w3-btn-green w3-round-large" 
-										th:onclick="'javascript: processDeleteOTPCourseRegistration(\''+ ${courseId} +'\');'" >
+										th:data-parameter1="${courseId}"
+										th:onclick="javascript: processDeleteOTPCourseRegistration(this.getAttribute('data-parameter1'))" >
 								    		<i class="fa fa-check"></i>Yes
 									</button>
 									&nbsp;&nbsp;
@@ -201,8 +212,9 @@
 									
 									<tr style="background-color :#095988">
 										<td colspan="2" style="text-align: center;">
-											<button type="button" class="btn-warning w3-btn w3-btn-green w3-round-large"							         
-											    th:onclick="'javascript: processDeleteConfirmationCourseRegistration(\''+ ${courseId} +'\');'">
+											<button type="button" class="btn-warning w3-btn w3-btn-green w3-round-large"	
+												th:data-parameter1="${courseId}"						         
+											    th:onclick="javascript: processDeleteConfirmationCourseRegistration(this.getAttribute('data-parameter1'))">
 											     <i class="fa fa-check"></i>Confirm
 											</button>
 											&nbsp;&nbsp;

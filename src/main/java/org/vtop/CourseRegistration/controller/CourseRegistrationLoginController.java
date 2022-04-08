@@ -45,19 +45,19 @@ public class CourseRegistrationLoginController
 						HttpServletResponse response) throws ServletException, IOException, 
 						ParseException 
 	{	
-		int testStatus = 1; //Login with Password & Captcha-> 1: Enable/ 2: Disable
+		int testStatus = 2; //Login with Password & Captcha-> 1: Enable/ 2: Disable
 		int regSlotCheckStatus = 2; //If Permitted Schedule-> 1: Date & Time / 2: Only Date
 		int regTimeCheckStatus = 1; //Time-> 1: Open Hours/ 2: Permitted Schedule
 		int wishListCheckStatus = 2; //1: Enable/ 2: Disable
 		int historyCallStatus = 2; //Student History-> 1: Procedure/ 2: Table
-		int cgpaStatus = 2; //Student CGPA & Credit Detail-> 1: Dynamic/ 2: Static
+		int cgpaStatus = 1; //Student CGPA & Credit Detail-> 1: Dynamic/ 2: Static
 		
 		int PEUEAllowStatus = 1; //PE & UE Category Allow Status-> 1: Enable/ 2: Disable
 		int approvalStatus = 1; //Registration Status Approval-> 1: Enable/ 2: Disable
 		int waitingListStatus = 2; //Waiting List Allow Status-> 1: Enable/ 2: Disable
 		int OptionNAStatus = 1; //Option Not Allowed Status-> 1: Enable/ 2: Disable
 		int compulsoryCourseStatus = 1; //Compulsory Course Allow Status-> 1: Enable/ 2: Disable
-		int otpStatus = 1; //OTP Send Status-> 1: Enable/ 2: Disable
+		int otpStatus = 2; //OTP Send Status-> 1: Enable/ 2: Disable
 		
 		int maxCredit = 27, minCredit = 16, studyStartYear = 0;	
 		int studentGraduateYear = 0, academicYear = 0, academicGraduateYear = 0, cclTotalCredit = 0;				
@@ -79,8 +79,8 @@ public class CourseRegistrationLoginController
 		//String studentCgpaData = "0|0|0", studentHistoryStatus = "";
 				
 		SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy");		
-		Date startDate = format.parse("14-FEB-2022");
-		Date endDate = format.parse("16-FEB-2022");
+		Date startDate = format.parse("29-MAR-2022");
+		Date endDate = format.parse("01-MAY-2022");
 		String startTime = "10:00:00", endTime = "23:59:59", allowStartTime = "10:00:00";
 		
 		String[] statusMsg = new String[]{};
@@ -838,7 +838,9 @@ public class CourseRegistrationLoginController
 				model.addAttribute("startTime", startTime);
 				model.addAttribute("endTime", endTime);
 				
-				urlPage = "RegistrationStart";
+				//urlPage = "mainpages/MainPage";
+				urlPage = "InstructionPage";
+				//urlPage ="RegistrationStart";
 			}
 			else
 			{

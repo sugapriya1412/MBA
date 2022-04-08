@@ -9,7 +9,7 @@ import org.vtop.CourseRegistration.repository.CourseEquivalanceRegRepository;
 
 
 @Service
-@Transactional("academicsTransactionManager")
+@Transactional("transactionManager")
 public class CourseEquivalanceRegService
 {		
 	@Autowired private CourseEquivalanceRegRepository courseEquivalanceRegRepository;

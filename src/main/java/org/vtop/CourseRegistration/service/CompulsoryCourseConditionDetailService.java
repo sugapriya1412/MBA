@@ -10,7 +10,7 @@ import org.vtop.CourseRegistration.repository.CompulsoryCourseConditionDetailRep
 
 
 @Service
-@Transactional("academicsTransactionManager")
+@Transactional("transactionManager")
 public class CompulsoryCourseConditionDetailService
 {	
 	@Autowired private CompulsoryCourseConditionDetailRepository compulsoryCourseConditionDetailRepository;

@@ -1,8 +1,6 @@
 package org.vtop.CourseRegistration.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,51 +12,8 @@ import org.vtop.CourseRegistration.model.StudentCGPAData;
 @Service
 public class CGPACalcService
 {
-	//private static DecimalFormat df = new DecimalFormat("0.00" );
+	@Autowired private SemesterMasterService semesterMasterService;
 	
-	@Autowired private StudentHistoryService studentHistoryService;
-	
-	public StudentCGPAData calculateCalCGPA(String PRegNo, String PType, String PAdlPra, Date PFromExamMonth, 
-								Date PToExamMonth, Short PProgSplnId)
-	{
-		List<HistoryCourseData> historyCourseList = new ArrayList<>();
-		try
-		{
-			List<Object[]>  tempHistoryList = null;
-			if ((PType.equals("CGPA") || PType.equals("HOSTEL_NCGPA")) &&  PRegNo !=null)
-			{
-				tempHistoryList = studentHistoryService.getStudentHistoryForCgpaCalc(PRegNo, PProgSplnId);
-			}
-
-			else if (PType.equals("GPA") &&  PRegNo!=null &&  PFromExamMonth!=null &&  PProgSplnId!=null)
-			{
-				tempHistoryList = studentHistoryService.getStudentHistoryForGpaCalc(PRegNo, PProgSplnId, PFromExamMonth);
-			}
-			else if( PType.equals("CGPA_UPTO_EXAMMONTH") && PRegNo!=null && PToExamMonth!=null && PProgSplnId != null)
-			{
-				tempHistoryList = studentHistoryService.getStudentHistoryForCgpaCalc(PRegNo, PProgSplnId,PToExamMonth);
-			}
-			if(tempHistoryList!=null)
-			{
-				for (Object[] row : tempHistoryList) {
-					HistoryCourseData hData = new HistoryCourseData();
-					hData.setRegno(row[0].toString());
-					hData.setCourseCode(row[1].toString());
-					hData.setCourseType(row[2].toString());
-					hData.setCredits(Float.parseFloat(row[3].toString()));
-					hData.setGrade(row[4].toString());
-					hData.setCourseOption(row[5]!=null?row[5].toString():null);
-					historyCourseList.add(hData);
-				}
-			}
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		return doProcess(PRegNo, PType, PAdlPra, historyCourseList,PProgSplnId);
-	}
-
-
 	public StudentCGPAData doProcess(String PRegNo,String PType,String PAdlPra,List<HistoryCourseData> historyCourseList,Short PProgSplnId)
 	{
 		Integer LoopCounter;
@@ -130,7 +85,7 @@ public class CGPACalcService
 			}
 			tot_course=tot_course+1;
 			LoopCounter=LoopCounter+1;
-			vGradePoint=studentHistoryService.getGradePoint(hCourse.getGrade(),hCourse.getCredits());
+			vGradePoint = semesterMasterService.getGradePoint(hCourse.getGrade(),hCourse.getCredits());
 			if (!hCourse.getGrade().equals("W") && !hCourse.getGrade().equals("U") && !hCourse.getGrade().equals("P"))
 			{
 				if( vGradePoint==0.0f )
@@ -226,5 +181,4 @@ public class CGPACalcService
 		return cgpaData;
 
 	}
-
 }

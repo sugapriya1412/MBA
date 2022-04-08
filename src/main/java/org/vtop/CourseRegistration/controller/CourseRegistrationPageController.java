@@ -159,10 +159,13 @@ public class CourseRegistrationPageController
 			session.setAttribute("userSessionId", session.getId());
 		}
 		
-		return "InstructionPage";
+		courseRegCommonFn.callCaptcha(request, response, session, model);
+		session.setAttribute("CAPTCHA", session.getAttribute("CAPTCHA"));
+		//return "InstructionPage";
+		return "StudentLogin";
 	}
 
-	@PostMapping("viewStudentLogin")
+/*	@PostMapping("viewStudentLogin")
 	public String viewStudentLogin(Model model, HttpServletRequest request, HttpSession session, 
 						HttpServletResponse response) throws ServletException, IOException 
 	{
@@ -178,11 +181,12 @@ public class CourseRegistrationPageController
 		currentDateTimeStr = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a").format(new Date());
 		model.addAttribute("CurrentDateTime", currentDateTimeStr);
 		
-		courseRegCommonFn.callCaptcha(request, response, session, model);
-		session.setAttribute("CAPTCHA", session.getAttribute("CAPTCHA"));
+		//courseRegCommonFn.callCaptcha(request, response, session, model);
+		//session.setAttribute("CAPTCHA", session.getAttribute("CAPTCHA"));
 		
-		return "StudentLogin";
-	}
+		//return "StudentLogin";
+		return "RegistrationStart";
+	}*/
 	
 	@PostMapping("viewStudentLogin1")
 	public String viewStudentLogin1(Model model, HttpServletRequest request, HttpSession session, 
@@ -398,7 +402,7 @@ public class CourseRegistrationPageController
 	
 
 	@PostMapping(value="ViewCredits")
-	public String ViewCredits(Model model, HttpSession session, HttpServletRequest request) 
+	public String ViewCredits(Model model,String creditDetailshowFlag, HttpSession session, HttpServletRequest request) 
 	{
 		String registerNumber = (String) session.getAttribute("RegisterNumber");
 		String semesterSubId = (String) session.getAttribute("SemesterSubId");
@@ -417,40 +421,51 @@ public class CourseRegistrationPageController
 		Integer maxCredit = (Integer) session.getAttribute("maxCredit");
 		try
 		{
-			if (registerNumber!=null)
-			{	
-				ncCourseList.add("NONE");
-				//ncCourseList = programmeSpecializationCurriculumDetailService.getNCCourseByYearAndCCVersion(programSpecId, 
-				//					studyStartYear, curriculumVersion);
-				regCredit = courseRegistrationService.getRegCreditByRegisterNumberAndNCCourseCode(semesterSubId, 
+			if(creditDetailshowFlag.equals("true"))
+			{
+				if (registerNumber!=null)
+				{	
+					ncCourseList.add("NONE");
+					//ncCourseList = programmeSpecializationCurriculumDetailService.getNCCourseByYearAndCCVersion(programSpecId, 
+					//					studyStartYear, curriculumVersion);
+					regCredit = courseRegistrationService.getRegCreditByRegisterNumberAndNCCourseCode(semesterSubId, 
+									registerNumber, ncCourseList);
+					regCount = courseRegistrationService.getRegisterNumberTCCountByClassGroupId(semesterSubId, registerNumber, 
+									classGroupId);
+					
+					if (WaitingListStatus == 1)
+					{
+						wlCredit = courseRegistrationWaitingService.getRegCreditByRegisterNumberAndNCCourseCode(semesterSubId, 
 								registerNumber, ncCourseList);
-				regCount = courseRegistrationService.getRegisterNumberTCCountByClassGroupId(semesterSubId, registerNumber, 
-								classGroupId);
-				
-				if (WaitingListStatus == 1)
-				{
-					wlCredit = courseRegistrationWaitingService.getRegCreditByRegisterNumberAndNCCourseCode(semesterSubId, 
-							registerNumber, ncCourseList);
-					wlCount = courseRegistrationWaitingService.getRegisterNumberCRWCountByClassGroupId(semesterSubId, 
-							registerNumber, classGroupId);
+						wlCount = courseRegistrationWaitingService.getRegisterNumberCRWCountByClassGroupId(semesterSubId, 
+								registerNumber, classGroupId);
+					}
+					
+					model.addAttribute("regCredit", regCredit);
+					model.addAttribute("regCount", regCount);
+					model.addAttribute("wlCount", wlCount);
+					model.addAttribute("wlCredit", wlCredit);
+					model.addAttribute("minCredit", minCredit);
+					model.addAttribute("maxCredit", maxCredit);
+					model.addAttribute("creditDetailshowFlag",creditDetailshowFlag);
+					model.addAttribute("WaitingListStatus", WaitingListStatus);
+					
+					urlPage = "mainpages/MainPage::creditsFragment";
 				}
-				
-				model.addAttribute("regCredit", regCredit);
-				model.addAttribute("regCount", regCount);
-				model.addAttribute("wlCount", wlCount);
-				model.addAttribute("wlCredit", wlCredit);
-				model.addAttribute("minCredit", minCredit);
-				model.addAttribute("maxCredit", maxCredit);
-				model.addAttribute("WaitingListStatus", WaitingListStatus);
-				
-				urlPage = "mainpages/MainPage::creditsFragment";
+				else
+				{
+					model.addAttribute("flag", 1);
+					urlPage = "redirectpage";
+					return urlPage;
+				}
 			}
 			else
 			{
-				model.addAttribute("flag", 1);
-				urlPage = "redirectpage";
-				return urlPage;
+				model.addAttribute("creditDetailshowFlag",creditDetailshowFlag);
+				urlPage = "mainpages/MainPage::creditsFragment";
+				
 			}
+			
 		}
 		catch(Exception e)
 		{

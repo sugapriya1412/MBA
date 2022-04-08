@@ -9,7 +9,7 @@ import org.vtop.CourseRegistration.repository.RegistrationLogRepository;
 
 
 @Service
-@Transactional("academicsTransactionManager")
+@Transactional("transactionManager")
 public class RegistrationLogService
 {
 	@Autowired private RegistrationLogRepository registrationLogRepository;

@@ -25,7 +25,7 @@ import org.vtop.CourseRegistration.repository.SemesterMasterRepository;
 
 
 @Service
-@Transactional("academicsTransactionManager")
+@Transactional("transactionManager")
 public class SemesterMasterService
 {
 	@Autowired private SemesterMasterRepository semesterMasterRepository;
@@ -467,5 +467,37 @@ public class SemesterMasterService
 		}
 				
 		return returnObjectList;
+	}
+	
+	public float getGradePoint(String grade, Float credits)
+	{
+		float gradePoint = 0;
+		
+		switch (grade)
+		{
+			case "S":
+				gradePoint= 10*credits;
+				break;
+			case "A":
+				gradePoint= 9*credits;
+				break;
+			case "B":
+				gradePoint= 8*credits;
+				break;
+			case "C":
+				gradePoint= 7*credits;
+				break;
+			case "D":
+				gradePoint= 6*credits;
+				break;
+			case "E":
+				gradePoint= 5*credits;
+				break;
+			default:
+				gradePoint= 0;
+				break;
+		}
+		
+		return gradePoint;
 	}
 }

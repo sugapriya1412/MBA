@@ -152,11 +152,22 @@
 						</table>
 						 <div class="login-reset-btn" style="margin-bottom: 20px;">
 						 	<th:block th:if="${checkEligibleStatus == 1}">
-							 	<button th:if="${checkEligibleStatus == 1}" 
+							 <!-- 	<button th:if="${checkEligibleStatus == 1}" 
 							 		class="btn-warning w3-btn w3-btn-red w3-round-large" 
 							 		type="button" style="font-weight: bold;" 									
 									th:onclick="'javascript: callCourseRegistration(\''+ ${CourseDetails.getCourseId()} 
 										+'\',  \''+ ${page} +'\' ,\''+ ${srhType} +'\',\''+ ${srhVal} +'\' );'"
+									>Check Eligibility</button> -->
+									
+									<button th:if="${checkEligibleStatus == 1}" 
+							 		class="btn-warning w3-btn w3-btn-red w3-round-large" 
+							 		type="button" style="font-weight: bold;" 
+							 		th:data-parameter1="${CourseDetails.getCourseId()}" 									
+									th:data-parameter2="${page}" 
+									th:data-parameter3="${srhType}" 
+									th:data-parameter4="${srhVal}" 
+									th:onclick="javascript: callCourseRegistration(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'),
+									this.getAttribute('data-parameter3'),this.getAttribute('data-parameter4'))"
 									>Check Eligibility</button>
 								&nbsp;&nbsp;&nbsp;
 							</th:block>

@@ -16,7 +16,7 @@ import org.vtop.CourseRegistration.repository.ProgrammeSpecializationCurriculumC
 
 
 @Service
-@Transactional("academicsTransactionManager")
+@Transactional("transactionManager")
 public class ProgrammeSpecializationCurriculumCreditService
 {		
 	@Autowired private ProgrammeSpecializationCurriculumCreditRepository programmeSpecializationCurriculumCreditRepository;

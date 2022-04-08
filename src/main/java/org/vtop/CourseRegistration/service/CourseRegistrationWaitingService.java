@@ -12,7 +12,7 @@ import org.vtop.CourseRegistration.repository.CourseRegistrationWaitingRepositor
 
 
 @Service
-@Transactional("academicsTransactionManager")
+@Transactional("transactionManager")
 public class CourseRegistrationWaitingService
 {		
 	@Autowired private CourseRegistrationWaitingRepository courseRegistrationWaitingRepository;

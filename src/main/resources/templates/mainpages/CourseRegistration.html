@@ -175,25 +175,56 @@
 									<th:block th:if="${(courseCatalogModel.getGenericCourseType() == 'ETL') or (courseCatalogModel.getGenericCourseType() == 'ETLP') 
 													or ((crCourseStatus == 1) and (courseCatalogModel.getGenericCourseType() == 'TH'))}">
 										<td style="text-align: center; border:1px solid #095988;">
-											<input type="radio" name="classnbr1" id="classnbr1"  th:value="${'GEN/'+courseAllocationModells.getClassId()}"
+							<!-- 				<input type="radio" name="classnbr1" id="classnbr1"  th:value="${'GEN/'+courseAllocationModells.getClassId()}"
 												th:checked="${courseAllocationModells.getClassId() == tlClassId}"
 											    th:onclick="'javascript:viewCorrespondingCourse(\''+ ${courseAllocationModells.getCourseCatalogModel().getCourseId()} +'\',\''+
 											    ${courseAllocationModells.getErpId()} +'\',\''+ ${courseAllocationModells.getCourseCatalogModel().getGenericCourseType()} +'\',\''+
-											    ${courseAllocationModells.getClassId()} +'\',\''+ ${page}  +'\');'" th:if="${courseAllocationModells.getAvailableSeats() &gt;0}"/>
+											    ${courseAllocationModells.getClassId()} +'\',\''+ ${page}  +'\');'" 
+											    th:if="${courseAllocationModells.getAvailableSeats() &gt;0}"/>
+											     -->
+											    <input type="radio" name="classnbr1" id="classnbr1"  th:value="${'GEN/'+courseAllocationModells.getClassId()}"
+												th:checked="${courseAllocationModells.getClassId() == tlClassId}"
+											   	th:data-parameter1="${courseAllocationModells.getCourseCatalogModel().getCourseId()}" 
+											  	th:data-parameter2="${courseAllocationModells.getErpId()}" 
+											  	th:data-parameter3="${courseAllocationModells.getCourseCatalogModel().getGenericCourseType()}" 
+											  	th:data-parameter4="${courseAllocationModells.getClassId()}" 
+											  	th:data-parameter5="${page}" 											   
+											    th:onclick="javascript:viewCorrespondingCourse(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'),
+											    this.getAttribute('data-parameter3'),this.getAttribute('data-parameter4'),this.getAttribute('data-parameter5'))" 								  
+											  
+											    th:if="${courseAllocationModells.getAvailableSeats() &gt;0}"/>
 											<span th:text="${courseAllocationModells.getAvailableSeats() &gt;0}?${courseAllocationModells.getAvailableSeats()}:'Full'"></span>																												
 										</td>
 										<th:block th:if="${WaitingListStatus == 1} 
 													and ${#lists.contains(tlCompCourseList, courseCatalogModel.getCode()) == false}">
 											<td style="text-align: center; border:1px solid #095988;" th:if="${!(courseCatalogModel.getGenericCourseType() == 'SS') or (courseCatalogModel.getGenericCourseType() == 'ECA')}">								
-												<input type="radio" name="classnbr1" id="classnbr1" th:value="${'WL/'+courseAllocationModells.getClassId()}"
+										<!-- 		<input type="radio" name="classnbr1" id="classnbr1" th:value="${'WL/'+courseAllocationModells.getClassId()}"
 													th:checked="${courseAllocationModells.getClassId() == tlClassId}"
 													th:onclick="'javascript:viewCorrespondingCourse(\''+ ${courseAllocationModells.getCourseCatalogModel().getCourseId()} +'\',\''+
 																${courseAllocationModells.getErpId()} +'\',\''+ ${courseAllocationModells.getCourseCatalogModel().getGenericCourseType()} +'\',\''+
 																${courseAllocationModells.getClassId()} +'\',\''+ ${page}  +'\');'"															 
 													th:if="${(courseAllocationModells.getAvailableSeats() le 0) and 
 														(courseAllocationModells.getAvailableWaitingSeats() ge 1) and 
-														(courseAllocationModells.getAvailableWaitingSeats() le 10)}"/>
+														(courseAllocationModells.getAvailableWaitingSeats() le 10)}"/> -->
 														
+														
+										<input type="radio" name="classnbr1" id="classnbr1" th:value="${'WL/'+courseAllocationModells.getClassId()}"
+													th:checked="${courseAllocationModells.getClassId() == tlClassId}"
+													th:data-parameter1="${courseAllocationModells.getCourseCatalogModel().getCourseId()}" 
+												  	th:data-parameter2="${courseAllocationModells.getErpId()}" 
+												  	th:data-parameter3="${courseAllocationModells.getCourseCatalogModel().getGenericCourseType()}" 
+												  	th:data-parameter4="${courseAllocationModells.getClassId()}" 
+												  	th:data-parameter5="${page}" 						
+														
+													th:onclick="javascript:viewCorrespondingCourse(this.getAttribute('data-parameter1'),
+													this.getAttribute('data-parameter2'),this.getAttribute('data-parameter3'),
+													this.getAttribute('data-parameter4'),this.getAttribute('data-parameter5'))"																	
+																														 
+													th:if="${(courseAllocationModells.getAvailableSeats() le 0) and 
+														(courseAllocationModells.getAvailableWaitingSeats() ge 1) and 
+														(courseAllocationModells.getAvailableWaitingSeats() le 10)}"/>
+											
+											
 												<span th:if="${(courseAllocationModells.getAvailableSeats() &gt; 0) and 
 														(courseAllocationModells.getAvailableWaitingSeats() &gt; 0)}" th:text="${'-'}"></span>
 												<span th:if="${(courseAllocationModells.getAvailableSeats() le 0) and 
@@ -326,8 +357,9 @@
 									<td style="text-align: center; border:1px solid #095988;" th:text="${'NONE'}"></td>
 											
 									<td style="text-align: center;border:1px solid #095988;">								
-										<input type="radio" name="classnbr3" id="classnbr3" th:value="${'GEN/'+courseAllocationModells.getClassId()}"
-																							th:if="${(courseAllocationModells.getTotalSeats() - courseAllocationModells.getRegisteredSeats()) &gt; 0}"/>
+										<input type="radio" name="classnbr3" id="classnbr3"
+										 th:value="${'GEN/'+courseAllocationModells.getClassId()}"
+										th:if="${(courseAllocationModells.getTotalSeats() - courseAllocationModells.getRegisteredSeats()) &gt; 0}"/>
 										<span th:text="${(courseAllocationModells.getTotalSeats() - courseAllocationModells.getRegisteredSeats()) &gt; 0 and (courseAllocationModells.getAvailableSeats() != 0)}?${courseAllocationModells.getAvailableSeats()}:'Full'"></span>																		
 									</td>
 																	
@@ -464,7 +496,7 @@
 							<tr th:if="${courseCatalogModel.getGenericCourseType() != 'PJT'}">								
 								<td colspan="9" style="text-align:center; border:1px solid #095988;">									
 									<div>																	
-										<button type="button" style="font-weight: bold;" 
+									<!-- 	<button type="button" style="font-weight: bold;" 
 											class="btn-success w3-btn w3-btn-green w3-round-large" 
 											th:if="${(regAllowFlag == 1)}" 
 											onclick="registerCourse('processRegisterCourse');">Register</button>
@@ -473,9 +505,23 @@
 											class="btn-warning w3-btn w3-btn-red w3-round-large" 
 											th:if="${((wlAllowFlag == 1) and (WaitingListStatus== 1) 
 												and (!(courseCatalogModel.getGenericCourseType() == 'SS') or (courseCatalogModel.getGenericCourseType() == 'ECA')))}"
-									 		onclick="registerCourse('processWaitingCourse');" >Waiting</button>
+									 		onclick="registerCourse('processWaitingCourse');" >Waiting</button> -->
+										
+										<button type="button" style="font-weight: bold;" 
+											class="btn-success w3-btn w3-btn-green w3-round-large" 
+											th:if="${(regAllowFlag == 1)}" 
+											th:data-parameter1="processRegisterCourse"
+											th:onclick="javascript:registerCourse(this.getAttribute('data-parameter1'))">Register</button>
 										&nbsp;&nbsp;
-										<button type="button" style="font-weight: bold;" class="btn-warning w3-btn w3-btn-blue w3-round-large" onclick="goBack();">Go Back</button>
+										<button type="button" style="font-weight: bold;" 
+											class="btn-warning w3-btn w3-btn-red w3-round-large" 
+											th:if="${((wlAllowFlag == 1) and (WaitingListStatus== 1) 
+												and (!(courseCatalogModel.getGenericCourseType() == 'SS') or (courseCatalogModel.getGenericCourseType() == 'ECA')))}"
+									 		th:data-parameter1="processWaitingCourse"
+									 		th:onclick="javascript:registerCourse(this.getAttribute('data-parameter1'))" >Waiting</button>
+										&nbsp;&nbsp;
+										<button type="button" style="font-weight: bold;" class="btn-warning w3-btn w3-btn-blue w3-round-large" 
+										onclick="goBack();">Go Back</button>
 				   					</div>					   				
 								</td>
 							</tr>

@@ -43,7 +43,14 @@
 									 	<li style="text-align: justify;">Recommended browsers are <b style="color:red;">“MOZILLA FIREFOX”</b> and <b style="color:red;">“GOOGLE CHROME”</b></li>
 									 	<li style="text-align: justify;">Session will be timed out automatically after 3 minutes of idle time period. To re-login without proper ‘Log out’ the student has to wait for 3 minutes.</li>
 									 	<li style="text-align: justify;"><strong  style="color: red;">If "Multi-Tab" error or "Session Timed Out" message displayed, close your web browser or clear the cache and then "Re-Login" to website.</strong></li>
-									</ul>							
+									</ul>	
+								<!-- 	 <div class="login-reset-btn">
+									 <form  action="checkRegistration" method="post" id="checkRegistration"
+											style="padding-top: 100px;">
+					  						<br/><button type="submit" style="font-weight: bold;" class="btn-success w3-btn w3-btn-green w3-round-large">Start Registration</button>
+					   						 &nbsp;&nbsp;&nbsp;&nbsp;<button type="button" style="font-weight: bold;" class="btn-warning w3-btn w3-btn-red w3-round-large" onclick="location.href='processLogout'">Sign out</button>	
+									</form>
+									</div> 	 -->					
 
 									<div class="small-info" style="text-align:center;
 										border-bottom-left-radius:10px; border-bottom-right-radius:10px; 
@@ -51,11 +58,46 @@
 										background: -webkit-linear-gradient(to right, #004e92, #000428);  /* Chrome 10-25, Safari 5.1-6 */
 										background: linear-gradient(to right, #004e92, #000428); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 	 									color: #fff; padding: 10px 0; width: 100%; font-weight:bold;  font-size: 13px;">
-	 									<span>I have read the above Instructions/ Conditions and ready to proceed for Course Add/Drop.</span>
+	 									<!-- <span>I have read the above Instructions/ Conditions and ready to proceed for Course Add/Drop.</span> -->
 									 
-									 <form method="post">
-									 	<button class="btn-success w3-btn w3-btn-green w3-round-large" type="button" onclick="callLoginPage('Agree');">Agree</button>&nbsp;&nbsp;
-									 </form>
+									 <div id="agreeButton" style = "display:none" >
+									<!--  <form method="post" >									 	
+									 	<button  class="btn-success w3-btn w3-btn-green w3-round-large" type="button"
+									 	 onclick="callLoginPage('Agree')">Agree</button>&nbsp;&nbsp;
+									  </form> -->
+									   <form  action="checkRegistration" method="post" id="checkRegistration">
+					  						<br/>
+					  						<button type="submit" style="font-weight: bold;" class="btn-success w3-btn w3-btn-green w3-round-large">Start Registration</button>
+					   				  </form>
+									 </div>
+									
+									  <div id="dvCountDown" style = "display:none ; font-size:20px " >
+											You will be redirected after <span id = "lblCount"></span>&nbsp;seconds.
+									  </div>
+											<script type="text/javascript">
+												function DelayRedirect() 
+												{
+													//alert("DelayRedirect");
+												    var seconds = 5;
+												    var dvCountDown = document.getElementById("dvCountDown");
+												    var agreeButton = document.getElementById("agreeButton");
+												    var lblCount = document.getElementById("lblCount");
+												    dvCountDown.style.display = "block";
+												    /* agreeButton.style.display = "hidden"; */
+												    lblCount.innerHTML = seconds;
+												    setInterval(
+												     function () 
+												     {
+												        seconds--;
+												        lblCount.innerHTML = seconds;
+												        if (seconds == 0) 
+												        { 
+												        	 dvCountDown.style.display = "none";  
+												        	 agreeButton.style.display = "block";
+												        }
+												     }, 1000);
+												}
+											</script>
 									 								 
 								 	</div>
 								 
@@ -66,9 +108,10 @@
 
 			<script th:inline="javascript">
 			/*<![CDATA[*/
-
+			
+				DelayRedirect();
 				
-				function callLoginPage(logStatus) 
+			/* 	function callLoginPage(logStatus) 
 				{			
 					if (logStatus == 'Disagree')
 					{						
@@ -92,14 +135,9 @@
 							}
 						});					
 					}
-				}
-			
-			
-			
-			
-		/*]]>*/
+				} */
+			/*]]>*/
 		</script>	
-			
 			<script src="assets/js/jquery-2.2.3.min.js"></script> 
 			<script src="assets/js/jquery.blockUI.js"></script>
 			</div>	

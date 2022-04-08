@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.vtop.CourseRegistration.model.CourseCatalogModel;
@@ -20,8 +19,10 @@ import org.springframework.data.domain.Pageable;
 public class CourseCatalogService
 {
 	@Autowired private CourseCatalogRepository courseCatalogRepository;
-	@Autowired private CourseRegistrationCommonFunction courseRegistrationCommonFunction;
+	//@Autowired private CourseRegistrationCommonFunction courseRegistrationCommonFunction;
 	@Autowired private StudentHistoryService studentHistoryService;
+	//@Autowired private CompulsoryCourseConditionDetailService compulsoryCourseConditionDetailService;	
+	
 		
 		
 	public CourseCatalogModel getOne(String courseId)
@@ -321,12 +322,10 @@ public class CourseCatalogService
 					}
 					break;
 
-				case "SS":
-					//courseCode = courseRegistrationCommonFunction.SoftSkillCourseCheck(programGroupId, admissionYear, 
-					//				studentGraduateYear, registerNumber, programSpecCode, programGroupCode);
+				/*case "SS":
 					courseCode = courseRegistrationCommonFunction.SoftSkillCourseCheck(programGroupId, admissionYear, 
-									studentGraduateYear, registerNumber, programSpecCode, programGroupCode, semesterSubId);
-						
+									studentGraduateYear, registerNumber, programSpecCode, programGroupCode);
+											
 					if (registrationMethod.equals("CAL"))
 					{
 						if (programGroupCode.equals("RP"))
@@ -355,7 +354,7 @@ public class CourseCatalogService
 											courseCode, programGroupCode, programSpecCode, costCentreCode);
 						}
 					}
-					break;
+					break;*/
 					
 				//case "PC":
 				//case "PE":

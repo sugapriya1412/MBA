@@ -3,12 +3,39 @@
   Author: Sivaraman C & Kishore B
 -->
 <html xmlns:th="http://www.thymeleaf.org">
+<style>
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #60a8e6;
+  color: black;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+</style>
 <head th:include="layouts/Header :: style_sheets">
 	<link href="assets/img/favicon1.png" rel="icon" type="image/x-icon" />
 </head>
 <body class="hold-transition skin-blue-light sidebar-mini fixed"  id="errorMsg">
 	<header class="main-header" th:include="layouts/Header :: header"></header>
-	<div class="top-info" style="color: rgb(0, 0, 0); font-family: times new roman; font-weight: bold; text-align: left; float: left; width: 100%; background-color: rgb(221, 221, 221); padding: 11px 0px; font-size: 16px;">
+	<div class="top-info" style="color: rgb(0, 0, 0); font-family: times new roman;
+	  font-weight: bold; text-align: left; float: left; 
+	  width: 100%; background-color: rgb(221, 221, 221); padding: 11px 0px; font-size: 16px;">
 		<div class="container">		
 			<span th:text="${studentDetails}"></span>				  
 			<span id="servertime" style="float: right;">							
@@ -22,63 +49,53 @@
 		</div>
 	</div>
 	
-	<div class="row full-main-sec" style="background-color: rgb(255, 255, 255); border-bottom: 10px solid rgb(221, 221, 221); border-top: 5px solid rgb(221, 221, 221);">		
-		<div class="container">		
-			<div class="col-4 left-info" style="width: 30%;">
-			<br/>
-				<div id="NotesRow">
-					<span style="font-weight: bold; color: red;">Note :</span>
-					<p style="color: blue; font-weight: bold; font-style: oblique; text-align: justify;">This part will enable after selecting the Course Registration Option given below.</p>				
-				</div>
-				<div style="display: none; width: 100%;" id="showFlag">					
-						<div id="searchRow1">
-							<label class="col-sm-3 control-label left-col" style="text-align: left;">Search by :</label>
-							<div class="right-col">
-								<select id="searchOption" name="searchOption" onchange="searchOptionChange(2);" 
-								style="padding: 5px 10px;border: 1px solid #ddd;width:86%;">
-									<option value="1">Course Code</option>
-								</select>
-								</div>
-							</div>
-				</div>
-				
-				<div id="searchRow3" style="display: none;float:left;text-align:center;width:100%;">
-					
-					<div class="right-col"  style="width:100%;">
-					<label class="col-sm-3 control-label left-col" style="text-align: left; padding: 10px;">Code : </label>
-					
-						<input style="width: 70%; max-width:100%;float: right; padding: 5px; margin-top: 10px;" 
-					  	type="text" placeholder="Enter the Course Code" id="searchValue" name="searchValue"/>	
-					 </div>	
-					 <div style="width:100%;float:left;"> 
-						<button type="button" id="findBtn" name="findBtn" 
-						onclick="findBtnSearchValue();" class="w3-btn w3-btn-blue w3-round-large findbtn">Find</button>	
-					 </div>				
-				</div>
-			</div>
+	<div>
+		<table class="w3-table-all w3-card-4" 
+			style="background-color: #e0f8f8; padding: 11px 10px;">
+							<tr>
+								<td class="tooltip"  style="width: 10%; 
+									text-align: center; color:black;">
+									<i class="fa fa-home" aria-hidden="true" onclick="viewRegOption();"
+										style="color:green; font-size: 25px ; cursor: pointer;">
+										<span class="tooltiptext">Home</span></i>								
+								</td>
+								<td class="tooltip" style="width: 10%; text-align: center;
+										color:black;">
+										<i class="fa fa-book" aria-hidden="true" onclick="viewRegistered();" 
+										 style="color:rgb(224,92,38); font-size: 25px ;cursor: pointer;">
+										<span class="tooltiptext">View Registered Course(s)</span></i>
+								</td>
+								<td class="tooltip"  style="width: 10%; text-align: center;
+										color:black; ">
+										<i class="fa fa-pencil-square-o" aria-hidden="true" onclick="modifySlots();"
+										style="color:rgb(220,123,36); font-size: 25px ;cursor: pointer;">
+										<span class="tooltiptext">Modify Slot(s) </span></i>
+								</td>
+								<td class="tooltip" style="width: 10%; text-align: center;
+										color:black; ">
+										<i class="fa fa-trash" onclick="deleteCourse();"  
+										style="color:red; font-size: 25px ;cursor: pointer;">
+										<span class="tooltiptext">Delete Registered Course(s)</span></i>
+								</td>
+								<td class="tooltip" style="width: 10%; text-align: center;
+										color:black; ">
+										<i class="fa fa-area-chart"   onclick="curriculumCredits();" 
+										style="color:black;font-size: 25px ;cursor: pointer;">
+										<span class="tooltiptext">Curriculum Credits View </span></i>
+								</td>
+								<td class="tooltip" style="width: 10%; 
+										text-align: center; color:black;">
+									<i class="fa fa-power-off"   onclick="location.href='processLogout'" 
+										style="color:black;font-size: 25px ;cursor: pointer; color:red">
+										<span class="tooltiptext">Signout</span></i>
+								</td>
+							</tr>
+						</table> 
+					</div>
 			
-			<div class="col-4 main-info" style="min-height:180px; border-right: 10px solid rgb(221, 221, 221); 
-						border-left: 10px solid rgb(221, 221, 221);padding:20px;width: 40%;">
-				<div style="float: none; margin: auto;" class="main-info-inside">
-					<ul class="listing" style="size: 10px;">
-						<li><i class="fa fa-home" aria-hidden="true" style="color:green;"></i>
-						<button onclick="viewRegOption();" class="link" style="font-weight: bold;">Home</button></li>
-						<li><i class="fa fa-book" aria-hidden="true" style="color:rgb(224,92,38);"></i>
-						<button onclick="viewRegistered();" class="link" style="font-weight: bold;">View Registered Course(s)</button></li>
-						<li><i class="fa fa-pencil-square-o" aria-hidden="true" style="color:rgb(220,123,36);"></i>
-						<button onclick="modifySlots();" class="link" style="font-weight: bold;">Modify Slot(s) </button></li>						
-						<li><i class="fa fa-trash" style="color:red;"></i>
-						<button onclick="deleteCourse();" class="link" style="font-weight: bold;">Delete Registered Course(s)</button></li>
-						<li><i class="fa fa-area-chart" style="color:black;"></i>
-						<button onclick="curriculumCredits();" class="link" style="font-weight: bold;">Curriculum Credits View </button></li>												
-					</ul>
-				</div>
-			</div>
-			
-			<div class="col-4 right-info" style="padding:10px;width: 30%;">
-				<div class="col-sm-12 form-group" >
-					<div th:fragment="creditsFragment" id="creditsFragment">
-						<table style="border: 8px solid; width: 100%; border-color: rgb(221, 221, 221);">
+	 			<div  th:fragment="creditsFragment" id="creditsFragment">
+	 			<div  th:if="${creditDetailshowFlag =='true'}"   style="padding:10px;" align="center" >
+				 <table  style="border: 8px solid; width: 25%; border-color: rgb(221, 221, 221);">
 							<tr >
 								<td style="width: 30%; border-color: rgb(221, 221, 221); color:black; text-align: center;
 										background: #000428;  /* fallback for old browsers */
@@ -145,13 +162,8 @@
 							</tr>
 						</table> 
 					</div>
-					<br/>
-					<button type="button" onclick="location.href='processLogout'" class="btn-warning w3-btn w3-btn-red w3-round-large" style="font-weight: bold;">Sign out</button>
-				</div>
-			</div>
-		</div>
-		
-	</div>
+					<br/>	
+					</div>
 
 	<div class="content-wrapper" id="page-wrapper">
 		<div class="container">
@@ -222,14 +234,14 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					if (showFlag==0)
+					/* if (showFlag==0)
 					{						
 						document.getElementById("showFlag").style.display="none";
 						document.getElementById("searchRow3").style.display="none";
 						document.getElementById("NotesRow").style.display="";
-					}
+					} */
 					
-					viewCredits();				
+					viewCredits('false');				
 				}
 			});
 		}
@@ -250,15 +262,15 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					if (showFlag > 0)
+					/* if (showFlag > 0)
 					{								
 						document.getElementById("showFlag").style.display="";
 						document.getElementById("NotesRow").style.display="none";
 						document.getElementById("searchOption").selectedIndex = 0;								
 						searchOptionChange(2);
-					}
+					} */
 					
-					viewCredits();
+					viewCredits('false');
 				}
 			});
 		}
@@ -310,15 +322,15 @@
 						$('#page-wrapper').html(response);
 						$.unblockUI();
 						
-						if (showFlag > 0)
+					/* 	if (showFlag > 0)
 						{								
 							document.getElementById("showFlag").style.display="";
 							document.getElementById("NotesRow").style.display="none";
 							document.getElementById("searchOption").selectedIndex = 0;								
 							searchOptionChange(2);
-						}
+						} */
 						
-						viewCredits();
+						viewCredits('false');
 					}
 				});
 			}
@@ -361,7 +373,7 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					viewCredits();
+					viewCredits('false');
 				}
 			});
 		}		
@@ -379,13 +391,13 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					if (showFlag==0)
+				/* 	if (showFlag==0)
 					{						
 						document.getElementById("showFlag").style.display="none";
 						document.getElementById("searchRow3").style.display="none";
 						document.getElementById("NotesRow").style.display="";
-					}
-					viewCredits();
+					} */
+					viewCredits('true');
 				}
 			});
 		}
@@ -406,13 +418,13 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					if (showFlag==0)
+				/* 	if (showFlag==0)
 					{						
 						document.getElementById("showFlag").style.display="none";
 						document.getElementById("searchRow3").style.display="none";
 						document.getElementById("NotesRow").style.display="";
-					}
-					viewCredits();
+					} */
+					viewCredits('false');
 				}
 			});
 		}
@@ -433,13 +445,13 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					if (showFlag==0)
+					/* if (showFlag==0)
 					{						
 						document.getElementById("showFlag").style.display="none";
 						document.getElementById("searchRow3").style.display="none";
 						document.getElementById("NotesRow").style.display="";
-					}
-					viewCredits();
+					} */
+					viewCredits('false');
 				}
 			});
 		}
@@ -465,7 +477,7 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					viewCredits();
+					viewCredits('false');
 				}				
 			});
 			
@@ -841,7 +853,7 @@
 						$('#page-wrapper').html(response);
 						$.unblockUI();
 						
-						viewCredits();
+						viewCredits('false');
 					}
 				});
 			}
@@ -1243,6 +1255,7 @@
 									+"&epjSlotFlag="+ epjSlotFlag +"&crCourseStatus="+ crCourseStatus 
 									+"&crCourseId="+ crCourseId +"&crCourseCode="+ crCourseCode 
 									+"&crCourseType="+ crCourseType;
+			//alert("dataParameter"+dataParameter);
 						
 			if (chkflg == 1) 
 			{
@@ -1258,19 +1271,22 @@
 						$('#page-wrapper').html(response);
 						$.unblockUI();
 						
-						viewCredits();
+						viewCredits('false');
 					}
 				});
 			} 
 		}
 		
-		function viewCredits() 
+		function viewCredits(creditDetailshowFlag) 
 		{
+			var creditDetailshowFlag = creditDetailshowFlag;
+			var dataParameter = "creditDetailshowFlag=" + creditDetailshowFlag;
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
 			$.ajax({
 				url : "ViewCredits",
 				type : "POST",
+				data : dataParameter,
 			
 				success : function(response) 
 				{
@@ -1296,7 +1312,7 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					viewCredits();
+					viewCredits('false');
 				}
 			});
 		}
@@ -1317,7 +1333,7 @@
 					$('#ProjectGuideFragment').html(response);
 					$.unblockUI();
 					
-					viewCredits();
+					viewCredits('false');
 				}
 			});
 		}		
@@ -1339,7 +1355,7 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					viewCredits();
+					viewCredits('false');
 				}				
 			});
 		}
@@ -1377,7 +1393,7 @@
 						$('#page-wrapper').html(response);
 						$.unblockUI();
 						
-						viewCredits();
+						viewCredits('false');
 					}				
 				});
 			}
@@ -1395,7 +1411,7 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					viewCredits();
+					viewCredits('false');
 				}				
 			});
 		}
@@ -1416,7 +1432,7 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					viewCredits();
+					viewCredits('false');
 				}				
 			});
 		}
@@ -1433,7 +1449,7 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					viewCredits();
+					//viewCredits();
 				}				
 			});
 		}
@@ -1454,13 +1470,14 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					viewCredits();
+					viewCredits('false');
 				}				
 			});
 		}
 
 		function processDeleteCourseRegistrationWaiting(courseId) 
 		{
+			//alert("processDeleteCourseRegistrationWaiting"+courseId);
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
 			$.ajax({
@@ -1472,7 +1489,7 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					viewCredits();
+					viewCredits('false');
 				}				
 			});
 		}
@@ -1527,6 +1544,7 @@
 				var mailOTP = $("#mailOTP").val();
 				var dataParameter = "newCourseDetail="+ $('input:radio[name=courseOption]:checked').val() 
 										+"&oldClassId=" + oldClassId +"&mailOTP="+ mailOTP;
+				//alert('dataParameter'+dataParameter);
 				
 				$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 				
@@ -1539,7 +1557,7 @@
 						$('#page-wrapper').html(response);
 						$.unblockUI();
 						
-						viewCredits();
+						viewCredits('false');
 					}
 				});
 			}
@@ -1557,7 +1575,7 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					viewCredits();
+					viewCredits('false');
 				}				
 			});
 		}		
@@ -1574,7 +1592,7 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					viewCredits();
+					viewCredits('false');
 				}
 			});
 		}
@@ -1600,7 +1618,7 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					viewCredits();
+					viewCredits('false');
 				}
 			});
 		}
@@ -1621,7 +1639,7 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					viewCredits();
+					viewCredits('false');
 				}				
 			});
 		}
@@ -1643,7 +1661,7 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					viewCredits();
+					viewCredits('false');
 				}	
 				
 			});
@@ -1664,7 +1682,7 @@
 					$('#page-wrapper').html(response);
 					$.unblockUI();
 					
-					viewCredits();
+					viewCredits('false');
 				}
 			});
 		}
@@ -1680,9 +1698,8 @@
 				success : function(response) 
 				{
 					$('#page-wrapper').html(response);
-					$.unblockUI();
-					
-					viewCredits();
+					$.unblockUI();					
+					viewCredits('false');
 				}
 			});
 		}

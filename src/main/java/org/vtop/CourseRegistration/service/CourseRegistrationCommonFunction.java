@@ -2182,6 +2182,21 @@ public class CourseRegistrationCommonFunction
 		return clashStatus +"/"+ message;
 	}
 	
+	//Checking the Soft Skill course
+	public List<String> SoftSkillCourseCheck(Integer progGroupId, Integer studentBatch, Integer studentGradYear,
+							String registerNumber, String progSpecCode, String progGroupCode, String semesterSubId)
+	{
+		List<String> ssCourseList = new ArrayList<String>();
+			
+		ssCourseList = compulsoryCourseConditionDetailService.getSoftSkillCourseList(semesterSubId, progGroupId, 
+							studentBatch);
+		if (ssCourseList.isEmpty())
+		{
+			ssCourseList.add("NIL");
+		}
+		
+		return ssCourseList;
+	}	
 	
 	//Checking the compulsory course is registered or not & then return the status  
 	public int compulsoryCourseCheck(Integer progGroupId, Integer studentBatch, Integer studentGradYear,
@@ -2275,22 +2290,7 @@ public class CourseRegistrationCommonFunction
 	}	
 	
 		
-	//Checking the Soft Skill course
-	public List<String> SoftSkillCourseCheck(Integer progGroupId, Integer studentBatch, Integer studentGradYear,
-							String registerNumber, String progSpecCode, String progGroupCode, String semesterSubId)
-	{
-		List<String> ssCourseList = new ArrayList<String>();
 		
-		ssCourseList = compulsoryCourseConditionDetailService.getSoftSkillCourseList(semesterSubId, progGroupId, 
-							studentBatch);
-		if (ssCourseList.isEmpty())
-		{
-			ssCourseList.add("NIL");
-		}
-
-		return ssCourseList;
-	}
-	
 	public Integer findStudentSemester(String progGroupCode, Integer studentBatch)
 	{
 		Integer tempStudentSemester = 0;
