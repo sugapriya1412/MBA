@@ -2,8 +2,6 @@ package org.vtop.CourseRegistration.repository;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -19,7 +17,6 @@ import org.vtop.CourseRegistration.model.StudentsLoginDetailsModel;
 
 
 @Repository
-@Transactional
 public interface SemesterMasterRepository extends JpaRepository<SemesterMasterModel, Integer>
 {
 	//Semester Detail
@@ -251,10 +248,6 @@ public interface SemesterMasterRepository extends JpaRepository<SemesterMasterMo
 	
 	
 	//Registration Schedule
-	/*@Query(value="select to_char(reg_date,'DD-MON-YYYY') as regdate, FROM_TIME, TO_TIME, "+
-					"to_char((to_date(FROM_TIME,'HH24:MI:SS') - (5/1440)), 'HH24:MI:SS') as ALLOW_FROM_TIME, "+
-					"STATUS from ACADEMICS.REGISTRATION_SCHEDULE where REGNO=?1", nativeQuery=true)
-	List<Object[]> findRegistrationScheduleByRegisterNumber(String registerNumber);*/
 	@Query(value="select to_char(reg_date,'DD-MON-YYYY') as regdate, FROM_TIME, TO_TIME, "+
 					"to_char((to_timestamp(FROM_TIME,'HH24:MI:SS') - interval '300 second'), 'HH24:MI:SS'), "+
 					"STATUS from ACADEMICS.REGISTRATION_SCHEDULE where REGNO=?1", nativeQuery=true)
@@ -284,14 +277,6 @@ public interface SemesterMasterRepository extends JpaRepository<SemesterMasterMo
 	
 
 	//Time Table Pattern Detail
-	/*@Query(value="select decode(TT_SESSION,'FN',1,'LN',2,'AN',3,'EN',4,5) as tt_session_order, TT_SESSION, "+
-					"NUM_TH_SLOTS, NUM_LAB_SLOTS, MAX_SLOT from "+
-					"((select TT_SESSION, NUM_TH_SLOTS, NUM_LAB_SLOTS, greatest(NUM_TH_SLOTS, NUM_LAB_SLOTS) "+
-					"as max_slot from academics.time_table_pattern_detail where PATTERN_ID=?1) "+
-					"union all "+
-					"(select 'LN' as TT_SESSION, 0 as NUM_TH_SLOTS, 0 as NUM_LAB_SLOTS, 0 as max_slot from dual)) "+
-					"order by tt_session_order", nativeQuery= true)
-	List<Object[]> findTTPatternDetailSessionSlotByPatternId(Integer patternId);*/
 	@Query(value="select TT_SESSION, NUM_TH_SLOTS, NUM_LAB_SLOTS, greatest(NUM_TH_SLOTS, NUM_LAB_SLOTS) as max_slot "+
 					"from academics.time_table_pattern_detail where PATTERN_ID=?1 order by TT_SESSION", nativeQuery=true)
 	List<Object[]> findTTPatternDetailSessionSlotByPatternId(Integer patternId);

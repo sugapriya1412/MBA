@@ -12,10 +12,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+
 @Entity
 @Table(name="COURSE_REGISTRATION_WAITING", schema="ACADEMICS")
-public class CourseRegistrationWaitingModel implements Serializable {
-	
+public class CourseRegistrationWaitingModel implements Serializable
+{	
 	private static final long serialVersionUID = 1L;
 	
 	@EmbeddedId
@@ -56,6 +57,9 @@ public class CourseRegistrationWaitingModel implements Serializable {
 	
 	@Column(name="REGISTRATION_COMPONENT_TYPE")
 	private int componentType;
+	
+	@Column(name="GRADE_CATEGORY")
+	private String gradeCategory;
 	
 	@Column(name="WAITING_STATUS")
 	private int waitingStatus;
@@ -155,6 +159,14 @@ public class CourseRegistrationWaitingModel implements Serializable {
 		this.componentType = componentType;
 	}
 	
+	public String getGradeCategory() {
+		return gradeCategory;
+	}
+
+	public void setGradeCategory(String gradeCategory) {
+		this.gradeCategory = gradeCategory;
+	}
+
 	public int getWaitingStatus() {
 		return waitingStatus;
 	}
@@ -208,12 +220,12 @@ public class CourseRegistrationWaitingModel implements Serializable {
 	@Override
 	public String toString() {
 		return "CourseRegistrationWaitingModel [courseRegistrationWaitingPKId=" + courseRegistrationWaitingPKId
-				+ ", semesterDetailsModel=" + semesterDetailsModel + ", classId=" + classId + ", courseAllocationModel="
-				+ courseAllocationModel + ", courseCatalogModel=" + courseCatalogModel + ", courseTypeComponentModel="
-				+ courseTypeComponentModel + ", courseOptionCode=" + courseOptionCode + ", courseOptionModel="
-				+ courseOptionModel + ", statusNumber=" + statusNumber + ", registrationStatusMasterModel="
-				+ registrationStatusMasterModel + ", componentType=" + componentType + ", waitingStatus="
-				+ waitingStatus + ", logTimestamp=" + logTimestamp + ", logIpaddress=" + logIpaddress + "]";
+				+ ", semesterDetailsModel=" + semesterDetailsModel + ", courseCatalogModel=" + courseCatalogModel
+				+ ", courseTypeComponentModel=" + courseTypeComponentModel + ", classId=" + classId
+				+ ", courseAllocationModel=" + courseAllocationModel + ", courseOptionCode=" + courseOptionCode
+				+ ", courseOptionModel=" + courseOptionModel + ", statusNumber=" + statusNumber
+				+ ", registrationStatusMasterModel=" + registrationStatusMasterModel + ", componentType="
+				+ componentType + ", gradeCategory=" + gradeCategory + ", waitingStatus=" + waitingStatus
+				+ ", logTimestamp=" + logTimestamp + ", logIpaddress=" + logIpaddress + "]";
 	}
-	
 }

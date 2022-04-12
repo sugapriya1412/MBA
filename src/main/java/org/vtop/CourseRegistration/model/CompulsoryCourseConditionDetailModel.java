@@ -9,7 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-	
+
+
 @Entity
 @Table(name="COMPU_COURSE_COND_DETAIL", schema="ACADEMICS")
 public class CompulsoryCourseConditionDetailModel implements Serializable

@@ -5,16 +5,18 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.vtop.CourseRegistration.model.HistoryCourseData;
 import org.vtop.CourseRegistration.model.StudentCGPAData;
 
 
 @Service
+@Transactional(readOnly=true)
 public class CGPANonCalService
 {
 	@Autowired private SemesterMasterService semesterMasterService;	 
 	
-	public StudentCGPAData doProcess(String PRegNo,String PType,String PAdlPra,Short PProgSplnId,List<HistoryCourseData> historyCourseList)
+	public StudentCGPAData doProcess(String PRegNo, String PType, String PAdlPra, Short PProgSplnId, List<HistoryCourseData> historyCourseList)
 	{
 		Integer LoopCounter;
 		Float tot_cre_reg ;
@@ -43,10 +45,7 @@ public class CGPANonCalService
 		{
 			returnType=1;
 		}
-
-
 		
-
 		LoopCounter=0;
 		tot_cre_reg=0.0f;
 		tot_sub=0.0f;
@@ -65,9 +64,11 @@ public class CGPANonCalService
 		ecount=0;
 		fcount=0;
 		ncount=0;
+		
 		StudentCGPAData cgpaData = new StudentCGPAData();
 		cgpaData.setRegisterNo(PRegNo);
 		cgpaData.setPgmSpecId(PProgSplnId.intValue());
+		
 		for (HistoryCourseData hCourse : historyCourseList) {
 
 			if (!hCourse.getGrade().equals("W") && !hCourse.getGrade().equals("U")) 
@@ -104,9 +105,11 @@ public class CGPANonCalService
 				tot_cre_reg=tot_cre_reg+(hCourse.getCredits());
 				tot_arrear= tot_arrear+1;
 			}
+			
 			tot_sub=tot_sub+1;
 			LoopCounter=LoopCounter+1;
 			vGradePoint = semesterMasterService.getGradePoint(hCourse.getGrade(),hCourse.getCredits());
+			
 			if (!hCourse.getGrade().equals("W") && !hCourse.getGrade().equals("U") && !hCourse.getGrade().equals("P"))
 			{
 				if (vGradePoint==0)
@@ -119,6 +122,7 @@ public class CGPANonCalService
 					tot_gradepoint=tot_gradepoint+vGradePoint;
 				}
 			}
+			
 			if (hCourse.getGrade().equals("S"))
 				scount= scount + 1;
 			else if (hCourse.getGrade().equals("A"))
@@ -135,7 +139,6 @@ public class CGPANonCalService
 				fcount= fcount + 1;
 			else if (hCourse.getGrade().equals("N") || hCourse.getGrade().equals("AAA"))
 				ncount= ncount + 1;
-
 		}
 
 		if (tot_cre_reg > 0 && (tot_cre_reg-tot_passfailcredits)>0)// then --if_004
@@ -162,11 +165,9 @@ public class CGPANonCalService
 			cgpaData.seteGradeCount(ecount+"");
 			cgpaData.setfGradeCount(fcount+"");
 			cgpaData.setnGradeCount(ncount+"");
-
 		}
 		else if (returnType==0 )
 		{
-
 			cgpaData.setCreditRegistered(tot_cre_reg+"");
 			cgpaData.setCreditEarned(tot_cre_ear+"");
 			
@@ -198,8 +199,7 @@ public class CGPANonCalService
 			cgpaData.setTotalCourse(tot_sub+"");
 		}
 
-return cgpaData;
-			
+		return cgpaData;	
 	}
 
 	public static Integer getGradeLevel ( String grade)

@@ -6,12 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import org.vtop.CourseRegistration.model.RegistrationLogModel;
 
 
 @Repository
-@Transactional
 public interface RegistrationLogRepository extends JpaRepository<RegistrationLogModel, String>
 {
 	@Modifying
@@ -53,16 +51,6 @@ public interface RegistrationLogRepository extends JpaRepository<RegistrationLog
 					"ACADEMICS.REGISTRATION_LOG where REGNO=?1", nativeQuery=true)
 	List<Object[]> findRegistrationLogByRegisterNumber(String registerNumber);
 	
-	
-	/*@Query(value="select LOG_STATUS, to_number(hrs||mts||scs) as time_diff from "+
-					"(select LOG_STATUS, (case when (hrs < 10) then '0'||to_char(hrs) else to_char(hrs) end) as hrs, "+
-					"(case when (mins < 10) then '0'||to_char(mins) else to_char(mins) end) as mts, "+
-					"(case when (secs < 10) then '0'||to_char(secs) else to_char(secs) end) as scs from "+
-					"(select LOG_STATUS, to_number(extract(hour from (systimestamp - ACTIVE_TIMESTAMP))) as hrs, "+
-					"to_number(extract(minute from (systimestamp - ACTIVE_TIMESTAMP))) as mins, "+
-					"trunc(to_number(extract(second from (systimestamp - ACTIVE_TIMESTAMP)))) as secs "+
-					"from ACADEMICS.REGISTRATION_LOG where REGNO=?1))", nativeQuery=true)
-	List<Object[]> findRegistrationLogTimeDifference(String registerNumber);*/
 	@Query(value="select a.LOG_STATUS, to_number((a.hrs||a.mts||a.scs), '999999') as time_diff from "+ 
 					"(select a.LOG_STATUS, (case when (a.hrs < 10) then '0'||to_char(a.hrs,'9') else to_char(a.hrs,'99') end) as hrs, "+ 
 					"(case when (a.mins < 10) then '0'||to_char(a.mins,'9') else to_char(a.mins,'99') end) as mts, "+ 
@@ -72,15 +60,8 @@ public interface RegistrationLogRepository extends JpaRepository<RegistrationLog
 					"extract(second from (CURRENT_TIMESTAMP - ACTIVE_TIMESTAMP)) as secs "+ 
 					"from ACADEMICS.REGISTRATION_LOG where REGNO=?1) a) a", nativeQuery=true)
 	List<Object[]> findRegistrationLogTimeDifference(String registerNumber);
-	
-	
+		
 	@Query(value="select REASON_TYPE from ACADEMICS.REGISTRATION_EXEMPTION_DETAIL where SEMSTR_DETAILS_SEMESTER_SUB_ID=?1 "+ 
 					"and STDNTSLGNDTLS_REGISTER_NUMBER=?2 and LOCK_STATUS=0", nativeQuery=true)
 	Integer findRegistrationExemptionReasonTypeBySemesterSubIdAndRegisterNumber(String semesterSubId, String registerNumber);
-	
-	
-	/*@Modifying
-	@Query("update RegistrationLogModel a set a.logstatus =1, a.activeTimestamp =systimestamp,"
-			+ " a.loginTimestamp =systimestamp,  a.loginIpaddress =?1	where a.regNo =?2")
-	public void UpdateLoginTimeStamp(String ipAddress, String registerNumber);*/
 }

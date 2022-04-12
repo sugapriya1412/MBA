@@ -5,7 +5,6 @@
 </head>
 <body class="hold-transition skin-blue-light sidebar-mini fixed">
 	<div class="wrapper">
-		<!-- Content Wrapper. Contains page content -->
 		<div class="content-wrapper" id="page-wrapper">
 			<div class="" th:fragment="section">
 				<div class="margin-homepage">
@@ -205,21 +204,10 @@
 										<span th:text="${tlCourseCatalogModelList[index].getGenericCourseType()}"></span>
 									</td>
 									
-								<!-- 	<td style="white-space: nowrap; border:1px solid #3c8dbc; text-align: center;">
-										<span th:text="${tlCourseCatalogModelList[index].getLectureHours()}"></span>
-									</td>
-									<td style=" border:1px solid #3c8dbc; text-align: center;">
-										<span th:text="${tlCourseCatalogModelList[index].getTutorialHours()}"></span>
-									</td>
-									<td style="border:1px solid #3c8dbc; text-align: center;">
-										<span th:text="${tlCourseCatalogModelList[index].getPracticalHours()}"></span>
-									</td>
-									<td style="border:1px solid #3c8dbc; text-align: center;">
-										<span th:text="${tlCourseCatalogModelList[index].getProjectHours()}"></span>
-									</td> -->
 									<td style="border: 1px solid #3c8dbc; text-align: center;">
-									<span th:text="${tlCourseCatalogModelList[index].getLectureHours() +' '+ tlCourseCatalogModelList[index].getTutorialHours() 
-										+' '+ tlCourseCatalogModelList[index].getPracticalHours() +' '+ tlCourseCatalogModelList[index].getProjectHours()}"></span></td>
+										<span th:text="${tlCourseCatalogModelList[index].getLectureHours() +' '+ tlCourseCatalogModelList[index].getTutorialHours() 
+												+' '+ tlCourseCatalogModelList[index].getPracticalHours() +' '+ tlCourseCatalogModelList[index].getProjectHours()}"></span>
+									</td>
 									<td style="border:1px solid #3c8dbc; text-align: center;">
 										<span th:text="${tlCourseCatalogModelList[index].getCredits()}"></span>
 									</td>
@@ -249,18 +237,15 @@
 									</td>
 									
 									<td style="border:1px solid #3c8dbc; text-align: center;">
-							    <!-- 	<button class="btn-warning w3-btn w3-btn-red w3-round-large" type="button" 
-											style="font-weight: bold;" th:onclick="'javascript: callViewSlots(\''
-												+ ${tlCourseCatalogModelList[index].getCourseId()} +'\',  \''+ ${page} +'\' ,\''
-												+ ${srhType} +'\',\''+ ${srhVal} +'\' );'">View/ Register</button> -->
-										<button class="btn-warning w3-btn w3-btn-red w3-round-large" type="button" 
+										<button class="btn-warning w3-btn w3-btn-red w3-round-large" 
+											type="button" 
 											style="font-weight: bold;" 
 											th:data-parameter1="${tlCourseCatalogModelList[index].getCourseId()}"
 											th:data-parameter2="${page}"
 											th:data-parameter3="${srhType}"
 											th:data-parameter4="${srhVal}"											
-											th:onclick="javascript: callViewSlots(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'),
-											this.getAttribute('data-parameter3'),this.getAttribute('data-parameter4'))">View/ Register</button>
+											th:onclick="javascript: callViewSlots(this.getAttribute('data-parameter1'), this.getAttribute('data-parameter2'),
+												this.getAttribute('data-parameter3'), this.getAttribute('data-parameter4'))">View/ Register</button>
 									</td>
 									
 								</tr>
@@ -269,8 +254,8 @@
 							</div>
 							</div>
 
-							<label style="color:red; font-size:20px;" th:if="${tlCourseCatalogModelList.size() le 0}"
-								>Courses Not available</label>
+							<label style="color:red; font-size:20px;" 
+									th:if="${tlCourseCatalogModelList.size() le 0}">Courses Not available</label>
 							
 							<div class="row" style="float: left; width: 100%; margin: 0 0 20px 0;" 
 									th:fragment="pageNoFrag2" id="pageNoFrag2">

@@ -9,7 +9,7 @@ import org.vtop.CourseRegistration.repository.CourseEquivalanceRegRepository;
 
 
 @Service
-@Transactional("transactionManager")
+@Transactional(readOnly=true)
 public class CourseEquivalanceRegService
 {		
 	@Autowired private CourseEquivalanceRegRepository courseEquivalanceRegRepository;
@@ -29,37 +29,4 @@ public class CourseEquivalanceRegService
 	{
 		return courseEquivalanceRegRepository.findByRegisterNumberAndCourseCode(semesterSubId, registerNumber, courseOptionCode, courseCode);
 	}
-	
-	public void deleteByRegisterNumberCourseId(String semesterSubId, String registerNumber, String courseId)
-	{		
-		courseEquivalanceRegRepository.deleteByRegisterNumberCourseId(semesterSubId, registerNumber, courseId);
-	}
-	
-	
-	/*public CourseEquivalanceRegModel saveOne(CourseEquivalanceRegModel courseEquivalanceRegModel)
-	{
-		return courseEquivalanceRegRepository.save(courseEquivalanceRegModel);
-	}
-	
-	public CourseEquivalanceRegModel getOne(CourseEquivalanceRegPKModel courseEquivalanceRegPKModel)
-	{
-		return courseEquivalanceRegRepository.findOne(courseEquivalanceRegPKModel);
-	}
-		
-	public List<CourseEquivalanceRegModel> getAll(String semesterSubId)
-	{
-		return courseEquivalanceRegRepository.findBySemesterSubId(semesterSubId);
-	}
-		
-	public List<CourseEquivalanceRegModel> getByRegisterNumber(String semesterSubId, String registerNumber)
-	{
-		return courseEquivalanceRegRepository.findByRegisterNumber(semesterSubId, registerNumber);
-	}
-	
-	public List<CourseEquivalanceRegModel> getByRegisterNumberCourseId(String semesterSubId, 
-			String registerNumber, String courseId)
-	{
-		return courseEquivalanceRegRepository.findByRegisterNumberCourseId(semesterSubId, 
-				registerNumber, courseId);
-	}*/
 }

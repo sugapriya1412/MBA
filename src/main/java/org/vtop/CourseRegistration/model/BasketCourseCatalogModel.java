@@ -10,10 +10,10 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 
 @Entity
 @Table(name="BASKET_COURSE_CATALOG", schema="ACADEMICS")
@@ -24,12 +24,10 @@ public class BasketCourseCatalogModel implements Serializable {
 	@EmbeddedId
     private BasketCourseCatalogPK bccPkId;
 	
-	@MapsId("basketId")
 	@ManyToOne
 	@JoinColumn(name="BASKET_DETAILS_BASKET_ID", insertable = false, updatable = false)
 	private BasketDetailsModel basketDetailsModel;
-		
-	@MapsId("courseId")
+	
 	@ManyToOne
 	@JoinColumn(name="COURSE_CATALOG_COURSE_ID", insertable = false, updatable = false)
 	private CourseCatalogModel courseCatalogModel;
@@ -152,5 +150,4 @@ public class BasketCourseCatalogModel implements Serializable {
 				+ ", courseCatalogModel=" + courseCatalogModel + ", status=" + status + ", logUserId=" + logUserId
 				+ ", logTimestamp=" + logTimestamp + ", logIpaddress=" + logIpaddress + "]";
 	}
-		
 }

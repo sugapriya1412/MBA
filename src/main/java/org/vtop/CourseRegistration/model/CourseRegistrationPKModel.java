@@ -5,9 +5,10 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+
 @Embeddable
-public class CourseRegistrationPKModel implements Serializable {
-	
+public class CourseRegistrationPKModel implements Serializable
+{	
 	private static final long serialVersionUID = 1L;
 	
 	@Column(name="SEMSTR_DETAILS_SEMESTER_SUB_ID")
@@ -97,4 +98,9 @@ public class CourseRegistrationPKModel implements Serializable {
 		return true;
 	}
 	
+	@Override
+	public String toString() {
+		return "CourseRegistrationPKModel [semesterSubId=" + semesterSubId + ", registerNumber=" + registerNumber
+				+ ", courseId=" + courseId + ", courseType=" + courseType + "]";
+	}
 }

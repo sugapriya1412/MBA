@@ -25,7 +25,7 @@ import org.vtop.CourseRegistration.repository.SemesterMasterRepository;
 
 
 @Service
-@Transactional("transactionManager")
+@Transactional(readOnly=true)
 public class SemesterMasterService
 {
 	@Autowired private SemesterMasterRepository semesterMasterRepository;
@@ -312,10 +312,6 @@ public class SemesterMasterService
 	
 
 	//Time Table Pattern Detail
-	/*public List<Object[]> getTTPatternDetailSessionSlotByPatternId(Integer patternId)
-	{			
-		return semesterMasterRepository.findTTPatternDetailSessionSlotByPatternId(patternId);	
-	}*/
 	public List<Object[]> getTTPatternDetailSessionSlotByPatternId(Integer patternId)
 	{	
 		List<Object[]> returnObjectList = new ArrayList<Object[]>();

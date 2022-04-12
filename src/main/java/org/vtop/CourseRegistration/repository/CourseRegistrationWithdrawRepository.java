@@ -5,20 +5,15 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 import org.vtop.CourseRegistration.model.CourseRegistrationWithdrawModel;
 import org.vtop.CourseRegistration.model.CourseRegistrationWithdrawPKModel;
 
 
+@Repository
 public interface CourseRegistrationWithdrawRepository extends JpaRepository
 		<CourseRegistrationWithdrawModel, CourseRegistrationWithdrawPKModel>
-{	
-	//Course Delete/Update OTP  
-	@Query(value="select MOBILE_OTP, MAIL_OTP from ACADEMICS.COURSE_REG_WITHDRAW_OTP where "+
-					"SEMSTR_DETAILS_SEMESTER_SUB_ID=?1 and STDNTSLGNDTLS_REGISTER_NUMBER=?2 and "+
-					"COURSE_CATALOG_COURSE_ID=?3 and OTP_REASON_TYPE=?4", nativeQuery=true)
-	List<Object[]> findCourseWithdrawOTP(String semesterSubId, String registerNumber, String courseId, 
-						Integer otpReasonType);
-	
+{		
 	@Modifying
 	@Query(value="insert into ACADEMICS.COURSE_REG_WITHDRAW_OTP (SEMSTR_DETAILS_SEMESTER_SUB_ID, "+
 					"STDNTSLGNDTLS_REGISTER_NUMBER, COURSE_CATALOG_COURSE_ID, OTP_REASON_TYPE, MAIL_OTP, "+
@@ -65,7 +60,15 @@ public interface CourseRegistrationWithdrawRepository extends JpaRepository
 					"COURSE_CATALOG_COURSE_ID=?3 and OTP_REASON_TYPE=?4)", nativeQuery=true)
 	void insertCRWOTPBackup(String semesterSubId, String registerNumber, String courseId, Integer otpReasonType, 
 				String userId, String ipAddress);
-
+	
+	
+	//Course Delete/Update OTP  
+	@Query(value="select MOBILE_OTP, MAIL_OTP from ACADEMICS.COURSE_REG_WITHDRAW_OTP where "+
+					"SEMSTR_DETAILS_SEMESTER_SUB_ID=?1 and STDNTSLGNDTLS_REGISTER_NUMBER=?2 and "+
+					"COURSE_CATALOG_COURSE_ID=?3 and OTP_REASON_TYPE=?4", nativeQuery=true)
+	List<Object[]> findCourseWithdrawOTP(String semesterSubId, String registerNumber, String courseId, 
+						Integer otpReasonType);
+	
 	@Query(value="select a.hist_type, a.COURSE_CATALOG_COURSE_ID, a.CODE, a.GENERIC_COURSE_TYPE, a.hist_date from ("+
 					"(select 1 as hist_type, a.COURSE_CATALOG_COURSE_ID, b.CODE, b.GENERIC_COURSE_TYPE, "+
 					"to_char(a.LOG_TIMESTAMP,'DD-MON-YYYY') as hist_date from ACADEMICS.COURSE_REGISTRATION_WITHDRAW a, "+
@@ -84,42 +87,4 @@ public interface CourseRegistrationWithdrawRepository extends JpaRepository
 					"a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID) order by a.hist_type, a.COURSE_CATALOG_COURSE_ID", 
 					nativeQuery=true)
 	List<Object[]> findByRegisterNumberAndCourseCode2(List<String> registerNumber, String courseCode);
-	
-	
-	/*//For previous semester course checking
-	@Query("select distinct 'W' from CourseRegistrationWithdrawModel a where a.crwPKId.semesterSubId "+
-			"in (?1) and a.crwPKId.registerNumber=?2 and a.courseCatalogModel.code=?3")
-	String findStudentPrvSemRegCourseWdCheck(String[] semesterSubId, String registerNumber, String courseCode);
-	
-	//For Course Withdraw checking
-	@Query(value="select distinct 'W' as grade from ACADEMICS.COURSE_REGISTRATION_WITHDRAW a, "+
-					"ACADEMICS.COURSE_CATALOG b where a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and "+
-					"a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID and (b.CODE=?2 or b.CODE in "+
-					"(select EQUIVALENT_COURSE_CODE from ACADEMICS.COURSE_EQUIVALANCES where COURSE_CODE=?2) "+
-					"or b.CODE in (select COURSE_CODE from ACADEMICS.COURSE_EQUIVALANCES where "+
-					"EQUIVALENT_COURSE_CODE=?2))", nativeQuery=true)
-	String findCourseWithdrawByRegisterNumberAndCourseCode(List<String> registerNumber, 
-				String courseCode);
-
-	@Query(value="select hist_type, COURSE_CATALOG_COURSE_ID, CODE, GENERIC_COURSE_TYPE, hist_date from "+
-					"(select 1 as hist_type, a.COURSE_CATALOG_COURSE_ID, b.CODE, b.GENERIC_COURSE_TYPE, "+
-					"to_char(a.LOG_TIMESTAMP,'DD-MON-YYYY') as hist_date from ACADEMICS.COURSE_REGISTRATION_WITHDRAW a, "+
-					"ACADEMICS.COURSE_CATALOG b where a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and "+
-					"a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID and b.CODE=?2 "+
-					"union all "+
-					"(select 2 as hist_type, a.COURSE_CATALOG_COURSE_ID, b.CODE, b.GENERIC_COURSE_TYPE, "+
-					"to_char(a.LOG_TIMESTAMP,'DD-MON-YYYY') as hist_date from ACADEMICS.COURSE_REGISTRATION_WITHDRAW a, "+
-					"ACADEMICS.COURSE_CATALOG b where a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and "+
-					"a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID and (b.CODE in (select EQUIVALENT_COURSE_CODE from "+
-					"ACADEMICS.COURSE_EQUIVALANCES where COURSE_CODE=?2 and COURSE_CODE<>EQUIVALENT_COURSE_CODE) "+
-					"or b.CODE in (select COURSE_CODE from ACADEMICS.COURSE_EQUIVALANCES where EQUIVALENT_COURSE_CODE=?2 "+
-					"and COURSE_CODE<>EQUIVALENT_COURSE_CODE)))) order by hist_type, COURSE_CATALOG_COURSE_ID", 
-					nativeQuery=true)
-	List<Object[]> findWithdrawCourseByRegisterNumberAndCourseCode(List<String> registerNumber, String courseCode);
-	
-	@Query("select a from CourseRegistrationWithdrawModel a where a.crwPKId.semesterSubId=?1 "+
-			"and a.crwPKId.registerNumber=?2 and a.courseAllocationModel.clsGrpMasterGroupId "+
-			"in (?3) order by a.crwPKId.courseId, a.crwPKId.courseType desc")
-	List<CourseRegistrationWithdrawModel> findByRegisterNumberAndClassGroup(String semesterSubId, 
-			String registerNumber, String[] classGroupId);*/
 }

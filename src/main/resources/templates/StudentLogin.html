@@ -3,7 +3,8 @@
   Author: Sivaraman C & Kishore B
 -->
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:include="layouts/Header :: style_sheets">
+
+<head th:include="layouts/Header :: style_sheets">	
 	<base th:href="@{${session.baseURL}}" />
 	<link href="assets/img/favicon1.png" rel="icon" type="image/x-icon" />
 	<meta http-equiv="cache-control" content="max-age=0" />
@@ -25,6 +26,7 @@
 			}
 	</style>	
 </head>
+
 <body class="hold-transition skin-blue-light sidebar-mini fixed">
 	<header class="main-header" th:include="layouts/Header :: header"></header>
 	<div class="top-info" style="color: rgb(0, 0, 0); font-family: times new roman; font-weight: bold; text-align: left; float: left; width: 100%; background-color: rgb(221, 221, 221); padding: 8px 0px; font-size: 16px;">
@@ -83,7 +85,9 @@
 			      
 			</form>	
 		</div>			
+		
 		<footer class="main-footer" th:include="layouts/Footer::footer"></footer>
+		
 </body>
 <script th:inline="javascript">
 /*<![CDATA[*/

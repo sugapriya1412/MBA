@@ -6,8 +6,8 @@ package org.vtop.CourseRegistration.controller;
  * @author Branislav Lazic
  * @author Bruno Raljic
  */
-public class Pager {
-
+public class Pager
+{
 	private int buttonsToShow = 5;
 
 	private int startPage;
@@ -75,5 +75,4 @@ public class Pager {
 	public String toString() {
 		return "Pager [startPage=" + startPage + ", endPage=" + endPage + "]";
 	}
-
 }

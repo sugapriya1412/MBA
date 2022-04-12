@@ -22,9 +22,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.vtop.CourseRegistration.Common.service.CaptchaManager;
-import org.vtop.CourseRegistration.Common.service.MailUtility;
 import org.vtop.CourseRegistration.model.CourseAllocationModel;
 import org.vtop.CourseRegistration.model.CourseCatalogModel;
 import org.vtop.CourseRegistration.model.CourseEligibleModel;
@@ -32,12 +32,12 @@ import org.vtop.CourseRegistration.model.CourseEquivalancesModel;
 import org.vtop.CourseRegistration.model.CourseRegistrationModel;
 import org.vtop.CourseRegistration.model.CourseRegistrationWaitingModel;
 import org.vtop.CourseRegistration.model.ProgrammeSpecializationCurriculumCategoryCredit;
-import org.vtop.CourseRegistration.model.SemesterDetailsModel;
 import org.vtop.CourseRegistration.model.SlotTimeMasterModel;
 import org.vtop.CourseRegistration.model.StudentHistoryModel;
 
 
 @Service
+@Transactional(readOnly=true)
 public class CourseRegistrationCommonFunction
 {	
 	@Autowired private CourseCatalogService courseCatalogService;
@@ -76,21 +76,14 @@ public class CourseRegistrationCommonFunction
 				rgrOptionFlag = 2, allCompAllowFlag = 1, rrAllowFlag = 1;
 		int courseMehtodType = 1, crTpCount = 0, subCrCount = 0, wlCount = 0;
 		int regularAllowStatus = 2, NGradeAllowStatus= 2, eoAllowStatus = 2, peAdlAllowStatus = 2;
-				
 		int flag = 2, flag2 = 2, flag3 = 2, flag4 = 2, flag5 = 2;
 		int flag6 = 2, flag7 = 2, flag8 = 2, flag9 = 2, flag10 = 2;
-		//int courseCredit = 0, lectureCredit = 0, practicalCredit = 0, projectCredit = 0 obtCredit = 0, 
-		//		rmgCredit = 0, ueRmgCredit = 0, ccCredit = 0, ctgCredit = 0, bskObtCredit = 0, honEarnCredit = 0, 
-		//		regCredit = 0, wlCredit = 0, totalRegCredit = 0, honCompCount = 0;
-		
 		Integer courseProgId = 0, audCount = 0, adlCount = 0, giCount = 0;
-		//Integer studentSemester = 0, totCdtReg = 0, totCdtEarn = 0;
 		
 		float courseCredit = 0, lectureCredit = 0, practicalCredit = 0, projectCredit = 0, obtCredit = 0, rmgCredit = 0, 
 				ueRmgCredit = 0, totCdtReg = 0, totCdtEarn = 0, ccCredit = 0, ctgCredit = 0, bskObtCredit = 0, 
 				regCredit = 0, wlCredit = 0, totalRegCredit = 0;
 		Float cgpa = 0F;
-		//float honEarnCredit = 0;
 				
 		String courseOption = "RGR", courseType = "NONE", subCourseOption = "NONE",	subCourseType = "NONE", 
 					subCourseDate = "NONE";
@@ -118,12 +111,11 @@ public class CourseRegistrationCommonFunction
 		List<String> ceList = new ArrayList<String>();
 		List<String> spsRegList = new ArrayList<String>();
 		List<String> ncCourseList = new ArrayList<String>();
-		//List<String> englishCourseList = new ArrayList<String>();
 				
 		List<Object[]> shmList2 = new ArrayList<Object[]>();
 		List<Object[]> psRegList = new ArrayList<Object[]>();
 		List<Object[]> ccCreditList = new ArrayList<Object[]>();
-		//System.out.println("pRegisterNumber: "+ pRegisterNumber +" | pOldRegisterNumber: "+ pOldRegisterNumber);
+		logger.trace("\n pRegisterNumber: "+ pRegisterNumber +" | pOldRegisterNumber: "+ pOldRegisterNumber);
 		
 		try
 		{							
@@ -142,16 +134,11 @@ public class CourseRegistrationCommonFunction
 	    	{
 				String[] studentCgpaArr = pStudentCgpaData.split("\\|");
 				
-				//totCdtReg = Integer.parseInt(studentCgpaArr[0]);
-		    	//totCdtEarn = Integer.parseInt(studentCgpaArr[1]);
 		    	totCdtReg = Float.parseFloat(studentCgpaArr[0]);
 		    	totCdtEarn = Float.parseFloat(studentCgpaArr[1]);
-		    	
-				cgpa = Float.parseFloat(studentCgpaArr[2]);
+		    	cgpa = Float.parseFloat(studentCgpaArr[2]);
 	    	}
-			
-			//studentSemester = findStudentSemester(pProgramGroupCode, pStudentStartYear);
-			
+						
 			//Get the Allowed Status of Regular/ Grade Improvement/ Re-register/ Extra Option Courses/ Additional
 			regularAllowStatus = getCourseStatusOrCount(1, pProgramGroupCode, pProgramSpecCode, pStudentGraduateYear, 
 									academicGraduateYear, pSemesterId, pSemesterSubId, pStudentStartYear);
@@ -161,11 +148,7 @@ public class CourseRegistrationCommonFunction
 								academicGraduateYear, pSemesterId, pSemesterSubId, pStudentStartYear);
 			peAdlAllowStatus = getCourseStatusOrCount(4, pProgramGroupCode, pProgramSpecCode, pStudentGraduateYear, 
 									academicGraduateYear, pSemesterId, pSemesterSubId, pStudentStartYear);
-												
-			//Assigning English Course List
-			//englishCourseList.addAll(Arrays.asList("ENG1000","ENG2000","ENG3000","ENG1901","ENG1902","ENG1903",
-			//		"ENG1911","ENG1912","ENG1913"));
-												
+														
 			//Checking the select course is valid or not
 			if ((pCourseId != null) && (!pCourseId.equals("")))
 			{
@@ -221,7 +204,6 @@ public class CourseRegistrationCommonFunction
 								catalogType = e[1].toString();
 								ccCourseId = e[2].toString();
 								basketCategory = e[5].toString();
-								//ccCredit = Integer.parseInt(e[6].toString());
 								ccCredit = Float.parseFloat(e[6].toString());
 								break;
 							}
@@ -243,21 +225,6 @@ public class CourseRegistrationCommonFunction
 					}
 										
 					flag = 1;
-					
-					//To check whether selected course is restricted English course under UE Category
-					/*if (flag == 1)
-					{
-						if ((pStudentStartYear <= 2018) && courseCategory.equals("UE") && englishCourseList.contains(courseCode))
-						{
-							flag = 2;
-							msg = "Selected course "+ courseCode +" is not allowed for registration under "
-									+ courseCategory +" courseCategory.";
-						}
-						else
-						{
-							flag = 1;
-						}
-					}*/
 				}
 				else
 				{
@@ -585,35 +552,26 @@ public class CourseRegistrationCommonFunction
 					{						
 						if (eoAllowStatus == 1)
 						{
-							//if (historyGenericCourseType.equals(genericCoursetype))
-							//{
-								if (pStudentGraduateYear <= academicGraduateYear)
+							if (pStudentGraduateYear <= academicGraduateYear)
+							{
+								courseOption = (courseMehtodType == 2) ? "GICE" : "GI";
+								flag3 = 1;
+							}
+							else
+							{
+								giCount = courseRegistrationService.getGICourseCountByRegisterNumberCourseOptionAndClassGroup(
+												pSemesterSubId, pRegisterNumber, classGroupId);
+								if (giCount == 0)
 								{
 									courseOption = (courseMehtodType == 2) ? "GICE" : "GI";
 									flag3 = 1;
 								}
 								else
 								{
-									giCount = courseRegistrationService.getGICourseCountByRegisterNumberCourseOptionAndClassGroup(
-													pSemesterSubId, pRegisterNumber, classGroupId);
-									if (giCount == 0)
-									{
-										courseOption = (courseMehtodType == 2) ? "GICE" : "GI";
-										flag3 = 1;
-									}
-									else
-									{
-										flag3 = 2;
-										msg = "Only one grade improvement course is allowed.";
-									}
+									flag3 = 2;
+									msg = "Only one grade improvement course is allowed.";
 								}
-							//}
-							//else
-							//{
-							//	msg = "Grade improvement will be permitted only all course components are equal. "
-							//			+"Your previous studied course component is "+ historyGenericCourseType 
-							//			+" and selected course component is "+ genericCoursetype +".";
-							//}
+							}
 						}
 						else
 						{
@@ -946,8 +904,7 @@ public class CourseRegistrationCommonFunction
 						for (int i = 0; i < pg.length; i++)
 						{
 							pgid = Integer.parseInt(pg[i]);
-							//System.out.println("Check Level 2==> pgid: "+ pgid);
-							//if (pgid == pProgramGroupId)
+							logger.trace("\n Check Level 2==> pgid: "+ pgid);
 							if (pgid == courseProgId)
 							{
 								cgpaCourseFlag = 1;
@@ -1280,41 +1237,17 @@ public class CourseRegistrationCommonFunction
 					{
 						flag8 = 1;
 					}
-					/*else if (pProgramGroupCode.equals("BTECH"))
-					{
-						if (studTarpCredits >= 115)
-						{
-							flag8 = 1;
-						}
-						else
-						{
-							msg = "You are not eligible to take TARP course.  You earned "+ studTarpCredits 
-									+" credits and the eligible credit should be greater than or equal to 115 credits";
-						}
-					}
-					else if (pProgramGroupCode.equals("MTECH5"))
-					{
-						if (studTarpCredits >= 160)
-						{
-							flag8 = 1;
-						}
-						else
-						{
-							msg = "You are not eligible to take TARP course.  You earned "+ studTarpCredits 
-									+" credits and the eligible credit should be greater than or equal to 160 credits";
-						}
-					}*/
 					else if ((pProgramGroupCode.equals("BTECH") || pProgramGroupCode.equals("MTECH5")) && (cclTotalCredit > 0))
 					{						
 						psRegCredit = courseRegistrationService.getPSRegisteredTotalCreditsByRegisterNumber4(registerNumber2);
-						//System.out.println("totCdtEarn: "+ totCdtEarn +" | psRegCredit: "+ psRegCredit);
+						logger.trace("\n totCdtEarn: "+ totCdtEarn +" | psRegCredit: "+ psRegCredit);
 						
 						studTarpCredits = totCdtEarn + psRegCredit;
 						tarpCdtRequired = ((float)cclTotalCredit * (float)tarpPercentage) / 100;
 						tarpCdtPer = ((float)studTarpCredits / (float)cclTotalCredit) * 100;
 						tarpCeilCdtper = (int) Math.ceil(tarpCdtPer);
-						//System.out.println("studTarpCredits: "+ studTarpCredits +" | tarpCdtRequired: "+ tarpCdtRequired 
-						//		+" | tarpCdtPer: "+ tarpCdtPer +" | tarpCeilCdtper: "+ tarpCeilCdtper);
+						logger.trace("\n studTarpCredits: "+ studTarpCredits +" | tarpCdtRequired: "+ tarpCdtRequired 
+								+" | tarpCdtPer: "+ tarpCdtPer +" | tarpCeilCdtper: "+ tarpCeilCdtper);
 						
 						if (tarpCeilCdtper >= tarpPercentage)
 						{
@@ -1416,7 +1349,7 @@ public class CourseRegistrationCommonFunction
 										break;
 									}
 								}
-								//System.out.println("maxPjtYear: "+ maxPjtYear +" | pStudentStartYear: "+ pStudentStartYear);
+								logger.trace("\n maxPjtYear: "+ maxPjtYear +" | pStudentStartYear: "+ pStudentStartYear);
 								
 								if (pStudentStartYear > maxPjtYear)
 								{
@@ -1430,7 +1363,7 @@ public class CourseRegistrationCommonFunction
 							}
 						}
 					}
-					//System.out.println("totCredit: "+ totCredit +" | pjtPer: "+ pjtPer);
+					logger.trace("\n totCredit: "+ totCredit +" | pjtPer: "+ pjtPer);
 					
 				    if (cspeFlag == 1)
 				    {	
@@ -1444,37 +1377,11 @@ public class CourseRegistrationCommonFunction
 							cdtPer = ((float)totPjtCdt / (float)totCredit) * 100;
 							ceilCdtper = (int) Math.ceil(cdtPer);
 							
-							/*System.out.println("totCdtReg: "+ totCdtReg +" | totCdtEarn: "+ totCdtEarn 
+							logger.trace("\n totCdtReg: "+ totCdtReg +" | totCdtEarn: "+ totCdtEarn 
 									+" | failCdt: "+ failCdt +" | psRegCredit: "+ psRegCredit);
-							System.out.println("totPjtCdt: "+ totPjtCdt +" | cdtRequired: "+ cdtRequired 
-									+" | cdtPer: "+ cdtPer +" | ceilCdtper: "+ ceilCdtper);*/
-							
-							/*if ((pProgramGroupCode.equals("BTECH")) && (totPjtCdt >= 115))
-				    		{
-								cspeFlag2 = 1;
-				    		}
-							else if ((!pProgramGroupCode.equals("BTECH")) && (ceilCdtper >= pjtPer))
-							{
-								cspeFlag2 = 1;
-							}
-							else
-							{
-								if (pProgramGroupCode.equals("BTECH"))
-					    		{
-									msg = "You did not meet the required credits 115 to take this cap stone project.  "
-											+"Whereas, your total credits are "+ totPjtCdt +" only.\nDescription of your "
-											+"total credits:  Earned = "+ totCdtEarn +" | Failed (F-N Grade) = "+ failCdt 
-											+" | Current Semester = "+ psRegCredit +".";
-					    		}
-								else
-								{
-									msg = "You did not meet the required credits "+ cdtRequired +" ("+ pjtPer +"%) to "
-											+"take this cap stone project.  Whereas, your total credits are "+ totPjtCdt 
-											+" ("+ ceilCdtper +"%) only.\nDescription of your total credits:  "
-											+"Earned = "+ totCdtEarn +" | Failed = "+ failCdt +" | Current Semester = "+ psRegCredit +".";	
-								}
-							}*/
-							
+							logger.trace("\n totPjtCdt: "+ totPjtCdt +" | cdtRequired: "+ cdtRequired 
+									+" | cdtPer: "+ cdtPer +" | ceilCdtper: "+ ceilCdtper);
+														
 							if (ceilCdtper >= pjtPer)
 							{
 								cspeFlag2 = 1;
@@ -1507,9 +1414,9 @@ public class CourseRegistrationCommonFunction
 			//To check the Curriculum Credit
 			if (flag9 == 1)
 			{
-				/*System.out.println("rgrOptionFlag: "+ rgrOptionFlag + " | pProgramGroupCode: "+ pProgramGroupCode 
+				logger.trace("\n rgrOptionFlag: "+ rgrOptionFlag + " | pProgramGroupCode: "+ pProgramGroupCode 
 						+" | studStudySystem: "+ studStudySystem +" | courseOption: "+ courseOption 
-						+" | courseCategory: "+ courseCategory);*/
+						+" | courseCategory: "+ courseCategory);
 				
 				if (rgrOptionFlag == 1)
 				{					
@@ -1535,7 +1442,6 @@ public class CourseRegistrationCommonFunction
 						rgrAllowFlag = 1;
 						flag10 = 1;
 					}
-					//else if ((!studStudySystem.equals("CAL")) && (!studStudySystem.equals("RCAL")))
 					else if (studStudySystem.equals("NONFFCS") || studStudySystem.equals("FFCS"))
 					{
 						rgrAllowFlag = 1;
@@ -1596,7 +1502,6 @@ public class CourseRegistrationCommonFunction
 						}
 					
 					}
-					//else if (studStudySystem.equals("CAL") || studStudySystem.equals("RCAL"))
 					else
 					{
 						ccCreditList = programmeSpecializationCurriculumCreditService.getCurrentSemRegCurCtgCreditByRegisterNo(
@@ -1624,13 +1529,11 @@ public class CourseRegistrationCommonFunction
 								}
 							}
 							
-							/*System.out.println("courseCategory: "+ courseCategory +" | catalogType: "+ catalogType 
+							logger.trace("\n courseCategory: "+ courseCategory +" | catalogType: "+ catalogType 
 									+" | ccCourseId: "+ ccCourseId +" | basketCategory: "+ basketCategory 
 									+" | ccCredit: "+ ccCredit);
-							System.out.println("ctgCredit: "+ ctgCredit +" | obtCredit: "+ obtCredit 
-									+" | rmgCredit: "+ rmgCredit +" | ueRmgCredit: "+ ueRmgCredit);*/
-							/*System.out.println("histCredit: "+ histCredit +" | pvsCredit: "+ pvsCredit 
-									+" | cuRegCredit: "+ cuRegCredit +" | cuWlCredit: "+ cuWlCredit);*/
+							logger.trace("\n ctgCredit: "+ ctgCredit +" | obtCredit: "+ obtCredit 
+									+" | rmgCredit: "+ rmgCredit +" | ueRmgCredit: "+ ueRmgCredit);
 				    	}
 												
 						if (!ccCreditList.isEmpty())
@@ -1670,7 +1573,7 @@ public class CourseRegistrationCommonFunction
 									{
 										bskObtCredit = programmeSpecializationCurriculumCreditService.getBasketCtgCreditByRegisterNo(
 															pSemesterSubId, registerNumber2, ccCourseId);
-										//System.out.println("bskObtCredit: "+ bskObtCredit);
+										logger.trace("\n bskObtCredit: "+ bskObtCredit);
 										
 										if ((bskObtCredit + courseCredit) <= ccCredit)
 										{
@@ -1757,32 +1660,6 @@ public class CourseRegistrationCommonFunction
 										if (!psRegList.isEmpty())
 										{
 											honAllowFlag = 1;
-											
-											/*shmList2.clear();
-											shmList2 = programmeSpecializationCurriculumCreditService.getStudentHonourEligibleDetailByRegisterNo(
-															pProgramSpecId, pStudentStartYear, pCurriculumVersion, registerNumber2);
-											if (!shmList2.isEmpty())
-										   	{
-												for (Object[] e: shmList2)
-												{
-													//honEarnCredit = Integer.parseInt(e[0].toString());
-													honEarnCredit = Float.parseFloat(e[0].toString());
-													honCompCount = Integer.parseInt(e[1].toString());
-													break;
-												}
-										   	}
-											//System.out.println("honEarnCredit: "+ honEarnCredit +" | honCompCount: "+ honCompCount);
-																				
-											if (catalogType.equals("CC") && (pStudentStartYear <= 2018) 
-													&& (honEarnCredit >= 15) && (honCompCount >= 1))
-											{
-												honAllowFlag = 1;
-										    }
-											else if (catalogType.equals("CC") && (pStudentStartYear >= 2019) 
-														&& (honEarnCredit >= 20) && (honCompCount >= 1))
-											{											
-												honAllowFlag = 1;
-										    }*/
 										}
 									}
 									
@@ -1996,8 +1873,8 @@ public class CourseRegistrationCommonFunction
 					}
 					
 					//If history course component type is less than registered component type
-					/*System.out.println("rrAllowFlag: "+ rrAllowFlag +" | subCrCount: "+ subCrCount +
-							" | crTpCount: "+ crTpCount);*/
+					logger.trace("\n rrAllowFlag: "+ rrAllowFlag +" | subCrCount: "+ subCrCount +
+							" | crTpCount: "+ crTpCount);
 					if ((rrAllowFlag == 1) && (subCrCount != crTpCount) && (subCrCount == (crTpCount-1)))
 					{
 						subCourseType = subCourseType +",NONE";
@@ -2020,11 +1897,11 @@ public class CourseRegistrationCommonFunction
 		//Generating the Authentication Key Value
 		authKeyVal = generateCourseAuthKey(pRegisterNumber, pCourseId, regflag, 1);
 				
-		/*System.out.println("Flag: "+ flag +" | Flag2: "+ flag2 +" | Flag3: "+ flag3 +
-		" | Flag4: "+ flag4 +" | Flag5: "+ flag5 +" | Flag6: "+ flag6 +" | Flag7: "+ flag7 +
-		" | Flag8: "+ flag8 +" | Flag9: "+ flag9 +" | Flag10: "+ flag10);*/
+		logger.trace("\n Flag: "+ flag +" | Flag2: "+ flag2 +" | Flag3: "+ flag3 +
+			" | Flag4: "+ flag4 +" | Flag5: "+ flag5 +" | Flag6: "+ flag6 +" | Flag7: "+ flag7 +
+			" | Flag8: "+ flag8 +" | Flag9: "+ flag9 +" | Flag10: "+ flag10);
 				
-		/*System.out.println("regflag: "+ regflag +" / msg: "+ msg 
+		logger.trace("\n regflag: "+ regflag +" / msg: "+ msg 
 				+" / courseOption: "+ courseOption +" / regAllowFlag: "+ regAllowFlag 
 				+" / wlAllowFlag: "+ wlAllowFlag +" / ceCourseId: "+ ceCourseId 
 				+" / courseType: "+ courseType +" / subCourseOption: "+ subCourseOption 
@@ -2032,7 +1909,7 @@ public class CourseRegistrationCommonFunction
 				+" / subCourseDate: "+ subCourseDate +" / rgrAllowFlag: "+ rgrAllowFlag 
 				+" / honAllowFlag: "+ honAllowFlag +" / adlAllowFlag: "+ adlAllowFlag 
 				+" / authKeyVal: "+ authKeyVal +" / RPEUEAllowFlag: "+ RPEUEAllowFlag 
-				+" / csAllowFlag: "+ csAllowFlag +" / RUCUEAllowFlag: "+ RUCUEAllowFlag);*/
+				+" / csAllowFlag: "+ csAllowFlag +" / RUCUEAllowFlag: "+ RUCUEAllowFlag);
 			
 		return regflag +"/"+ msg +"/"+ courseOption +"/"+ regAllowFlag +"/"+ wlAllowFlag 
 					+"/"+ ceCourseId +"/"+ courseType +"/"+ subCourseOption +"/"+ audAllowFlag 
@@ -2054,9 +1931,9 @@ public class CourseRegistrationCommonFunction
 		List<Object[]> objectList = new ArrayList<Object[]>();
 		Map<String, List<SlotTimeMasterModel>> slotTimeMapList = new HashMap<String, List<SlotTimeMasterModel>>();
 		
-		//System.out.println("patternId: "+ patternId +" | clashSlotList: "+ clashSlotList 
-		//		+" | pSemesterSubId: "+ pSemesterSubId +" | pRegisterNumber: "+ pRegisterNumber 
-		//		+" | pRegType: "+ pRegType +" | pOldClassId: "+ pOldClassId);
+		logger.trace("\n patternId: "+ patternId +" | clashSlotList: "+ clashSlotList 
+				+" | pSemesterSubId: "+ pSemesterSubId +" | pRegisterNumber: "+ pRegisterNumber 
+				+" | pRegType: "+ pRegType +" | pOldClassId: "+ pOldClassId);
 		
 		if (clashSlotList.isEmpty())
 		{
@@ -2081,7 +1958,7 @@ public class CourseRegistrationCommonFunction
 			//Checking the clash with Registered Slot
 			if (!objectList.isEmpty())
 			{
-				//System.out.println("Checking clash with registered Slots==>");
+				logger.trace("\n Checking clash with registered Slots==>");
 				for (String clhslt : clashSlotList)
 				{
 					clashStatus = 2;
@@ -2116,7 +1993,7 @@ public class CourseRegistrationCommonFunction
 				objectList = courseRegistrationWaitingService.getWaitingSlots2(pSemesterSubId, pRegisterNumber);
 				if (!objectList.isEmpty())
 				{
-					//System.out.println("Checking clash with Waiting Slots==>");
+					logger.trace("\n Checking clash with Waiting Slots==>");
 					for (String clhslt : clashSlotList)
 					{
 						clashStatus = 2;
@@ -2150,7 +2027,7 @@ public class CourseRegistrationCommonFunction
 				
 				if (clashSlotList.size() >= 2)
 				{
-					//System.out.println("Checking clash Theory Slot with Lab Slot==>");
+					logger.trace("\n Checking clash Theory Slot with Lab Slot==>");
 					tempStringList.clear();
 					tempStringList.addAll(Arrays.asList(clashSlotList.get(1).split("/")));
 					if (!tempStringList.isEmpty())
@@ -2177,7 +2054,7 @@ public class CourseRegistrationCommonFunction
 				}
 			}	
 		}
-		//System.out.println("Return=> clashStatus: "+ clashStatus +" | message: "+ message);
+		logger.trace("\n Return=> clashStatus: "+ clashStatus +" | message: "+ message);
 		
 		return clashStatus +"/"+ message;
 	}
@@ -2203,7 +2080,7 @@ public class CourseRegistrationCommonFunction
 					Integer semesterId, String semesterSubId, String registerNumber, String[] classGroupId,
 					String[] classType, String progSpecCode, Integer progSpecId, String progGroupCode, 
 					String oldRegisterNumber, List<String> compulsoryCourse, String costCentreCode, 
-					String[] courseSystem)//M1
+					String[] courseSystem)
 	{
 		int returnStatus = 2;
 		String compCourseStatus = "NONE";
@@ -2215,7 +2092,7 @@ public class CourseRegistrationCommonFunction
 		{
 			returnStatus = 1;
 		}
-		//System.out.println("compCourseStatus: "+ compCourseStatus +" | returnStatus: "+ returnStatus);
+		logger.trace("\n compCourseStatus: "+ compCourseStatus +" | returnStatus: "+ returnStatus);
 		
 		return returnStatus;
 	}
@@ -2225,7 +2102,7 @@ public class CourseRegistrationCommonFunction
 						Integer semesterId, String semesterSubId, String registerNumber, String[] classGroupId,
 						String[] classType, String progSpecCode, Integer progSpecId, String progGroupCode, 
 						String oldRegisterNumber, List<String> compulsoryCourse, String costCentreCode, 
-						String regCourseCode, String[] courseSystem)//M2
+						String regCourseCode, String[] courseSystem)
 	{
 		String compCourseStatus = "NONE";
 		int checkCompFlag = 2, checkCompFlag2 = 2;
@@ -2234,7 +2111,7 @@ public class CourseRegistrationCommonFunction
 		List<CourseRegistrationWaitingModel> courseRegistrationWaitList = new ArrayList<CourseRegistrationWaitingModel>();
 		List<CourseAllocationModel> courseAllocationCrsAvbList = new ArrayList<CourseAllocationModel>();
 		
-		//System.out.println("compulsoryCourse: "+ compulsoryCourse);
+		logger.trace("\n compulsoryCourse: "+ compulsoryCourse);
 		if (!compulsoryCourse.isEmpty())
 		{
 			for (String crsId : compulsoryCourse)
@@ -2284,7 +2161,7 @@ public class CourseRegistrationCommonFunction
 				}
 			}
 		}
-		//System.out.println("compCourseStatus: "+ compCourseStatus);
+		logger.trace("\n compCourseStatus: "+ compCourseStatus);
 		
 		return compCourseStatus;
 	}	
@@ -2361,7 +2238,7 @@ public class CourseRegistrationCommonFunction
 				}
 				break;
 			}
-			//System.out.println("logStatus: "+ logStatus +" | timeDiff: "+ timeDiff);
+			logger.trace("\n logStatus: "+ logStatus +" | timeDiff: "+ timeDiff);
 			
 			if ((logStatus == 1) && (timeDiff <= 500))
 			{
@@ -2372,154 +2249,8 @@ public class CourseRegistrationCommonFunction
 		return activeStatus;
 	}
 	
-	
-	//Checking the Add or Drop Time
-	public String AddorDropDateTimeCheck(Date startDate, Date endDate, String startTime, String endTime,
-						String registerNo, int updateStatus, String ipAddress)
-	{	
-		int timeCheckFlag = 2;
-		String timeCheckMessage = "NONE", presentDateTime = "", presentTime = "";
-		Long startTimeVal = 0L, endTimeVal = 0L, presentTimeVal = 0L;
-		
-		Date presentDate = null;
-		DateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
-		
-		try
-		{
-			if ((startDate != null) && (endDate != null) && (startTime != null) && (!startTime.equals("")) 
-					&& (endTime != null) && (!endTime.equals("")) && (registerNo != null) && (!registerNo.equals("")) 
-					&& (ipAddress != null) && (!ipAddress.equals("")))
-			{
-				startTimeVal = Long.parseLong(startTime.replace(":", ""));
-				endTimeVal = Long.parseLong(endTime.replace(":", ""));
-				
-				presentDateTime = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").format(new Date());					
-				String[] presentDateTimeArr = presentDateTime.split(" ");
-				presentDate = format.parse(presentDateTimeArr[0]);
-				presentTime = presentDateTimeArr[1];
-				presentTimeVal = Long.parseLong(presentTime.replace(":", ""));
-				
-				/*System.out.println("StartDate: "+ startDate +" | StartTime: "+ startTime 
-											+" | Start Time Value: " + startTimeVal);
-				System.out.println("EndDate: "+ endDate +" | EndTime: "+ endTime +" | EndTimeValue: " + endTimeVal);
-				System.out.println("PresentDate: "+ presentDate +" | PresentTime: "+ presentTime
-						 				+" | PresentTimeValue: " + presentTimeVal);*/
-				
-				//Based on Registration Schedule
-				/*if ((presentDate.equals(startDate)) && (presentTimeVal >= startTimeVal)
-							&& (presentTimeVal <= endTimeVal))
-				{
-					timeCheckMessage = "Success.";
-					timeCheckFlag = 1;
-				}
-				else
-				{
-					if (presentDate.compareTo(startDate) < 0)
-					{
-						timeCheckMessage = "Your registration date and time duration "+ 
-													new SimpleDateFormat("dd-MMM-yyyy").format(startDate)  
-													+" between "+ startTime +" Hrs and "+ endTime +" Hrs.";
-					}
-					else if	((presentDate.equals(startDate)) && (presentTimeVal < startTimeVal))
-					{
-						timeCheckMessage = "Your registration time starts at "+ startTime +" Hrs and "
-											+"ends at "+ endTime +" Hrs.";
-					}
-					else
-					{
-						timeCheckMessage = "Your registration time was over.  The duration was "+ 
-												new SimpleDateFormat("dd-MMM-yyyy").format(startDate)  
-												+" between "+ startTime +" Hrs and "+ endTime +" Hrs.";
-					}
-				}*/
-				
-				//Based on fixed Date & Time
-				if ((presentDate.compareTo(startDate) >= 0) && (presentDate.compareTo(endDate) <= 0))
-				{				
-					if ((startDate.compareTo(endDate) == 0) && (presentDate.compareTo(startDate) == 0) 
-							&& (presentTimeVal < startTimeVal))
-					{
-						timeCheckMessage = "Add or Drop starts at "+ startTime +" Hrs.";
-					}
-					else if ((startDate.compareTo(endDate) == 0) && (presentDate.compareTo(startDate) == 0) 
-								&& (presentTimeVal >= startTimeVal) && (presentTimeVal <= endTimeVal))
-					{
-						timeCheckMessage = "Success.";
-						timeCheckFlag = 1;
-					}
-					else if ((startDate.compareTo(endDate) == 0) && (presentDate.compareTo(startDate) == 0) 
-								&& (presentTimeVal > endTimeVal))
-					{
-						timeCheckMessage = "Add or Drop closed.";
-					}
-					else if ((startDate.compareTo(endDate) != 0) && (presentDate.compareTo(startDate) == 0) 
-								&& (presentTimeVal < startTimeVal))
-					{
-						timeCheckMessage = "Add or Drop starts at "+ startTime +" Hrs.";
-					}
-					else if ((startDate.compareTo(endDate) != 0) && (presentDate.compareTo(startDate) == 0) 
-								&& (presentTimeVal >= startTimeVal))
-					{
-						timeCheckMessage = "Success.";
-						timeCheckFlag = 1;
-					}
-					else if ((startDate.compareTo(endDate) != 0) && (presentDate.compareTo(startDate) > 0) 
-								&& (presentDate.compareTo(endDate) < 0))
-					{
-						timeCheckMessage = "Success.";
-						timeCheckFlag = 1;
-					}
-					else if ((startDate.compareTo(endDate) != 0) && (presentDate.compareTo(endDate) == 0) 
-								&& (presentTimeVal <= endTimeVal))
-					{
-						timeCheckMessage = "Success.";
-						timeCheckFlag = 1;
-					}
-					else
-					{
-						timeCheckMessage = "Add or Drop closed.";
-					}
-				}
-				else
-				{
-					if (presentDate.compareTo(endDate) > 0)
-					{
-						timeCheckMessage = "Add or Drop closed.";
-					}
-					else
-					{
-						timeCheckMessage = "Add or Drop will start on "+ new SimpleDateFormat("dd-MMM-yyyy").format(startDate) 
-												+" at "+ startTime +" Hrs.";
-					}
-				}
-				
-				if ((timeCheckFlag == 1) && (updateStatus == 1))
-				{
-					registrationLogService.UpdateActiveTimeStamp(registerNo);
-				}
-			}
-			else
-			{
-				timeCheckMessage = "Session timed out.  Kindly logout and login again.";
-			}
-		}
-		catch (Exception ex)
-		{
-			//System.out.println(ex);
-		}
 
-		return timeCheckFlag +"/"+ timeCheckMessage;
-	}
 	
-	
-	/*public final void callCaptcha(HttpServletRequest request, HttpServletResponse response, HttpSession session, 
-							Model model) throws ServletException, IOException
-	{
-		Sdc_common_functions sdf = new Sdc_common_functions();
-		sdf.doGet(request, response);
-		String res = (String) session.getAttribute("ENCDATA");
-		model.addAttribute("res1", res);
-	}*/
 	public void callCaptcha(HttpServletRequest request, HttpServletResponse response, HttpSession session, 
 					Model model) throws ServletException, IOException
     {
@@ -2541,7 +2272,7 @@ public class CourseRegistrationCommonFunction
         captchaManager.setBackgroundColor(new Color(249, 231, 159));
         
         num = new Random().nextInt(10);
-        //System.out.println("num: "+ num);
+        logger.trace("\n num: "+ num);
         if(num<=5)
         {
         	captchaManager.setGridLines(true);
@@ -2584,39 +2315,6 @@ public class CourseRegistrationCommonFunction
 		else if ((pSemesterId == 7))
 		{	
 			returnClassGroup = "ST004";
-			/*if (pProgramGroupCode.equals("MBA") || pProgramGroupCode.equals("MBA5"))
-			{
-				returnClassGroup = "ST003";
-			}
-			else if (pProgramGroupCode.equals("RP") && costCentreCode.equals("VITBS"))
-			{
-				returnClassGroup = "ST003";
-			}
-			else if (studentGraduateYear <= academicGraduateYear)
-			{
-				returnClassGroup = "ST002/ST003";
-			}
-			else
-			{
-				if (pProgramGroupCode.equals("RP"))
-				{
-					returnClassGroup = "ST002";
-				}
-				else if ((pProgramGroupCode.equals("MTECH") || pProgramGroupCode.equals("MCA")) 
-								&& (studentGraduateYear == (academicGraduateYear+1)))
-				{
-					returnClassGroup = "ST002";
-				}
-				else if (pProgramGroupCode.equals("MTECH5") && (studentGraduateYear == (academicGraduateYear+1)))
-				{
-					//returnClassGroup = "ST002";
-					returnClassGroup = "ST002/ST003";
-				}
-				else
-				{
-					returnClassGroup = "ST003";
-				}
-			}*/
 		}
 		else
 		{
@@ -2733,9 +2431,9 @@ public class CourseRegistrationCommonFunction
 						String evaluationType, String studentCategory)
 	{
 		Integer tempRegistrationStatus = 0;
-		/*System.out.println("approvalStatus: "+ approvalStatus +" | courseOption: "+ courseOption 
+		logger.trace("\n approvalStatus: "+ approvalStatus +" | courseOption: "+ courseOption 
 					+" | genericCourseType: "+ genericCourseType + " | evaluationType: "+ evaluationType 
-					+" | studentCategory: "+ studentCategory);*/
+					+" | studentCategory: "+ studentCategory);
 		
 		if (approvalStatus == 1)
 		{
@@ -2997,10 +2695,10 @@ public class CourseRegistrationCommonFunction
 		//Generating the Authorization key
 		authKeyValue = generateCourseAuthKey(pRegisterNumber, pCourseId, deleteAllowFlag, 1);
 		
-		/*System.out.println("checkFlag: "+ checkFlag +" | checkFlag2: "+ checkFlag2 
-				+" | checkFlag3: "+ checkFlag3 +" | checkFlag4: "+ checkFlag4);*/
-		/*System.out.println("deleteAllowFlag: "+ deleteAllowFlag +" / message: "+ message 
-				+" / authKeyValue: "+ authKeyValue);*/
+		logger.trace("\n checkFlag: "+ checkFlag +" | checkFlag2: "+ checkFlag2 
+				+" | checkFlag3: "+ checkFlag3 +" | checkFlag4: "+ checkFlag4);
+		logger.trace("\n deleteAllowFlag: "+ deleteAllowFlag +" / message: "+ message 
+				+" / authKeyValue: "+ authKeyValue);
 				
 		return deleteAllowFlag +"|"+ message +"|"+ authKeyValue;
 	}
@@ -3017,12 +2715,11 @@ public class CourseRegistrationCommonFunction
 		String presentDateTime = "", presentTime = "", endTime = "", allowStartTime = "", slotDate = null;
 		String[] timeArr = new String[]{};
 		List<String> slotTimeList = new ArrayList<String>();
-		//String startTime = "";
 						
 		try
 		{
 			slotDate = df.format(startDate);
-			//System.out.println("StartDate: "+ startDate +" | slotDate: "+ slotDate);
+			logger.trace("\n StartDate: "+ startDate +" | slotDate: "+ slotDate);
 						
 			slotTimeList.add("09:00:00|10:30:00|08:55:00|"+ slotDate);
 			slotTimeList.add("11:00:00|12:30:00|10:55:00|"+ slotDate);
@@ -3035,15 +2732,14 @@ public class CourseRegistrationCommonFunction
 			presentDate = df.parse(presentDateTimeArr[0]);
 			presentTime = presentDateTimeArr[1];
 			presentTimeVal = Long.parseLong(presentTime.replace(":", ""));
-			/*System.out.println("presentDate: "+ presentDate +" | presentTime: "+ presentTime 
-					+" | presentTimeVal: "+ presentTimeVal);*/
+			logger.trace("\n presentDate: "+ presentDate +" | presentTime: "+ presentTime 
+					+" | presentTimeVal: "+ presentTimeVal);
 			
 			if (!slotTimeList.isEmpty())
 			{
 				for(String e : slotTimeList)
 				{
-					timeArr = e.split("\\|"); 
-					//startTime = timeArr[0];
+					timeArr = e.split("\\|");
 					endTime = timeArr[1];
 					allowStartTime = timeArr[2];
 					startDate = df.parse(timeArr[3]);
@@ -3051,9 +2747,9 @@ public class CourseRegistrationCommonFunction
 					startTimeVal = Long.parseLong(allowStartTime.replace(":", ""));
 					endTimeVal = Long.parseLong(endTime.replace(":", ""));
 					maxTimeVal = endTimeVal;
-					//System.out.println("StartDate: "+ startDate +" | endTime: "+ endTime 
-					//		+" | allowStartTime: "+ allowStartTime +" | startTimeVal: "+ startTimeVal
-					//		+" | endTimeVal: "+ endTimeVal);
+					logger.trace("\n StartDate: "+ startDate +" | endTime: "+ endTime 
+							+" | allowStartTime: "+ allowStartTime +" | startTimeVal: "+ startTimeVal
+							+" | endTimeVal: "+ endTimeVal);
 					
 					if (presentDate.equals(startDate) 
 							&& (presentTimeVal >= startTimeVal) && (presentTimeVal <= endTimeVal))
@@ -3086,9 +2782,9 @@ public class CourseRegistrationCommonFunction
 		}
 		catch (Exception ex)
 		{
-			//System.out.println(ex);
+			logger.trace(ex);
 		}
-		//System.out.println("tempStatus: "+ tempStatus);
+		logger.trace("\n tempStatus: "+ tempStatus);
 		
 		return tempStatus;
 	}
@@ -3142,271 +2838,8 @@ public class CourseRegistrationCommonFunction
 		
 		return minCredit +"|"+ maxCredit;
 	}
-	
-	//Validate Course & Sending the OTP
-	public String validateCourseAndSendOTP(String semesterSubId, String registerNumber, String courseId, 
-						String studentEMailId, String IpAddress, String processType)
-	{	
-		int validateStatus = 2, otpReasonType = 0, flag = 2, flag2 = 2, flag3 = 2, flag4 = 2;	
-		String msg = "NONE", authKeyVal = "NONE", mobileOTP = "NONE", emailOTP = "NONE"; 		 
-		String courseCode = "", semesterShortDesc = "", semesterDesc = "", mailSubject = "", 
-					mailBody = "", mailStatus = "";
-					
-		CourseCatalogModel ccm = new CourseCatalogModel();
-		SemesterDetailsModel sdm = new SemesterDetailsModel();
-		List<Object[]> objectList = new ArrayList<Object[]>();
-		
-		/*System.out.println("semesterSubId: "+ semesterSubId +" | registerNumber: "+ registerNumber 
-				+" | courseId: "+ courseId +" | studentEMailId: "+ studentEMailId +" | IpAddress: "+ IpAddress 
-				+" | processType: "+ processType);*/
-								
-		try
-		{
-			//Checking the select course is valid or not
-			if ((courseId != null) && (!courseId.equals("")))
-			{
-				ccm = courseCatalogService.getOne(courseId);
-				if (ccm != null)
-				{
-					courseCode = ccm.getCode();					
-					flag = 1;
-				}
-				else
-				{
-					msg = "Invalid course...!";
-				}
-			}
-			else
-			{
-				msg = "Invalid course...!";
-			}
-						
-			//Validating the Mobile No.
-			if (flag == 1)
-			{
-				if((studentEMailId != null) && (!studentEMailId.equals("")) && (!studentEMailId.equals("NONE")))
-				{
-					flag2 = 1;
-				}
-				else
-				{
-					msg = "E-Mail Id is not properly updated.  Kindly check your profile and update it."; 
-				}
-			}
-			
-			//Validating the Process Type.
-			if (flag2 == 1)
-			{
-				if (processType.equals("DELETE") || processType.equals("MODIFY"))
-				{
-					flag3 = 1;
-				}
-				else
-				{
-					msg = "Invalid process type.  Kindly proceed once again."; 
-				}
-			}
-									
-			//Sent & Check the Mail Status			
-			if (flag3 == 1)
-			{	
-				//Semester Sub Id Details
-				sdm = semesterMasterService.getSemesterDetailBySemesterSubId(semesterSubId);
-				if(sdm != null)
-				{
-					semesterShortDesc = sdm.getDescriptionShort();
-					semesterDesc = sdm.getDescription();
-				}
-				
-				mobileOTP = getRandomOtp(5);
-				emailOTP = getRandomOtp(5);
-				if (emailOTP.equals(mobileOTP))
-				{
-					mobileOTP = getRandomOtp(5);
-				}
-				
-				if (processType.equals("DELETE"))
-				{					
-					mailSubject = semesterShortDesc +" - Course Delete OTP";					
-					mailBody = "<html><body><b>Dear Student ("+ registerNumber +"),</b><br><br>"+ System.lineSeparator();
-					mailBody = mailBody +"OTP to delete the course "+ courseCode +" is <b>"+ emailOTP +"</b> for "
-								+ semesterDesc +".";
-					mailBody = mailBody +"<br><br>This is an auto generated mail.  Kindly don't reply or send message "
-								+"to this mail id."+ System.lineSeparator() +"<br><br>Thanks !!</body></html>";
-					otpReasonType = 2;
-				}
-				else if (processType.equals("MODIFY"))
-				{
-					mailSubject = semesterShortDesc +" - Course Modify OTP";
-					mailBody = "<html><body><b>Dear Student ("+ registerNumber +"),</b><br><br>"+ System.lineSeparator();
-					mailBody = mailBody +"OTP to modify the course "+ courseCode +" is <b>"+ emailOTP +"</b> for "
-								+ semesterDesc +".";
-					mailBody = mailBody +"<br><br>This is an auto generated mail.  Kindly don't reply or send message "
-								+"to this mail id."+ System.lineSeparator() +"<br><br>Thanks !!</body></html>";
-					otpReasonType = 3;
-				}
-				
-				//Add or Update the OTP Data
-				objectList = courseRegistrationWithdrawService.getCourseWithdrawOTP(semesterSubId, 
-								registerNumber, courseId, otpReasonType);
-				if (objectList.isEmpty())
-				{
-					courseRegistrationWithdrawService.addCourseWithdrawOTP(semesterSubId, registerNumber, 
-							courseId, otpReasonType, emailOTP, mobileOTP, registerNumber, IpAddress);
-				}
-				else
-				{
-					courseRegistrationWithdrawService.modifyCourseWithdrawOTP(semesterSubId, registerNumber, 
-							courseId, otpReasonType, emailOTP, mobileOTP, registerNumber, IpAddress);
-				}
-		
-				//Sending E-Mail
-				mailStatus = MailUtility.triggerMail(mailSubject, mailBody, "", studentEMailId);
-				if (mailStatus.length() > 250)
-				{
-					mailStatus = mailStatus.substring(0, 250);
-				}
-				
-				//Update the Mail Response Status
-				courseRegistrationWithdrawService.modifyCourseWithdrawOTPResponse(semesterSubId, registerNumber, 
-						courseId, otpReasonType, mailStatus);
-				
-				if (mailStatus.equals("SUCCESS"))
-				{
-					flag4 = 1;
-				}
-				else
-				{
-					msg = "Not a valid E-Mail Id.  Kindly check your profile and update it."; 
-				}
-			}
-			
-			//System.out.println("Flag: "+ flag +" | Flag2: "+ flag2 +" | Flag3: "+ flag3 +" | Flag4: "+ flag4);
-				
-			if ((flag == 1) && (flag2 == 1) && (flag3 == 1) && (flag4 == 1))
-			{	
-				validateStatus = 1;
-				msg = "SUCCESS";
-			}
-		}
-		catch (Exception ex)
-		{
-			logger.trace(ex);
-		}
-			
-		//Generating the Authentication Key Value
-		authKeyVal = generateCourseAuthKey(registerNumber, courseId, validateStatus, 2);
-			
-		//System.out.println("validateStatus: "+ validateStatus +" | authKeyVal: "+ authKeyVal 
-		// 		+" | emailOTP: "+ emailOTP +" | msg: "+ msg);
-			
-		return validateStatus +"|"+ authKeyVal +"|"+ emailOTP +"|"+ msg;
-	}
-	
-	//Validate Course & OTP
-	public String validateCourseAndOTP(String semesterSubId, String registerNumber, String courseId, 
-						String emailOTP, String IpAddress, String processType)
-	{	
-		int validateStatus = 2, otpReasonType = 0, otpAllowFlag = 2, flag = 2, flag2 = 2, flag3 = 2;							
-		String msg = "NONE", courseCode = "", emailOTPDB = "NONE";
-		
-		CourseCatalogModel ccm = new CourseCatalogModel();
-		List<Object[]> objectList = new ArrayList<Object[]>();
-		
-		/*System.out.println("semesterSubId: "+ semesterSubId +" | registerNumber: "+ registerNumber 
-				+" | courseId: "+ courseId +" | emailOTP: "+ emailOTP +" | IpAddress: "+ IpAddress 
-				+" | processType: "+ processType);*/
-		
-		try
-		{
-			//Checking the select course is valid or not
-			if ((courseId != null) && (!courseId.equals("")))
-			{
-				ccm = courseCatalogService.getOne(courseId);
-				if (ccm != null)
-				{
-					courseCode = ccm.getCode();										
-					flag = 1;
-				}
-				else
-				{
-					msg = "Invalid course...!";
-				}
-			}
-			else
-			{
-				msg = "Invalid course...!";
-			}
-			
-			//Validating the Process Type.
-			if (flag == 1)
-			{
-				if (processType.equals("DELETE"))
-				{
-					otpReasonType = 2;
-					flag2 = 1;
-				}
-				else if (processType.equals("MODIFY"))
-				{
-					otpReasonType = 3;
-					flag2 = 1;
-				}
-				else
-				{
-					msg = "Invalid process type.  Kindly proceed once again."; 
-				}
-			}
-						
-			//Checking the OTP
-			if (flag2 == 1)
-			{
-				objectList = courseRegistrationWithdrawService.getCourseWithdrawOTP(semesterSubId, registerNumber, 
-									courseId, otpReasonType);
-				if (!objectList.isEmpty())
-				{
-					for (Object[] e: objectList)
-					{
-						emailOTPDB = e[1].toString();
-						break;
-					}
-					
-					if (emailOTPDB.equals(emailOTP))
-					{
-						flag3 = 1;
-					}
-					else
-					{
-						otpAllowFlag = 1;
-						msg = "You entered the wrong OTP, kindly enter your E-Mail OTP properly "+
-								"for the course "+ courseCode +"."; 
-					}
-				}
-				else
-				{
-					msg = "You did not receive OTP for the course "+ courseCode +".  Kindly proceed once again."; 
-				}
-			}
-			//System.out.println("Flag: "+ flag +" | Flag2: "+ flag2 +" | Flag3: "+ flag3);
-			
-			if ((flag == 1) && (flag2 == 1) && (flag3 == 1))
-			{	
-				//Confirm the OTP Status
-				courseRegistrationWithdrawService.modifyWithdrawOTPConfirmationStatus(semesterSubId, registerNumber, 
-						courseId, otpReasonType, 2, 2, registerNumber, IpAddress);
-				
-				validateStatus = 1;
-				msg = "SUCCESS";
-			}
-		}
-		catch (Exception ex)
-		{
-			logger.trace(ex);
-		}
-					
-		//System.out.println("validateStatus: "+ validateStatus +" | otpAllowFlag: "+ otpAllowFlag +" | msg: "+ msg);
-			
-		return validateStatus +"|"+ otpAllowFlag +"|"+ msg;
-	}
+
+
 	
 	public String getRandomOtp(Integer keyLength)
 	{
@@ -3524,10 +2957,10 @@ public class CourseRegistrationCommonFunction
 	{
 		List<Object[]> returnObjectList = new ArrayList<Object[]>();
 		List<ProgrammeSpecializationCurriculumCategoryCredit> pscccList = new ArrayList<ProgrammeSpecializationCurriculumCategoryCredit>();
-		//System.out.println("programGroupCode: "+ programGroupCode +" | courseSystem: "+ courseSystem
-		//		 +" | rgrCourseAllowStatus: "+ rgrCourseAllowStatus +" | reRegCourseAllowStatus: "+ reRegCourseAllowStatus 
-		//		 +" | peueAllowStatus: "+ peueAllowStatus +" | specializationId: "+ specializationId 
-		//		 +" | admissionYear: "+ admissionYear +" | curriculumVersion: "+ curriculumVersion);
+		logger.trace("\n programGroupCode: "+ programGroupCode +" | courseSystem: "+ courseSystem
+				 +" | rgrCourseAllowStatus: "+ rgrCourseAllowStatus +" | reRegCourseAllowStatus: "+ reRegCourseAllowStatus 
+				 +" | peueAllowStatus: "+ peueAllowStatus +" | specializationId: "+ specializationId 
+				 +" | admissionYear: "+ admissionYear +" | curriculumVersion: "+ curriculumVersion);
 		
 		if ((programGroupCode == null) || programGroupCode.equals(""))
 		{
@@ -3603,7 +3036,7 @@ public class CourseRegistrationCommonFunction
 				returnObjectList.add(new Object[] {"RR", "Re - Registration"});
 			}
 		}
-		//System.out.println("returnObjectList size: "+ returnObjectList.size());
+		logger.trace("\n returnObjectList size: "+ returnObjectList.size());
 		
 		return returnObjectList;
 	}
@@ -3619,14 +3052,14 @@ public class CourseRegistrationCommonFunction
 		String[] clashStatusArray = new String[]{};
 		List<String> classIdList = new ArrayList<String>();
 		List<Long> slotIdList = new ArrayList<Long>();
-		//System.out.println("Checking clash status with registered Slots==>");
+		logger.trace("\n Checking clash status with registered Slots==>");
 		
 		if ((!registeredList.isEmpty()) && (!courseAllocationList.isEmpty()))
 		{
 			
 			classIdList = registeredList.stream().map(e -> e[3].toString()).collect(Collectors.toList());
 			slotIdList = registeredList.stream().map(e -> Long.parseLong(e[2].toString())).collect(Collectors.toList());
-			//System.out.println("classIdLists: "+ classIdList +" | slotIdList: "+ slotIdList));
+			logger.trace("\n classIdLists: "+ classIdList +" | slotIdList: "+ slotIdList);
 			
 			//Checking the clash with Registered Slot
 			for (CourseAllocationModel e : courseAllocationList)
@@ -3688,15 +3121,15 @@ public class CourseRegistrationCommonFunction
 		List<String> classIdList = new ArrayList<String>();
 		List<Long> slotIdList = new ArrayList<Long>();
 		Map<String, Integer> sfiMapList = new HashMap<String, Integer>();
-		//System.out.println("Checking Info with registered Slots==>");
+		logger.trace("\n Checking Info with registered Slots==>");
 		
 		if ((!registeredList.isEmpty()) && (!courseAllocationList.isEmpty()))
 		{	
 			classIdList = registeredList.stream().map(e -> e[3].toString()).collect(Collectors.toList());
 			slotIdList = registeredList.stream().map(e -> Long.parseLong(e[2].toString())).collect(Collectors.toList());
 			sfiMapList = courseAllocationService.getSlotFixedInfoList();
-			//System.out.println("classIdLists: "+ classIdList +" | slotIdList: "+ slotIdList 
-			//		+" | sfiMapList size: "+ sfiMapList.size());
+			logger.trace("\n classIdLists: "+ classIdList +" | slotIdList: "+ slotIdList 
+					+" | sfiMapList size: "+ sfiMapList.size());
 			
 			for (CourseAllocationModel e : courseAllocationList)
 			{

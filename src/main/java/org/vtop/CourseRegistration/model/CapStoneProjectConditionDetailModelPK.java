@@ -60,5 +60,10 @@ public class CapStoneProjectConditionDetailModelPK implements Serializable{
 			return false;
 		return true;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "CapStoneProjectConditionDetailModelPK [programGroupId=" + programGroupId + ", studentBatch="
+				+ studentBatch + "]";
+	}
 }

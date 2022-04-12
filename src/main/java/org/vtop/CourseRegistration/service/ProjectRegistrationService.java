@@ -8,7 +8,7 @@ import org.vtop.CourseRegistration.repository.ProjectRegistrationRepository;
 
 
 @Service
-@Transactional("transactionManager")
+@Transactional(readOnly=true)
 public class ProjectRegistrationService
 {		
 	@Autowired private ProjectRegistrationRepository projectRegistrationRepository;
@@ -18,31 +18,4 @@ public class ProjectRegistrationService
 	{
 		 projectRegistrationRepository.save(projectRegistrationModel);
 	}
-		
-	public void deleteByRegisterNumberCourseId(String semesterSubId, String registerNumber, String courseId)
-	{		
-		projectRegistrationRepository.deleteByRegisterNumberCourseId(semesterSubId, registerNumber, courseId);
-	}
-	
-	/*public ProjectRegistrationModel getOne(ProjectRegistrationPKModel projectRegistrationPKModel)
-	{
-		return projectRegistrationRepository.findOne(projectRegistrationPKModel);
-	}*/
-	
-	/*public List<ProjectRegistrationModel> getAll(String semesterSubId)
-	{
-		return projectRegistrationRepository.findBySemesterSubId(semesterSubId);
-	}
-		
-	public List<ProjectRegistrationModel> getByRegisterNumber(String semesterSubId, String registerNumber)
-	{
-		return projectRegistrationRepository.findByRegisterNumber(semesterSubId, registerNumber);
-	}
-	
-	public List<ProjectRegistrationModel> getByRegisterNumberCourseId(String semesterSubId, 
-			String registerNumber, String courseId)
-	{
-		return projectRegistrationRepository.findByRegisterNumberCourseId(semesterSubId, 
-				registerNumber, courseId);
-	}*/
 }

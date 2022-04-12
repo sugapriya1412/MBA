@@ -111,5 +111,11 @@ public class CourseRegistrationWaitingMovePKModel implements Serializable {
 			return false;
 		return true;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "CourseRegistrationWaitingMovePKModel [semesterSubId=" + semesterSubId + ", registerNumber="
+				+ registerNumber + ", courseId=" + courseId + ", courseType=" + courseType + ", movedTimestamp="
+				+ movedTimestamp + "]";
+	}
 }

@@ -10,18 +10,22 @@ import javax.mail.internet.InternetAddress;
 
 import javax.mail.internet.MimeMessage;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class MailUtility
 {
+	private static final Logger logger = LogManager.getLogger(MailUtility.class);
+	
 	public static String triggerMail(String subject, String body, String attachementFilePath, String to)
 	{
 		String FromEmailID = "noreply.sdc@vit.ac.in";
 		String FromEmailPass = "xM*$HZ87y7@^(5LS#.U*AgS";			
  
-		Properties props = new Properties();		 
-		//props.put("mail.smtp.host", "10.10.4.55");
+		Properties props = new Properties();
 		props.put("mail.smtp.host", "smtp.vit.ac.in");
 		props.put("mail.smtp.port", "25"); 		  
 		props.put("mail.smtp.auth", "true");		 
@@ -45,14 +49,13 @@ public class MailUtility
 			message.setContent(body ,"text/html");		
  
 			Transport.send(message);
-			//System.out.println("<<<<<< Email Sent Successfully >>>>>>>");
+			logger.trace("\n <<<<<< Email Sent Successfully >>>>>>>");
 			
 			return "SUCCESS";
 		 }
 		 catch(Exception e)
 		 {
-			 //e.printStackTrace();
-			 //System.out.println("<<<<<<<<< Error Sending Email >>>>>>>>>>");
+			 logger.trace(e);
 			 return e.toString();
 		 }
 	}

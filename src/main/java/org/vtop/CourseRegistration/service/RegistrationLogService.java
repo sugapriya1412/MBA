@@ -9,7 +9,7 @@ import org.vtop.CourseRegistration.repository.RegistrationLogRepository;
 
 
 @Service
-@Transactional("transactionManager")
+@Transactional(readOnly=true)
 public class RegistrationLogService
 {
 	@Autowired private RegistrationLogRepository registrationLogRepository;
@@ -18,33 +18,6 @@ public class RegistrationLogService
 	public boolean isExist(String registerNumber)
 	{
 		return registrationLogRepository.existsById(registerNumber);
-	}
-	
-	public void UpdateLogoutTimeStamp(String ipAddress, String registerNumber)
-	{
-		registrationLogRepository.UpdateLogoutTimeStamp(ipAddress, registerNumber);
-	}
-		
-	public void addErrorLog(String exceptionMessage, String packageName, String programName, 
-			String userId, String ipAddress)
-	{
-		if (exceptionMessage.length() >= 1000)
-		{
-			exceptionMessage = exceptionMessage.substring(1, 999);
-		}
-	
-		if (packageName.length() >= 100)
-		{
-			packageName = packageName.substring(1, 99);
-		}
-	
-		if (programName.length() >= 250)
-		{
-			programName = programName.substring(1, 249);
-		}
-	
-		registrationLogRepository.InsertErrorLog(exceptionMessage, "ACADEMICS", packageName, 
-			programName, userId, ipAddress);
 	}
 	
 	public Integer getRegistrationExemptionReasonTypeBySemesterSubIdAndRegisterNumber(String semesterSubId, 
@@ -62,26 +35,6 @@ public class RegistrationLogService
 		return tempReasonType;
 	}
 	
-	public void AddRegistrationLog(String registerNumber, String ipAddress)
-	{
-		registrationLogRepository.AddRegistrationLog(registerNumber, ipAddress);
-	}
-	
-	public void UpdateActiveTimeStamp(String registerNumber)
-	{
-		registrationLogRepository.UpdateActiveTimeStamp(registerNumber);
-	}
-	
-	public void UpdateLoginTimeStamp2(String ipAddress, String registerNumber)
-	{
-		registrationLogRepository.UpdateLoginTimeStamp2(ipAddress, registerNumber);
-	}
-	
-	public void UpdateLogoutTimeStamp2(String ipAddress, String registerNumber)
-	{
-		registrationLogRepository.UpdateLogoutTimeStamp2(ipAddress, registerNumber);
-	}
-	
 	public List<Object[]> getRegistrationLogTimeDifference(String registerNumber)
 	{
 		return registrationLogRepository.findRegistrationLogTimeDifference(registerNumber);
@@ -91,16 +44,4 @@ public class RegistrationLogService
 	{
 		return registrationLogRepository.findRegistrationLogByRegisterNumber(registerNumber);
 	}
-	
-	/*public void saveOne(RegistrationLogModel registrationLogModel){
-		registrationLogRepository.save(registrationLogModel);
-	}
-	
-	public void UpdateLoginTimeStamp(String ipAddress, String registerNumber){
-		registrationLogRepository.UpdateLoginTimeStamp(ipAddress, registerNumber);
-	}*/
-	
-	/*public RegistrationLogModel getOne(String registerNumber){
-		return registrationLogRepository.findOne(registerNumber);
-	}*/
 }

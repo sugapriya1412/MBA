@@ -12,7 +12,7 @@ import org.vtop.CourseRegistration.repository.CourseRegistrationWaitingRepositor
 
 
 @Service
-@Transactional("transactionManager")
+@Transactional(readOnly=true)
 public class CourseRegistrationWaitingService
 {		
 	@Autowired private CourseRegistrationWaitingRepository courseRegistrationWaitingRepository;
@@ -88,11 +88,6 @@ public class CourseRegistrationWaitingService
 		return tempCount;
 	}	
 	
-	public void deleteByRegisterNumberCourseId(String semesterSubId, String registerNumber, String courseId)
-	{		
-		courseRegistrationWaitingRepository.deleteByRegisterNumberCourseId(semesterSubId, registerNumber, courseId);
-	}
-	
 	public List<Object[]> getWaitingCourseByRegNoWithRank(String semesterSubId, String registerNumber)
 	{
 		return courseRegistrationWaitingRepository.findWaitingCourseByRegNoWithRank(semesterSubId, registerNumber);
@@ -136,102 +131,4 @@ public class CourseRegistrationWaitingService
 		
 		return tempCourseList;
 	}
-	
-	
-	//Course Registration Waiting Move
-	public void addWaitingToWaitingMove(String semesterSubId, String registerNumber, String courseId, 
-			int waitStatus, String ipaddress)
-	{		
-		courseRegistrationWaitingRepository.insertWaitingToWaitingMove(semesterSubId, registerNumber, 
-				courseId, waitStatus, ipaddress);
-	}
-	
-	
-	/*public CourseRegistrationWaitingModel saveOne(CourseRegistrationWaitingModel courseRegistrationWaitingModel)
-	{
-		return courseRegistrationWaitingRepository.save(courseRegistrationWaitingModel);
-	}
-	
-	public CourseRegistrationWaitingModel getOne(CourseRegistrationWaitingPKModel courseRegistrationWaitingPKModel)
-	{
-		return courseRegistrationWaitingRepository.findOne(courseRegistrationWaitingPKModel);
-	}
-		
-	public List<CourseRegistrationWaitingModel> getAll(String semesterSubId)
-	{
-		return courseRegistrationWaitingRepository.findBySemesterSubId(semesterSubId);
-	}
-		
-	public List<CourseRegistrationWaitingModel> getByRegisterNumber(String semesterSubId, String registerNumber)
-	{
-		return courseRegistrationWaitingRepository.findByRegisterNumber(semesterSubId, registerNumber);
-	}
-	
-	public List<CourseRegistrationWaitingModel> getByRegisterNumberCourseId(String semesterSubId, 
-													String registerNumber, String courseId)
-	{
-		return courseRegistrationWaitingRepository.findByRegisterNumberCourseId(semesterSubId, 
-					registerNumber, courseId);
-	}*/
-	
-	/*public List<String> getWaitingSlots(String semesterSubId, String registerNumber)
-	{
-		return courseRegistrationWaitingRepository.findWaitingSlots(semesterSubId, registerNumber);
-	}*/
-	
-	/*public List<String> getWaitingCourse(String semesterSubId, String registerNumber)
-	{
-		return courseRegistrationWaitingRepository.findWaitingCourse(semesterSubId, registerNumber);
-	}*/
-	
-	/*public List<CourseRegistrationWaitingModel> getByClassId(String semesterSubId, String classId)
-	{
-		return courseRegistrationWaitingRepository.findByClassId(semesterSubId, classId);
-	}
-	
-	public void statusUpdate(String semesterSubId, String registerNumber, String courseId, 
-					Integer waitingStatus)
-	{		
-		courseRegistrationWaitingRepository.updateStatusNoByRegisterNumberCourseId(semesterSubId, 
-				registerNumber, courseId, waitingStatus);
-	}*/
-	
-	/*public Integer getRegisterNumberAudCount(String semesterSubId, String registerNumber)
-	{
-		Integer tempCount = 0;
-		
-		tempCount = courseRegistrationWaitingRepository.findRegisterNumberAudCount(semesterSubId, registerNumber);
-		if (tempCount == null)
-		{
-			tempCount = 0;
-		}
-		
-		return tempCount;
-	}
-	
-	public Integer getRegisterNumberGICount(String semesterSubId, String registerNumber)
-	{
-		Integer tempCount = 0;
-		
-		tempCount = courseRegistrationWaitingRepository.findRegisterNumberGICount(semesterSubId, registerNumber);
-		if (tempCount == null)
-		{
-			tempCount = 0;
-		}
-		
-		return tempCount;
-	}*/
-	
-	/*public Integer getRegisterNumberRCCount(String semesterSubId, String registerNumber)
-	{
-		Integer tempCount = 0;
-		
-		tempCount = courseRegistrationWaitingRepository.findRegisterNumberRCCount(semesterSubId, registerNumber);
-		if (tempCount == null)
-		{
-			tempCount = 0;
-		}
-		
-		return tempCount;
-	}*/
 }

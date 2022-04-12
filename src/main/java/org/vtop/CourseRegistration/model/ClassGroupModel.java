@@ -11,23 +11,18 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
+
 
 @Entity
 @Table(name="CLASS_GROUP_MASTER", schema="academics")
-public class ClassGroupModel implements Serializable {
-
+public class ClassGroupModel implements Serializable
+{
 	private static final long serialVersionUID = 1L;
 	
-	
 	@Id
-	@Valid
-	@NotEmpty(message="This Filed is Reguired")
 	@Column(name="CLASS_GROUP_ID")
 	private String classGroupId;
 	
-	@NotEmpty(message="This Filed is Reguired")
 	@Column(name="DESCRIPTION")
 	private String description;
 		
@@ -104,5 +99,4 @@ public class ClassGroupModel implements Serializable {
 				+ ", status=" + status + ", logUserId="
 				+ logUserId + ", logTimestamp=" + logTimestamp + ", logIpaddress=" + logIpaddress + "]";
 	}
-	
 }

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,16 +15,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 
-
 @Service
-@Transactional("transactionManager")
+@Transactional(readOnly=true)
 public class CourseCatalogService
 {
 	@Autowired private CourseCatalogRepository courseCatalogRepository;
-	//@Autowired private CourseRegistrationCommonFunction courseRegistrationCommonFunction;
 	@Autowired private StudentHistoryService studentHistoryService;
-	//@Autowired private CompulsoryCourseConditionDetailService compulsoryCourseConditionDetailService;	
 	
+	private static final Logger logger = LogManager.getLogger(CourseCatalogService.class);
 		
 		
 	public CourseCatalogModel getOne(String courseId)
@@ -81,7 +81,6 @@ public class CourseCatalogService
 		List<String> naGenericCourseType = new ArrayList<String>();
 		
 		//Not allowed Generic Course Type except Compulsory Course
-		//naGenericCourseType = Arrays.asList("SS", "ECA", "OC");
 		naGenericCourseType = Arrays.asList("SS", "ECA");
 		
 		if ((registrationOption != null) && (!registrationOption.equals("")))
@@ -108,7 +107,6 @@ public class CourseCatalogService
 			}
 			else
 			{
-				//searchValue = searchValue.toUpperCase() + "%";
 				searchValue = searchValue.toUpperCase();
 			}
 		}
@@ -121,54 +119,22 @@ public class CourseCatalogService
 		{
 			programGroup = programGroupId.toString();
 		}
+				
+		logger.trace("\n registrationOption: "+ registrationOption +" | srhType: "+ searchType 
+				+" | dataListFlag: "+ dataListFlag +" | PEUEAllowStatus: "+ PEUEAllowStatus);	
+		logger.trace("\n campusCode: "+ campusCode +" | programGroup: "+ programGroup 
+			+" | semesterSubId: "+ semesterSubId +" | registerNumber: "+ registerNumber
+			+" | searchValue: "+ searchValue +" | evalPage: "+ evalPage 
+			+" | evalPageSize: "+ evalPageSize +" | programSpecId: "+ programSpecId 
+			+" | admissionYear: "+ admissionYear +" | curriculumVersion: "+ curriculumVersion 
+			+" | registrationMethod: "+ registrationMethod +" | costCentreCode: "+ costCentreCode 
+			+" | programGroupCode: "+ programGroupCode +" | programSpecCode: "+ programSpecCode);
 		
-		
-		//System.out.println("registrationOption: "+ registrationOption +" | srhType: "+ searchType 
-		//		+" | dataListFlag: "+ dataListFlag +" | PEUEAllowStatus: "+ PEUEAllowStatus);	
-		
-		//System.out.println("campusCode: "+ campusCode +" | programGroup: "+ programGroup 
-		//	+" | semesterSubId: "+ semesterSubId +" | registerNumber: "+ registerNumber
-		//	+" | searchValue: "+ searchValue +" | evalPage: "+ evalPage 
-		//	+" | evalPageSize: "+ evalPageSize +" | programSpecId: "+ programSpecId 
-		//	+" | admissionYear: "+ admissionYear +" | curriculumVersion: "+ curriculumVersion 
-		//	+" | registrationMethod: "+ registrationMethod +" | costCentreCode: "+ costCentreCode 
-		//	+" | programGroupCode: "+ programGroupCode +" | programSpecCode: "+ programSpecCode);
-		
-		//Course System
-		//System.out.println("courseSystem: ");
-		//for(int i=0; i<courseSystem.length; i++)
-		//{
-		//	System.out.println("Course System: "+ courseSystem[i]);
-		//}
-		
-		//Eligible Program Group Id
-		//System.out.println("egbGroupId: ");
-		//for(Integer e: egbGroupId)
-		//{
-		//	System.out.println("Eligible Program Group Id: "+ e);
-		//}
-		
-		//Class Group Id
-		//System.out.println("classGroupId: ");
-		//for(int i=0; i<classGroupId.length; i++)
-		//{
-		//	System.out.println("Class Group Id: "+ classGroupId[i]);
-		//}
-		
-		//Class Type
-		//System.out.println("classType: ");
-		//for(int i=0; i<classType.length; i++)
-		//{
-		//	System.out.println("Class Type: "+ classType[i]);
-		//}
-		
-		//Register Number List 2
-		//System.out.println("registerNumber2: ");
-		//for(int i=0; i<registerNumber2.length; i++)
-		//{
-		//	System.out.println("Register No.: "+ registerNumber2[i]);
-		//}
-		
+		logger.trace("\n courseSystem: "+ courseSystem);
+		logger.trace("\n egbGroupId: "+ egbGroupId);
+		logger.trace("\n classGroupId: "+ classGroupId);
+		logger.trace("\n classType: "+ classType);
+		logger.trace("\n registerNumber2: "+ registerNumber2);
 		
 		if (dataListFlag == 1)
 		{
@@ -321,46 +287,7 @@ public class CourseCatalogService
 							break;
 					}
 					break;
-
-				/*case "SS":
-					courseCode = courseRegistrationCommonFunction.SoftSkillCourseCheck(programGroupId, admissionYear, 
-									studentGraduateYear, registerNumber, programSpecCode, programGroupCode);
-											
-					if (registrationMethod.equals("CAL"))
-					{
-						if (programGroupCode.equals("RP"))
-						{
-							tempList = courseCatalogRepository.findCALSoftSkillCourse(campusCode, courseSystem, 
-											egbGroupId, programGroup, semesterSubId, classGroupId, classType, courseCode);
-						}
-						else
-						{
-							tempList = courseCatalogRepository.findCALSoftSkillCourseByClassOption(campusCode, 
-											courseSystem, egbGroupId, programGroup, semesterSubId, classGroupId, 
-											classType, courseCode, programGroupCode, programSpecCode, costCentreCode);
-						}
-					}
-					else if (!registrationMethod.equals("CAL"))
-					{
-						if (programGroupCode.equals("RP"))
-						{
-							tempList = courseCatalogRepository.findFFCSSoftSkillCourse(campusCode, egbGroupId,
-											programGroup, semesterSubId, classGroupId, classType, courseCode);
-						}
-						else
-						{
-							tempList = courseCatalogRepository.findFFCSSoftSkillCourseByClassOption(campusCode, 
-											egbGroupId, programGroup, semesterSubId, classGroupId, classType, 
-											courseCode, programGroupCode, programSpecCode, costCentreCode);
-						}
-					}
-					break;*/
 					
-				//case "PC":
-				//case "PE":
-				//case "UC":
-				//case "BC":
-				//case "NC":
 				default:
 					switch(searchType)
 					{
@@ -438,27 +365,4 @@ public class CourseCatalogService
 						
 		return totalPage +"|"+ fromIndex +"|"+ toIndex;
 	}
-	
-	
-	/*public List<CourseCatalogModel> getByCourseCode(String searchVal)
-	{
-		return courseCatalogRepository.findByCourseCode(searchVal);
-	}
-		
-	public CourseCatalogModel getByCourseCodeAndVersion(String code, float courseVersion)
-	{
-		return courseCatalogRepository.findByCourseCodeAndVersion(code, courseVersion);
-	}
-		
-	public List<CourseCatalogModel> getRegistrationCourseList(String campusCode, String[] courseSystem, 
-			List<Integer> egbGroupId, String groupCode)
-	{
-		return courseCatalogRepository.findRegistrationCourseList(campusCode, courseSystem, 
-				egbGroupId, groupCode);
-	}*/
-		
-	/*public boolean isExist(String courseId)
-	{
-		return courseCatalogRepository.exists(courseId);
-	}*/
 }

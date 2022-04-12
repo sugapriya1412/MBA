@@ -58,20 +58,4 @@ public interface CourseEquivalanceRegRepository extends JpaRepository<CourseEqui
 					nativeQuery=true)
 	List<Object[]> findByRegisterNumberAndCourseCode(String semesterSubId, List<String> registerNumber, List<String> courseOptionCode, 
 						String courseCode);
-	
-	/*@Query("select a from CourseEquivalanceRegModel a where a.courseEquivalanceRegPKId.semesterSubId=?1 "+
-				"order by a.courseEquivalanceRegPKId.registerNumber, a.courseEquivalanceRegPKId.courseId, "+
-				"a.courseEquivalanceRegPKId.courseType desc")
-	List<CourseEquivalanceRegModel> findBySemesterSubId(String semesterSubId);
-	
-	@Query("select a from CourseEquivalanceRegModel a where a.courseEquivalanceRegPKId.semesterSubId=?1 "+
-			"and a.courseEquivalanceRegPKId.registerNumber=?2 order by a.courseEquivalanceRegPKId.courseId, "+
-			"a.courseEquivalanceRegPKId.courseType desc")
-	List<CourseEquivalanceRegModel> findByRegisterNumber(String semesterSubId, String registerNumber);
-	
-	@Query("select a from CourseEquivalanceRegModel a where a.courseEquivalanceRegPKId.semesterSubId=?1 "+
-			"and a.courseEquivalanceRegPKId.registerNumber=?2 and a.courseEquivalanceRegPKId.courseId=?3 "+
-			"order by a.courseEquivalanceRegPKId.courseType desc")
-	List<CourseEquivalanceRegModel> findByRegisterNumberCourseId(String semesterSubId, String registerNumber, 
-										String courseId);*/
 }

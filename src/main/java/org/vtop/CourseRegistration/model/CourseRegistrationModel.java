@@ -12,10 +12,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+
 @Entity
 @Table(name="COURSE_REGISTRATION", schema="ACADEMICS")
-public class CourseRegistrationModel implements Serializable {
-	
+public class CourseRegistrationModel implements Serializable
+{	
 	private static final long serialVersionUID = 1L;
 	
 	@EmbeddedId
@@ -65,6 +66,13 @@ public class CourseRegistrationModel implements Serializable {
 	
 	@Column(name="EXTERNAL_FOILCARD_NUMBER")
 	private Long externalFoilcardNumber;
+	
+	@Column(name="ATTENDANCE_DATE")
+	@Temporal(TemporalType.DATE)
+	private Date attendanceDate;
+	
+	@Column(name="GRADE_CATEGORY")
+	private String gradeCategory;
 	
 	@Column(name="LOG_USERID")
 	private String logUserId;
@@ -188,6 +196,22 @@ public class CourseRegistrationModel implements Serializable {
 		this.externalFoilcardNumber = externalFoilcardNumber;
 	}
 
+	public Date getAttendanceDate() {
+		return attendanceDate;
+	}
+
+	public void setAttendanceDate(Date attendanceDate) {
+		this.attendanceDate = attendanceDate;
+	}
+
+	public String getGradeCategory() {
+		return gradeCategory;
+	}
+
+	public void setGradeCategory(String gradeCategory) {
+		this.gradeCategory = gradeCategory;
+	}
+
 	public String getLogUserId() {
 		return logUserId;
 	}
@@ -246,8 +270,8 @@ public class CourseRegistrationModel implements Serializable {
 				+ courseOptionModel + ", statusNumber=" + statusNumber + ", registrationStatusMasterModel="
 				+ registrationStatusMasterModel + ", componentType=" + componentType + ", invoiceNumber="
 				+ invoiceNumber + ", internalFoilcardNumber=" + internalFoilcardNumber + ", externalFoilcardNumber="
-				+ externalFoilcardNumber + ", logUserId=" + logUserId + ", logTimestamp=" + logTimestamp
-				+ ", logIpaddress=" + logIpaddress + "]";
+				+ externalFoilcardNumber + ", attendanceDate=" + attendanceDate + ", gradeCategory=" + gradeCategory
+				+ ", logUserId=" + logUserId + ", logTimestamp=" + logTimestamp + ", logIpaddress=" + logIpaddress
+				+ "]";
 	}
-	
 }

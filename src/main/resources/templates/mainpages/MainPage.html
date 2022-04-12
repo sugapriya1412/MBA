@@ -31,11 +31,13 @@
 <head th:include="layouts/Header :: style_sheets">
 	<link href="assets/img/favicon1.png" rel="icon" type="image/x-icon" />
 </head>
-<body class="hold-transition skin-blue-light sidebar-mini fixed"  id="errorMsg">
+<body class="hold-transition skin-blue-light sidebar-mini fixed" id="errorMsg">
+
 	<header class="main-header" th:include="layouts/Header :: header"></header>
+	
 	<div class="top-info" style="color: rgb(0, 0, 0); font-family: times new roman;
-	  font-weight: bold; text-align: left; float: left; 
-	  width: 100%; background-color: rgb(221, 221, 221); padding: 11px 0px; font-size: 16px;">
+			font-weight: bold; text-align: left; float: left; width: 100%; 
+			background-color: rgb(221, 221, 221); padding: 11px 0px; font-size: 16px;">
 		<div class="container">		
 			<span th:text="${studentDetails}"></span>				  
 			<span id="servertime" style="float: right;">							
@@ -52,126 +54,49 @@
 	<div>
 		<table class="w3-table-all w3-card-4" 
 			style="background-color: #e0f8f8; padding: 11px 10px;">
-							<tr>
-								<td class="tooltip"  style="width: 10%; 
-									text-align: center; color:black;">
-									<i class="fa fa-home" aria-hidden="true" onclick="viewRegOption();"
-										style="color:green; font-size: 25px ; cursor: pointer;">
-										<span class="tooltiptext">Home</span></i>								
-								</td>
-								<td class="tooltip" style="width: 10%; text-align: center;
-										color:black;">
-										<i class="fa fa-book" aria-hidden="true" onclick="viewRegistered();" 
-										 style="color:rgb(224,92,38); font-size: 25px ;cursor: pointer;">
-										<span class="tooltiptext">View Registered Course(s)</span></i>
-								</td>
-								<td class="tooltip"  style="width: 10%; text-align: center;
-										color:black; ">
-										<i class="fa fa-pencil-square-o" aria-hidden="true" onclick="modifySlots();"
-										style="color:rgb(220,123,36); font-size: 25px ;cursor: pointer;">
-										<span class="tooltiptext">Modify Slot(s) </span></i>
-								</td>
-								<td class="tooltip" style="width: 10%; text-align: center;
-										color:black; ">
-										<i class="fa fa-trash" onclick="deleteCourse();"  
-										style="color:red; font-size: 25px ;cursor: pointer;">
-										<span class="tooltiptext">Delete Registered Course(s)</span></i>
-								</td>
-								<td class="tooltip" style="width: 10%; text-align: center;
-										color:black; ">
-										<i class="fa fa-area-chart"   onclick="curriculumCredits();" 
-										style="color:black;font-size: 25px ;cursor: pointer;">
-										<span class="tooltiptext">Curriculum Credits View </span></i>
-								</td>
-								<td class="tooltip" style="width: 10%; 
-										text-align: center; color:black;">
-									<i class="fa fa-power-off"   onclick="location.href='processLogout'" 
-										style="color:black;font-size: 25px ;cursor: pointer; color:red">
-										<span class="tooltiptext">Signout</span></i>
-								</td>
-							</tr>
-						</table> 
-					</div>
+			<tr>
 			
-	 			<div  th:fragment="creditsFragment" id="creditsFragment">
-	 			<div  th:if="${creditDetailshowFlag =='true'}"   style="padding:10px;" align="center" >
-				 <table  style="border: 8px solid; width: 25%; border-color: rgb(221, 221, 221);">
-							<tr >
-								<td style="width: 30%; border-color: rgb(221, 221, 221); color:black; text-align: center;
-										background: #000428;  /* fallback for old browsers */
-										background: -webkit-linear-gradient(to right, #004e92, #000428);  /* Chrome 10-25, Safari 5.1-6 */
-										background: linear-gradient(to right, #004e92, #000428); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-										color:white;">
-									
-								</td>
-								<td style="width: 20%;
-										background: #000428;  /* fallback for old browsers */
-										background: -webkit-linear-gradient(to right, #004e92, #000428);  /* Chrome 10-25, Safari 5.1-6 */
-										background: linear-gradient(to right, #004e92, #000428); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-										color:white;">
-									Credits
-								</td>
-								<td style="width: 20%;
-										background: #000428;  /* fallback for old browsers */
-										background: -webkit-linear-gradient(to right, #004e92, #000428);  /* Chrome 10-25, Safari 5.1-6 */
-										background: linear-gradient(to right, #004e92, #000428); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-										color:white; ">
-									Courses
-								</td>
-							</tr>
-							
-							<tr>
-								<td style="background: #000428;  /* fallback for old browsers */
-										background: -webkit-linear-gradient(to right, #004e92, #000428);  /* Chrome 10-25, Safari 5.1-6 */
-										background: linear-gradient(to right, #004e92, #000428); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-										color:white; ">Maximum</td>
-								<td style="text-align: center; font-weight: bold;"
-									th:text="${(maxCredit == null) ? '0' : maxCredit}"></td>
-								<td style="text-align: center; font-weight: bold;"> - </td>
-							</tr>
-							
-							<tr>
-								<td style="background: #000428;  /* fallback for old browsers */
-										background: -webkit-linear-gradient(to right, #004e92, #000428);  /* Chrome 10-25, Safari 5.1-6 */
-										background: linear-gradient(to right, #004e92, #000428); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-										color:white; ">Minimum</td>
-								<td style="text-align: center; font-weight: bold;" th:text="${minCredit}"></td>
-								<td style="text-align: center; font-weight: bold;"> - </td>
-							</tr>
-							
-							<tr>
-								<td style="background: #000428;  /* fallback for old browsers */
-										background: -webkit-linear-gradient(to right, #004e92, #000428);  /* Chrome 10-25, Safari 5.1-6 */
-										background: linear-gradient(to right, #004e92, #000428); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-										color:white; ">Registered</td>
-								<td style="text-align: center; font-weight: bold;" 
-									th:text="${(regCredit == null) ? '0' : regCredit}"></td>
-								<td style="text-align: center; font-weight: bold;" 
-									th:text="${(regCount == null) ? '0' : regCount}"></td>
-							</tr>
-							
-							<tr th:if="${WaitingListStatus == 1}">
-								<td style="background: #000428;  /* fallback for old browsers */
-										background: -webkit-linear-gradient(to right, #004e92, #000428);  /* Chrome 10-25, Safari 5.1-6 */
-										background: linear-gradient(to right, #004e92, #000428); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-										color:white; ">Waiting</td>
-								<td style="text-align: center; font-weight: bold;" 
-									th:text="${(wlCredit == null) ? '0' : wlCredit}"></td>
-								<td style="text-align: center; font-weight: bold;" 
-									th:text="${(wlCount == null) ? '0' : wlCount}"></td>
-							</tr>
-						</table> 
-					</div>
-					<br/>	
-					</div>
-
+				<td class="tooltip" style="width: 5%; text-align: center; color:black;">
+					<i class="fa fa-home" aria-hidden="true" onclick="viewRegOption();"
+						style="color:green; font-size: 25px ; cursor: pointer;">
+						<span class="tooltiptext">Home</span></i>								
+				</td>
+				<td class="tooltip" style="width: 5%; text-align: center; color:black;">
+					<i class="fa fa-book" aria-hidden="true" onclick="viewRegistered();" 
+						 style="color:rgb(224,92,38); font-size: 25px ;cursor: pointer;">
+						<span class="tooltiptext">View Registered Course(s)</span></i>
+				</td>
+				<td class="tooltip" style="width: 5%; text-align: center; color:black;">
+					<i class="fa fa-pencil-square-o" aria-hidden="true" onclick="modifySlots();"
+						style="color:rgb(220,123,36); font-size: 25px ;cursor: pointer;">
+						<span class="tooltiptext">Modify Slot(s) </span></i>
+				</td>
+				<td class="tooltip" style="width: 5%; text-align: center; color:black;">
+					<i class="fa fa-trash" onclick="deleteCourse();"  
+						style="color:red; font-size: 25px ;cursor: pointer;">
+						<span class="tooltiptext">Delete Registered Course(s)</span></i>
+				</td>
+				<td class="tooltip" style="width: 5%; text-align: center; color:black;">
+					<i class="fa fa-area-chart" onclick="curriculumCredits();" 
+						style="color:black;font-size: 25px ;cursor: pointer;">
+						<span class="tooltiptext">Curriculum Credits View </span></i>
+				</td>
+				<td class="tooltip" style="width: 5%; text-align: center; color:black;">
+					<i class="fa fa-power-off" onclick="location.href='processLogout'" 
+						style="color:black;font-size: 25px ;cursor: pointer; color:red">
+						<span class="tooltiptext">Signout</span></i>
+				</td>
+					
+			</tr>
+		</table> 
+	</div>
+			
 	<div class="content-wrapper" id="page-wrapper">
 		<div class="container">
 			<section class="content">			
 			
 			</section>
 		</div>
-		
 	</div>
 
 	<footer class="main-footer" th:include="layouts/Footer::footer"></footer>
@@ -232,16 +157,7 @@
 				success : function(response) 
 				{				
 					$('#page-wrapper').html(response);
-					$.unblockUI();
-					
-					/* if (showFlag==0)
-					{						
-						document.getElementById("showFlag").style.display="none";
-						document.getElementById("searchRow3").style.display="none";
-						document.getElementById("NotesRow").style.display="";
-					} */
-					
-					viewCredits('false');				
+					$.unblockUI();				
 				}
 			});
 		}
@@ -261,16 +177,6 @@
 				{				
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-					/* if (showFlag > 0)
-					{								
-						document.getElementById("showFlag").style.display="";
-						document.getElementById("NotesRow").style.display="none";
-						document.getElementById("searchOption").selectedIndex = 0;								
-						searchOptionChange(2);
-					} */
-					
-					viewCredits('false');
 				}
 			});
 		}
@@ -321,16 +227,6 @@
 					{				
 						$('#page-wrapper').html(response);
 						$.unblockUI();
-						
-					/* 	if (showFlag > 0)
-						{								
-							document.getElementById("showFlag").style.display="";
-							document.getElementById("NotesRow").style.display="none";
-							document.getElementById("searchOption").selectedIndex = 0;								
-							searchOptionChange(2);
-						} */
-						
-						viewCredits('false');
 					}
 				});
 			}
@@ -372,8 +268,6 @@
 				{
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-					viewCredits('false');
 				}
 			});
 		}		
@@ -390,14 +284,6 @@
 				{
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-				/* 	if (showFlag==0)
-					{						
-						document.getElementById("showFlag").style.display="none";
-						document.getElementById("searchRow3").style.display="none";
-						document.getElementById("NotesRow").style.display="";
-					} */
-					viewCredits('true');
 				}
 			});
 		}
@@ -417,14 +303,6 @@
 				{
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-				/* 	if (showFlag==0)
-					{						
-						document.getElementById("showFlag").style.display="none";
-						document.getElementById("searchRow3").style.display="none";
-						document.getElementById("NotesRow").style.display="";
-					} */
-					viewCredits('false');
 				}
 			});
 		}
@@ -444,14 +322,6 @@
 				{
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-					/* if (showFlag==0)
-					{						
-						document.getElementById("showFlag").style.display="none";
-						document.getElementById("searchRow3").style.display="none";
-						document.getElementById("NotesRow").style.display="";
-					} */
-					viewCredits('false');
 				}
 			});
 		}
@@ -476,8 +346,6 @@
 				{		
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-					viewCredits('false');
 				}				
 			});
 			
@@ -852,8 +720,6 @@
 					{
 						$('#page-wrapper').html(response);
 						$.unblockUI();
-						
-						viewCredits('false');
 					}
 				});
 			}
@@ -1255,7 +1121,6 @@
 									+"&epjSlotFlag="+ epjSlotFlag +"&crCourseStatus="+ crCourseStatus 
 									+"&crCourseId="+ crCourseId +"&crCourseCode="+ crCourseCode 
 									+"&crCourseType="+ crCourseType;
-			//alert("dataParameter"+dataParameter);
 						
 			if (chkflg == 1) 
 			{
@@ -1270,32 +1135,11 @@
 					{
 						$('#page-wrapper').html(response);
 						$.unblockUI();
-						
-						viewCredits('false');
 					}
 				});
 			} 
 		}
-		
-		function viewCredits(creditDetailshowFlag) 
-		{
-			var creditDetailshowFlag = creditDetailshowFlag;
-			var dataParameter = "creditDetailshowFlag=" + creditDetailshowFlag;
-			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
-			
-			$.ajax({
-				url : "ViewCredits",
-				type : "POST",
-				data : dataParameter,
-			
-				success : function(response) 
-				{
-					$('#creditsFragment').html(response);
-					$.unblockUI();
-				}
-			});
-		}	
-
+	
 		function goBack() 
 		{
 			var params = "&pageSize=5&page="+ $('#page').val() +"&searchType="+ $('#searchType').val() 
@@ -1311,8 +1155,6 @@
 				{
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-					viewCredits('false');
 				}
 			});
 		}
@@ -1332,8 +1174,6 @@
 				{	
 					$('#ProjectGuideFragment').html(response);
 					$.unblockUI();
-					
-					viewCredits('false');
 				}
 			});
 		}		
@@ -1354,8 +1194,6 @@
 				{
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-					viewCredits('false');
 				}				
 			});
 		}
@@ -1392,8 +1230,6 @@
 					{
 						$('#page-wrapper').html(response);
 						$.unblockUI();
-						
-						viewCredits('false');
 					}				
 				});
 			}
@@ -1410,8 +1246,6 @@
 				{
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-					viewCredits('false');
 				}				
 			});
 		}
@@ -1431,8 +1265,6 @@
 				{
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-					viewCredits('false');
 				}				
 			});
 		}
@@ -1448,8 +1280,6 @@
 				{
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-					//viewCredits();
 				}				
 			});
 		}
@@ -1469,15 +1299,12 @@
 				{
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-					viewCredits('false');
 				}				
 			});
 		}
 
 		function processDeleteCourseRegistrationWaiting(courseId) 
 		{
-			//alert("processDeleteCourseRegistrationWaiting"+courseId);
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
 			$.ajax({
@@ -1488,8 +1315,6 @@
 				{
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-					viewCredits('false');
 				}				
 			});
 		}
@@ -1544,7 +1369,6 @@
 				var mailOTP = $("#mailOTP").val();
 				var dataParameter = "newCourseDetail="+ $('input:radio[name=courseOption]:checked').val() 
 										+"&oldClassId=" + oldClassId +"&mailOTP="+ mailOTP;
-				//alert('dataParameter'+dataParameter);
 				
 				$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 				
@@ -1556,8 +1380,6 @@
 					{
 						$('#page-wrapper').html(response);
 						$.unblockUI();
-						
-						viewCredits('false');
 					}
 				});
 			}
@@ -1574,8 +1396,6 @@
 				{					
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-					viewCredits('false');
 				}				
 			});
 		}		
@@ -1591,8 +1411,6 @@
 				{
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-					viewCredits('false');
 				}
 			});
 		}
@@ -1617,8 +1435,6 @@
 				{
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-					viewCredits('false');
 				}
 			});
 		}
@@ -1638,8 +1454,6 @@
 				{
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-					viewCredits('false');
 				}				
 			});
 		}
@@ -1660,8 +1474,6 @@
 				{		
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-					viewCredits('false');
 				}	
 				
 			});
@@ -1681,8 +1493,6 @@
 				{
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-					
-					viewCredits('false');
 				}
 			});
 		}
@@ -1698,8 +1508,7 @@
 				success : function(response) 
 				{
 					$('#page-wrapper').html(response);
-					$.unblockUI();					
-					viewCredits('false');
+					$.unblockUI();
 				}
 			});
 		}
@@ -1722,8 +1531,6 @@
 			var timestring = padlength(serverdate.getHours())+":"+padlength(serverdate.getMinutes())+":"+padlength(serverdate.getSeconds());
 			document.getElementById("servertime").innerHTML = datestring+" "+timestring;
 		}
-
-
 		/************VIEW SLOTS*****************/
 
 		/*]]>*/

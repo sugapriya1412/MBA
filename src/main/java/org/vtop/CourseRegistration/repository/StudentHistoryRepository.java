@@ -3,8 +3,6 @@ package org.vtop.CourseRegistration.repository;
 import java.util.Date;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -13,7 +11,6 @@ import org.vtop.CourseRegistration.model.StudentHistoryPKModel;
 
 
 @Repository
-@Transactional
 public interface StudentHistoryRepository extends JpaRepository<StudentHistoryModel, StudentHistoryPKModel>
 {	
 	@Query("select a from StudentHistoryModel a where a.studentHistoryPKId.registerNumber in (?1) and "+
@@ -211,28 +208,12 @@ public interface StudentHistoryRepository extends JpaRepository<StudentHistoryMo
 	
 		
 	//Procedure
-	//Old Method:  To insert the fresh Data in Student History from Examination Schema
-	//@Procedure(name="call student_history_insert_process", procedureName="EXAMINATIONS.ACAD_STUDENT_HISTORY_PROCESS")
-	//String acad_student_history_insert_process(String pRegisterNumber, String pCourseSystem);*/
 	@Query(value="call EXAMINATIONS.ACAD_STUDENT_HISTORY_PROCESS (?1, ?2, ?3)", nativeQuery=true)
 	String acad_student_history_insert_process(String pRegisterNumber, String pCourseSystem, String returnValue);
 	
 	//New Method:  To insert the fresh Data in Student History from Examination Schema with N grade concept
-	//@Procedure(name="student_history_insert_process2", procedureName="EXAMINATIONS.ACAD_STUDENT_HISTORY_PROCESS_N")
-	//String acad_student_history_insert_process2(String pRegisterNumber, String pCourseSystem);
 	@Query(value="call EXAMINATIONS.ACAD_STUDENT_HISTORY_PROCESS_N (?1, ?2, ?3)", nativeQuery=true)
 	String acad_student_history_insert_process2(String pRegisterNumber, String pCourseSystem, String returnValue);
-		
-		
-	//To get the CAL Student CGPA & its related details from Examination Schema
-	//@Procedure(name="student_cgpa", procedureName="examinations.cgpa_cal")
-	//String student_cgpa_cal(String pRegisterNumber, String cgp1, String cgpa2, Date fromDate, Date toDate, 
-	//			Integer specId);
-	
-	//To get the CAL Student CGPA & its related details from Examination Schema
-	//@Procedure(name="student_cgpa", procedureName="examinations.cgpa_ncal")
-	//String student_cgpa_ncal(String pRegisterNumber, String cgp1, String cgpa2, Date fromDate, Date toDate, 
-	//			Integer specId);
 	
 	
 	//Research Queries	
@@ -494,215 +475,4 @@ public interface StudentHistoryRepository extends JpaRepository<StudentHistoryMo
 			"  having  examinations.GRADE_LEVEL(a.grade)>=max(examinations.GRADE_LEVEL(b.grade))  order by a.regno,a.subcode", 
 			nativeQuery=true)
 	List<Object[]> findStudentHistoryForCgpaNonCalCalc(String regNo, Short pgmSpecId, Date examMonth);
-		
-	
-	/*@Query("select a from StudentHistoryModel a order by a.studentHistoryPKId.registerNumber, "+
-				"a.studentHistoryPKId.courseId, a.studentHistoryPKId.courseType desc")
-	List<StudentHistoryModel> findAll();
-
-	@Query("select a from StudentHistoryModel a where a.studentHistoryPKId.registerNumber in (?1) "+
-		"order by a.studentHistoryPKId.courseId, a.studentHistoryPKId.courseType desc")
-	List<StudentHistoryModel> findByRegisterNumber(List<String> registerNumber);
-	
-	@Query("select a from StudentHistoryModel a where a.studentHistoryPKId.registerNumber in (?1) and "+
-		"a.studentHistoryPKId.courseId=?2 order by a.studentHistoryPKId.courseType desc")
-	List<StudentHistoryModel> findByRegisterNumberCourseId(List<String> registerNumber, String courseId);
-	
-	@Query("select a from StudentHistoryModel a where a.studentHistoryPKId.registerNumber in (?1) and "+
-		"a.courseCode=?2 and a.courseTypeComponentModel.component in (1,3) "+
-		"order by a.studentHistoryPKId.courseType desc")
-	StudentHistoryModel findStudentHistoryGrade(List<String> registerNumber, String courseCode);
-	
-	@Query("select distinct a.grade from StudentHistoryModel a where "+
-		"a.studentHistoryPKId.registerNumber in (?1) and a.courseCode=?2 and "+
-		"a.courseTypeComponentModel.component in (1,3)")
-	String findStudentHistoryDistinctGrade(List<String> registerNumber, String courseCode);
-	
-	@Query("select a from StudentHistoryModel a where a.studentHistoryPKId.registerNumber in (?1) and "+
-		"a.courseTypeComponentModel.component in (1,3) and a.courseCode in "+
-		"(select b.equivalentCourseCode from CourseEquivalancesModel b where "+
-		"b.courseEquivalancesPkId.courseId=?2) order by a.studentHistoryPKId.courseType desc")
-	List<StudentHistoryModel> findStudentHistoryCEGrade(List<String> registerNumber, String courseId);
-	
-	@Query(value="select a.grade, a.COURSE_CATALOG_COURSE_ID, decode(a.grade,'S',1,'U',2,'P',3,'Pass',"+
-			"4,'A',5,'B',6,'C',7,'D',8,'E',9,'R',10,'F',11,'Fail',12,'N',13,'N1',13,'N2',13,'N3',13,'N4',13,"+
-			"'W',14,'WWW',15,'AAA',16,17) as grade_order from academics.student_history a, "+
-			"academics.COURSE_TYPE_COMPONENT_MASTER b where "+
-			"a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and b.COMPONENT in (1,3) and "+
-			"a.CRSTYPCMPNTMASTER_COURSE_TYPE=b.COURSE_TYPE and (a.COURSE_CODE in "+
-			"(select EQUIVALENT_COURSE_CODE from academics.COURSE_EQUIVALANCES "+
-			"where COURSE_CODE=?2) or a.COURSE_CODE in (select COURSE_CODE from "+ 
-			"academics.COURSE_EQUIVALANCES where EQUIVALENT_COURSE_CODE=?2)) "+
-			"order by grade_order", nativeQuery=true)
-	List<Object[]> findStudentHistoryCEGrade2(List<String> registerNumber, String courseCode);*/
-	
-	/*@Query("select distinct a.studentHistoryPKId.courseType from StudentHistoryModel a where "+
-			"a.studentHistoryPKId.registerNumber in (?1) and a.courseCode=?2 and "+
-			"a.grade in ('Y','N1','N2','N3','N4') and a.courseTypeComponentModel.component=2 "+
-			"order by a.studentHistoryPKId.courseType desc")
-	List<String> findStudentHistoryCourseType(List<String> registerNumber, String courseCode);
-	
-	@Query("select distinct a.studentHistoryPKId.courseType from StudentHistoryModel a where "+
-			"a.studentHistoryPKId.registerNumber in (?1) and a.courseCode=?2 "+
-			"and a.courseTypeComponentModel.component not in (2)")
-	String findStudentHistoryGenericCourseType(List<String> registerNumber, String courseCode);
-	
-
-	//For Course Substitution
-	@Query("select a from StudentHistoryModel a where a.studentHistoryPKId.registerNumber in (?1) and "+
-			"a.courseCode=?2 and a.grade in ('Fail','F','N','N1','N2','N3','N4') and "+
-			"a.courseTypeComponentModel.component in (1,3) order by a.studentHistoryPKId.courseType desc")
-	List<StudentHistoryModel> findStudentHistoryCS(List<String> registerNumber, String courseCode);*/
-	
-	/*@Query("select a from StudentHistoryModel a where (a.studentHistoryPKId.registerNumber in ?1) "+
-			"and a.grade in ('Fail','F') and a.courseTypeComponentModel.component in (1,3) "+
-			"order by a.studentHistoryPKId.courseType desc")
-	List<StudentHistoryModel> findStudentHistoryFailCourse(List<String> registerNumber);
-	
-	@Query("select nvl(sum(a.credit),0) as FCredits from StudentHistoryModel a where "+
-			"(a.studentHistoryPKId.registerNumber in ?1) and a.grade in ('Fail','F') "+
-			"and a.courseTypeComponentModel.component in (1,3)")
-	Integer findStudentHistoryFailCourseCredits(List<String> registerNumber);*/
-	
-	/*@Query(value="select GRADE, COURSE_CATALOG_COURSE_ID, COURSE_CODE, GEN_COURSE_TYPE, decode(GRADE,'S',1,'U',2,'P',3,"+
-				"'Pass',4,'A',5,'B',6,'C',7,'D',8,'E',9,'R',10,'F',11,'Fail',12,'N',13,'N1',13,'N2',13,'N3',13,'N4',13,"+
-				"'W',14,'WWW',15,'AAA',16,17) as grade_order, hist_type from ("+
-				"(select a.GRADE, a.COURSE_CATALOG_COURSE_ID, a.COURSE_CODE, a.CRSTYPCMPNTMASTER_COURSE_TYPE "+
-				"as GEN_COURSE_TYPE, 1 as hist_type from academics.STUDENT_HISTORY a, academics.COURSE_TYPE_COMPONENT_MASTER b "+
-				"where a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and b.COMPONENT in (1,3) and "+ 
-				"a.CRSTYPCMPNTMASTER_COURSE_TYPE=b.COURSE_TYPE) "+
-				"union all "+
-				"(select a.GRADE, a.COURSE_CATALOG_COURSE_ID, a.CODE as COURSE_CODE, a.CRS_CTALOG_GENERIC_COURSE_TYPE "+
-				"as GEN_COURSE_TYPE, 2 as hist_type from examinations.MIGRATION_STUDENT_HISTORY_ACAD a, academics.COURSE_TYPE_COMPONENT_MASTER b "+ 
-				"where a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and b.COMPONENT in (1,3) and "+
-				"a.GRADE is not null and a.CRS_CTALOG_GENERIC_COURSE_TYPE=b.COURSE_TYPE)"+
-				") where COURSE_CODE=?2 order by grade_order", nativeQuery=true)
-	List<Object[]> findStudentHistoryGrade2(List<String> registerNumber, String courseCode);*/
-	
-	/*@Query(value="select GRADE, COURSE_CATALOG_COURSE_ID, COURSE_CODE, GEN_COURSE_TYPE, decode(GRADE,'S',1,'U',2,'P',3,"+
-				"'Pass',4,'A',5,'B',6,'C',7,'D',8,'E',9,'R',10,'F',11,'Fail',12,'N',13,'N1',13,'N2',13,'N3',13,'N4',13,"+
-				"'W',14,'WWW',15,'AAA',16,17) as grade_order, hist_type from ("+
-				"(select a.GRADE, a.COURSE_CATALOG_COURSE_ID, a.COURSE_CODE, a.CRSTYPCMPNTMASTER_COURSE_TYPE "+
-				"as GEN_COURSE_TYPE, 1 as hist_type from academics.STUDENT_HISTORY a, academics.COURSE_TYPE_COMPONENT_MASTER b "+
-				"where a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and b.COMPONENT in (1,3) and "+ 
-				"a.CRSTYPCMPNTMASTER_COURSE_TYPE=b.COURSE_TYPE) "+
-				"union all "+
-				"(select a.GRADE, a.COURSE_CATALOG_COURSE_ID, a.CODE as COURSE_CODE, a.CRS_CTALOG_GENERIC_COURSE_TYPE "+
-				"as GEN_COURSE_TYPE, 2 as hist_type from examinations.MIGRATION_STUDENT_HISTORY_ACAD a, academics.COURSE_TYPE_COMPONENT_MASTER b "+ 
-				"where a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and b.COMPONENT in (1,3) and "+
-				"a.GRADE is not null and a.CRS_CTALOG_GENERIC_COURSE_TYPE=b.COURSE_TYPE)"+
-				") where (COURSE_CODE in (select EQUIVALENT_COURSE_CODE from academics.COURSE_EQUIVALANCES "+
-				"where COURSE_CODE=?2) or COURSE_CODE in (select COURSE_CODE from academics.COURSE_EQUIVALANCES "+
-				"where EQUIVALENT_COURSE_CODE=?2)) order by grade_order", nativeQuery=true)
-	List<Object[]> findStudentHistoryCEGrade3(List<String> registerNumber, String courseCode);*/
-	
-	/*@Query(value="select GRADE, COURSE_CATALOG_COURSE_ID, COURSE_CODE, GEN_COURSE_TYPE, hist_type from ("+
-				"(select a.GRADE, a.COURSE_CATALOG_COURSE_ID, a.COURSE_CODE, a.CRSTYPCMPNTMASTER_COURSE_TYPE "+
-				"as GEN_COURSE_TYPE, 1 as hist_type from academics.STUDENT_HISTORY a, academics.COURSE_TYPE_COMPONENT_MASTER b "+
-				"where a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and a.CRSTYPCMPNTMASTER_COURSE_TYPE=b.COURSE_TYPE) "+
-				"union all "+
-				"(select a.GRADE, a.COURSE_CATALOG_COURSE_ID, a.CODE as COURSE_CODE, a.CRS_CTALOG_GENERIC_COURSE_TYPE "+
-				"as GEN_COURSE_TYPE, 2 as hist_type from examinations.MIGRATION_STUDENT_HISTORY_ACAD a, "+
-				"academics.COURSE_TYPE_COMPONENT_MASTER b where a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and "+
-				"a.GRADE is not null and a.CRS_CTALOG_GENERIC_COURSE_TYPE=b.COURSE_TYPE)"+
-				") where GRADE in ('Fail','F','Y','N1','N2','N3','N4') order by COURSE_CODE", nativeQuery=true)
-	List<Object[]> findStudentHistoryFailCourse2(List<String> registerNumber);*/
-	
-	/*@Query(value="select a.GRADE, a.COURSE_CATALOG_COURSE_ID, a.COURSE_CODE, a.CRSTYPCMPNTMASTER_COURSE_TYPE "+
-			"as GEN_COURSE_TYPE from academics.STUDENT_HISTORY a, academics.COURSE_TYPE_COMPONENT_MASTER b "+
-			"where a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and a.COURSE_CATALOG_COURSE_ID=?2 and "+
-			"trunc(EXAM_MONTH)=to_date(?3,'DD-MON-YYYY') and a.GRADE in ('N2') and "+
-			"a.CRSTYPCMPNTMASTER_COURSE_TYPE=b.COURSE_TYPE order by a.CRSTYPCMPNTMASTER_COURSE_TYPE desc", 
-			nativeQuery=true)
-	List<Object[]> findStudentHistoryNotAllowedGrade(List<String> registerNumber, String courseId, String examMonth);
-	
-	//For Arrears Registration
-	@Query(value="select distinct SEMSTR_DETAILS_SEMESTER_SUB_ID, DESCRIPTION, decode(REGISTRATION_TYPE,"+
-					"'FAR','FAT as Arrear','FAR_RFAT','FAT as Arrear','RAR','Regular Arrear','RAR_RFAT',"+
-					"'Regular Arrear') as reg_type_desc, decode(REGISTRATION_TYPE,'FAR',1,'FAR_RFAT',2,"+
-					"'RAR',3,'RAR_RFAT',4,5) as reg_type_no from ACADEMICS.ARREAR_COURSE_REG_VIEW where "+
-					"STDNTSLGNDTLS_REGISTER_NUMBER=?1 and code=?2 "+
-					"order by SEMSTR_DETAILS_SEMESTER_SUB_ID, reg_type_no", nativeQuery=true)
-	List<Object[]> findArrearRegistrationByRegisterNumberAndCourseCode(String registerNumber, String courseCode);*/
-	
-	/*@Query(value="select distinct SEMSTR_DETAILS_SEMESTER_SUB_ID, DESCRIPTION, decode(REGISTRATION_TYPE,"+
-					"'FAR','FAT as Arrear','FAR_RFAT','FAT as Arrear','RAR','Regular Arrear','RAR_RFAT',"+
-					"'Regular Arrear') as reg_type_desc, decode(REGISTRATION_TYPE,'FAR',1,'FAR_RFAT',2,"+
-					"'RAR',3,'RAR_RFAT',4,5) as reg_type_no from ACADEMICS.ARREAR_COURSE_REG_VIEW where "+
-					"STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and REGISTRATION_TYPE not in ('FAR_RFAT','RAR_RFAT') "+
-					"and code=?2 order by SEMSTR_DETAILS_SEMESTER_SUB_ID, reg_type_no", nativeQuery=true)
-	List<Object[]> findArrearRegistrationByRegisterNumberAndCourseCode3(List<String> registerNumber, 
-						String courseCode);
-
-		
-	@Query(value="select distinct SEMSTR_DETAILS_SEMESTER_SUB_ID, DESCRIPTION, decode(REGISTRATION_TYPE,"+
-					"'FAR','FAT as Arrear','FAR_RFAT','FAT as Arrear','RAR','Regular Arrear','RAR_RFAT',"+
-					"'Regular Arrear') as reg_type_desc, decode(REGISTRATION_TYPE,'FAR',1,'FAR_RFAT',2,"+
-					"'RAR',3,'RAR_RFAT',4,5) as reg_type_no, CODE as course_code from ACADEMICS.ARREAR_COURSE_REG_VIEW "+
-					"where STDNTSLGNDTLS_REGISTER_NUMBER=?1 and (CODE in (select EQUIVALENT_COURSE_CODE from "+
-					"ACADEMICS.COURSE_EQUIVALANCES where COURSE_CODE=?2) or CODE in "+
-					"(select COURSE_CODE from ACADEMICS.COURSE_EQUIVALANCES where EQUIVALENT_COURSE_CODE=?2)) "+
-					"order by SEMSTR_DETAILS_SEMESTER_SUB_ID, reg_type_no", nativeQuery=true)
-	List<Object[]> findArrearCERegistrationByRegisterNumberAndCourseCode(String registerNumber, String courseCode);*/
-	
-	/*@Query(value="select distinct SEMSTR_DETAILS_SEMESTER_SUB_ID, DESCRIPTION, decode(REGISTRATION_TYPE,"+
-					"'FAR','FAT as Arrear','FAR_RFAT','FAT as Arrear','RAR','Regular Arrear','RAR_RFAT',"+
-					"'Regular Arrear') as reg_type_desc, decode(REGISTRATION_TYPE,'FAR',1,'FAR_RFAT',2,"+
-					"'RAR',3,'RAR_RFAT',4,5) as reg_type_no, CODE as course_code from ACADEMICS.ARREAR_COURSE_REG_VIEW "+
-					"where STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and REGISTRATION_TYPE not in ('FAR_RFAT','RAR_RFAT') "+
-					"and (code in (select EQUIVALENT_COURSE_CODE from ACADEMICS.COURSE_EQUIVALANCES where COURSE_CODE=?2) "+
-					"or CODE in (select COURSE_CODE from ACADEMICS.COURSE_EQUIVALANCES where EQUIVALENT_COURSE_CODE=?2)) "+
-					"order by SEMSTR_DETAILS_SEMESTER_SUB_ID, reg_type_no", nativeQuery=true)
-	List<Object[]> findArrearCERegistrationByRegisterNumberAndCourseCode3(List<String> registerNumber, 
-						String courseCode);*/
-	
-	/*//For Course Change or Course Substitution history
-	@Query(value="select PRE_CRSCATALOG_COURSE_ID, PRE_CRSCATALOG_COURSE_CODE, COURSE_CHANGE_OPTION from "+
-					"EXAMINATIONS.STUDENT_COURSE_CHANGE_HISTORY where STDNTSLGNDTLS_REGISTER_NUMBER=?1 and "+
-					"PRE_CRSCATALOG_COURSE_CODE=?2", nativeQuery=true)
-	List<Object[]> findCourseChangeHistoryByRegisterNumberAndCourseCode(String registerNumber, String courseCode);
-	
-	@Query(value="select PRE_CRSCATALOG_COURSE_ID, PRE_CRSCATALOG_COURSE_CODE, COURSE_CHANGE_OPTION from "+
-					"EXAMINATIONS.STUDENT_COURSE_CHANGE_HISTORY where STDNTSLGNDTLS_REGISTER_NUMBER in (?1) "+
-					"and PRE_CRSCATALOG_COURSE_CODE=?2", nativeQuery=true)
-	List<Object[]> findCourseChangeHistoryByRegisterNumberAndCourseCode2(List<String> registerNumber, 
-						String courseCode);*/
-	
-	/*//Previous semester arrear result published course list
-	@Query(value="select * from("
-			+ " select  gne.semstr_details_semester_sub_id,gne.stdntslgndtls_register_number,cc.course_id, cc.code course_code,"
-			+ " cc.generic_course_type,gne.grade from examinations.arrear_grade_non_embedded gne "
-			+ " inner join academics.course_catalog cc on gne.course_catalog_course_id=cc.course_id"
-			+ " inner join examinations.arrear_course_allocation_rar ca on gne.arr_course_allocation_class_id=ca.class_id"
-			+ " inner join (select * from admissions.students_login_details sld "
-			+ " inner join vtopmaster.cost_centre vcc2 on sld.cost_centre=vcc2.centre_id "
-			+ " inner join admissions.student_base sb on sld.application_no=sb.application_number) sd "
-			+ " on gne.stdntslgndtls_register_number=sd.reg_no  "
-			+ " inner join vtopmaster.cost_centre vcc on sd.cost_centre=vcc.centre_id "
-			+ " inner join (select  pg.programme_mode,pg.programme_name,pss.description, "
-			+ " pss.programme_specialization_id from vtopmaster.programme_group pg "
-			+ " inner join vtopmaster.programme_specialization pss on "
-			+ " pg.programme_group_id=pss.prgrm_group_programme_group_id) ps "
-			+ " on sd.prgspl_prgrm_specialization_id=ps.programme_specialization_id "
-			+ " where gne.result_declared_date is not null and gne.semstr_details_semester_sub_id=?1"
-			+ " and gne.stdntslgndtls_register_number in (?2) union all "
-			+ " select gne.semstr_details_semester_sub_id,gne.stdntslgndtls_register_number,"
-			+ " cc.course_id,cc.code course_code,cc.generic_course_type,gne.grade"
-			+ " from examinations.arrear_grade_embedded gne"
-			+ " inner join academics.course_catalog cc on gne.course_catalog_course_id=cc.course_id"
-			+ " inner join examinations.arrear_course_allocation_rar ca on gne.arr_course_allocation_class_id=ca.class_id"
-			+ " inner join (select * from admissions.students_login_details sld"
-			+ " inner join vtopmaster.cost_centre vcc2 on sld.cost_centre=vcc2.centre_id "
-			+ " inner join admissions.student_base sb on sld.application_no=sb.application_number) sd"
-			+ " on gne.stdntslgndtls_register_number=sd.reg_no "
-			+ " inner join vtopmaster.cost_centre vcc on sd.cost_centre=vcc.centre_id"
-			+ " inner join (select  pg.programme_mode,pg.programme_name,pss.description,"
-			+ " pss.programme_specialization_id from vtopmaster.programme_group pg"
-			+ " inner join vtopmaster.programme_specialization pss on"
-			+ " pg.programme_group_id=pss.prgrm_group_programme_group_id) ps"
-			+ " on sd.prgspl_prgrm_specialization_id=ps.programme_specialization_id"
-			+ " where gne.result_declared_date is not null and"
-			+ " gne.semstr_details_semester_sub_id=?1 and gne.stdntslgndtls_register_number in (?2))"
-			+ " order by stdntslgndtls_register_number,course_code", nativeQuery=true)
-	List<Object[]> findResultPublishedCourseDataForRARBySemAndRegNo(String semesterSubId, List<String> regNoList);*/
 }

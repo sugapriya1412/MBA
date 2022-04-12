@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,11 +15,14 @@ import org.vtop.CourseRegistration.repository.CourseRegistrationRepository;
 
 
 @Service
-@Transactional("transactionManager")
+@Transactional(readOnly=true)
 public class CourseRegistrationService
 {
 	@Autowired private CourseRegistrationRepository courseRegistrationRepository;
 	@Autowired private StudentHistoryService studentHistoryService;
+	
+	private static final Logger logger = LogManager.getLogger(CourseRegistrationService.class);
+			
 		
 	public CourseRegistrationModel getOne(CourseRegistrationPKModel courseRegistrationPKModel)
 	{
@@ -159,45 +164,13 @@ public class CourseRegistrationService
 		return courseRegistrationRepository.findRegistrationAndWLCourseByRegisterNumber(semesterSubId, registerNumber);
 	}
 	
-	
-	//Procedure
-	public String courseRegistrationAdd2(String psemsubid, String pclassid, String pregno, String pcourseid, 
-						String pcomponent_type, String pcourse_option, Integer pregstatus, Integer pregcomponent_type, 
-						String ploguserid, String plogipaddress, String pregtype, String pold_course_code, String pcalltype, 
-						String pold_course_type, String pold_exam_month)
-	{
-		return courseRegistrationRepository.registration_insert_prc(psemsubid, pclassid, pregno, pcourseid, 
-					pcomponent_type, pcourse_option, pregstatus, pregcomponent_type, ploguserid, plogipaddress, 
-					pregtype, pold_course_code, pcalltype, pold_course_type, pold_exam_month, "","NONE");
-	}
-	
-	public String courseRegistrationUpdate2(String psemsubid, String pregno, String pcourseid, String pcomponent_type,
-			String pcourse_option, String poldclassid, String pnewclassid, String ploguserid, String plogipaddress,
-			Integer pregstatus, Integer pregcomponent_type, String pregtype, String pold_course_code, 
-			String pold_course_type, String pold_exam_month)
-	{
-		return courseRegistrationRepository.registration_update_prc(psemsubid, pregno, pcourseid, pcomponent_type,
-					pcourse_option, poldclassid, pnewclassid, ploguserid, plogipaddress, pregstatus, pregcomponent_type, 
-					pregtype, pold_course_code, pold_course_type, pold_exam_month,"", "NONE");
-	}
-	
-	public String courseRegistrationDelete(String psemsubid, String pregno, String pcourseid, String pcalltype, 
-			String ploguserid, String plogipaddress, String pregtype, String poldcoursecode)
-	{
-		return courseRegistrationRepository.registration_delete_prc(psemsubid, pregno, pcourseid, pcalltype, 
-					ploguserid, plogipaddress, pregtype, poldcoursecode, "NONE");
-	}
-	
-	
 	public List<Object[]> getCourseRegWlSlotByStudent(String semesterSubId, String registerNumber, Integer patternId)
 	{
-		//return courseRegistrationRepository.findCourseRegWlSlotByStudent(semesterSubId, registerNumber, patternId);
 		return courseRegistrationRepository.findCourseRegWlSlotByStudent(semesterSubId, registerNumber);
 	}
 	
 	public List<Object[]> getCourseRegWlSlotByStudent2(String semesterSubId, String registerNumber, Integer patternId)
 	{
-		//return courseRegistrationRepository.findCourseRegWlSlotByStudent2(semesterSubId, registerNumber, patternId);
 		return courseRegistrationRepository.findCourseRegWlSlotByStudent2(semesterSubId, registerNumber);
 	}
 	
@@ -220,13 +193,12 @@ public class CourseRegistrationService
 			{
 				prvSemSubId = e[0].toString();
 				prvSemRPList.clear();
-				//System.out.println("prvSemSubId: "+ prvSemSubId +" | courseCode: "+ courseCode);
+				logger.trace("\n prvSemSubId: "+ prvSemSubId +" | courseCode: "+ courseCode);
 				
 				prvSemRPList = studentHistoryService.getResultPublishedCourseDataBySemRegNoAndCourseCode(
 									prvSemSubId, registerNumber, courseCode);
 				if (!prvSemRPList.isEmpty())
 				{
-					//prvSemResultFlag = 1;
 					if (!studentHistoryService.getStudentHistoryGrade2(registerNumber, courseCode).isEmpty())
 					{
 						prvSemResultFlag = 1;
@@ -273,7 +245,6 @@ public class CourseRegistrationService
 										registerNumber, prvSemCourseCode);				
 				if (!prvSemRPList.isEmpty())
 				{
-					//prvSemResultFlag = 1;
 					if (!studentHistoryService.getStudentHistoryGrade2(registerNumber, prvSemCourseCode).isEmpty())
 					{
 						prvSemResultFlag = 1;
@@ -401,8 +372,6 @@ public class CourseRegistrationService
 	{
 		List<String> tempCourseIdList = new ArrayList<String>();
 		
-		//tempCourseIdList = courseRegistrationRepository.findBlockedCourseIdByRegisterNumberForUpdate(
-		//						semesterSubId, registerNumber);
 		tempCourseIdList = courseRegistrationRepository.findBlockedCourseIdByRegisterNumberForUpdate2(
 								semesterSubId, registerNumber);
 		if (tempCourseIdList.isEmpty())
@@ -491,7 +460,7 @@ public class CourseRegistrationService
 			{
 				if (!e[0].toString().equals(prvSemSubId))
 				{
-					//System.out.println("Before=> prvSemSubId: "+ prvSemSubId +" | courseIdList: "+ courseIdList);
+					logger.trace("\n Before=> prvSemSubId: "+ prvSemSubId +" | courseIdList: "+ courseIdList);
 					if ((!prvSemSubId.equals("")) && (!courseIdList.isEmpty()))
 					{
 						for (String str : studentHistoryService.getCSCourseCodeByRegisterNoAndCourseId(prvSemSubId, 
@@ -514,7 +483,7 @@ public class CourseRegistrationService
 							courseCodeList.add(e2[3].toString());
 						}
 					}
-					//System.out.println("After=> prvSemSubId : "+ prvSemSubId +" | courseCodeList: "+ courseCodeList);
+					logger.trace("\n After=> prvSemSubId : "+ prvSemSubId +" | courseCodeList: "+ courseCodeList);
 				}
 				
 				if (!courseCodeList.contains(e[2].toString()))
@@ -524,7 +493,7 @@ public class CourseRegistrationService
 				}
 			}
 			
-			//System.out.println("Final=> prvSemSubId: "+ prvSemSubId +" | courseIdList: "+ courseIdList);
+			logger.trace("\n Final=> prvSemSubId: "+ prvSemSubId +" | courseIdList: "+ courseIdList);
 			if ((!prvSemSubId.equals("")) && (!courseIdList.isEmpty()))
 			{
 				for (String str : studentHistoryService.getCSCourseCodeByRegisterNoAndCourseId(prvSemSubId, 
@@ -587,351 +556,33 @@ public class CourseRegistrationService
 		return returnObjectList;
 	}
 
-	
-	/*public CourseRegistrationModel saveOne(CourseRegistrationModel courseRegistrationModel)
+	public String getGradeCategory(int admissionYear, String courseCategory, String genericCourseType)
 	{
-		return courseRegistrationRepository.save(courseRegistrationModel);
-	}*/
-	
-	/*public List<CourseRegistrationModel> getAll(String semesterSubId)
-	{
-		return courseRegistrationRepository.findBySemesterSubId(semesterSubId);
-	}
+		String returnGradeCategory = "CG";
 		
-	public List<CourseRegistrationModel> getByRegisterNumber(String semesterSubId, String registerNumber)
-	{
-		return courseRegistrationRepository.findByRegisterNumber(semesterSubId, registerNumber);
-	}
-	
-	public List<CourseRegistrationModel> getByRegisterNumberByClassGroupId(String semesterSubId, String registerNumber, 
-												String[] classGroupId)
-	{
-		return courseRegistrationRepository.findByRegisterNumberByClassGroupId(semesterSubId, registerNumber, classGroupId);
-	}*/
-	
-	/*public List<CourseRegistrationModel> getByRegisterNumberCourseId(String semesterSubId, String registerNumber, 
-											String courseId)
-	{
-		return courseRegistrationRepository.findByRegisterNumberCourseId(semesterSubId,	registerNumber, courseId);
-	}*/
-	
-	/*public List<CourseRegistrationModel> getByRegisterNumberCourseCode2(String semesterSubId, String registerNumber, 
-												String courseCode)
-	{
-		return courseRegistrationRepository.findByRegisterNumberCourseCode2(semesterSubId, registerNumber, courseCode);
-	}
-	
-	public void classUpdate(String semesterSubId, String registerNumber, String courseId, 
-					String courseType, String classId, String userId, Date timestamp, 
-					String ipaddress)
-	{				
-		courseRegistrationRepository.updateClassIdByRegisterNumberCourseIdType(semesterSubId, 
-				registerNumber, courseId, courseType, classId, userId, timestamp, ipaddress);
-	}
-	
-	public void statusUpdate(String semesterSubId, String registerNumber, String courseId, Integer statusNumber)
-	{		
-		courseRegistrationRepository.updateStatusNoByRegisterNumberCourseId(semesterSubId, registerNumber, 
-				courseId, statusNumber);
-	}
-	
-	public void deleteByRegisterNumberCourseId(String semesterSubId, String registerNumber, String courseId)
-	{		
-		courseRegistrationRepository.deleteByRegisterNumberCourseId(semesterSubId, registerNumber, courseId);
-	}
-	
-	//Registration Count
-	public Integer getRegisterNumberTCCount(String semesterSubId, String registerNumber)
-	{
-		Integer tempCount = 0;
-		
-		tempCount = courseRegistrationRepository.findRegisterNumberTCCount(semesterSubId, registerNumber);
-		if (tempCount == null)
+		if ((admissionYear >= 2019) && (courseCategory.equals("NC") || courseCategory.equals("BC")))
 		{
-			tempCount = 0;
-		}
-		
-		return tempCount;
-	}*/
-	
-	/*public Integer getRegisterNumberRCCount(String semesterSubId, String registerNumber)
-	{
-		Integer tempCount = 0;
-		
-		tempCount = courseRegistrationRepository.findRegisterNumberRCCount(semesterSubId, registerNumber);
-		if (tempCount == null)
-		{
-			tempCount = 0;
-		}
-		
-		return tempCount;
-	}
-	
-	public Integer getRegisterNumberRCCountByClassGroupId(String semesterSubId, String registerNumber, 
-						String[] classGroupId)
-	{
-		Integer tempCount = 0;
-		
-		tempCount = courseRegistrationRepository.findRegisterNumberRCCountByClassGroupId(semesterSubId, registerNumber, 
-						classGroupId);
-		if (tempCount == null)
-		{
-			tempCount = 0;
-		}
-		
-		return tempCount;
-	}*/
-	
-	/*public Integer getRegisterNumbeGICount(String semesterSubId, String registerNumber)
-	{
-		Integer tempCount = 0;
-		
-		tempCount = courseRegistrationRepository.findRegisterNumbeGICount(semesterSubId, registerNumber);
-		if (tempCount == null)
-		{
-			tempCount = 0;
-		}
-		
-		return tempCount;
-	}*/
-	
-	/*public Integer getRegisterNumbeICCCount(String semesterSubId, String registerNumber)
-	{
-		Integer tempCount = 0;
-		
-		tempCount = courseRegistrationRepository.findRegisterNumbeICCCount(semesterSubId, registerNumber);
-		if (tempCount == null)
-		{
-			tempCount = 0;
-		}
-		
-		return tempCount;
-	}*/
-	
-	/*public Integer getPSRegisteredTotalCreditsByRegisterNumber(String[] semesterSubId, String registerNumber)
-	{
-		Integer tempCount = 0;
-		
-		tempCount = courseRegistrationRepository.findPSRegisteredTotalCreditsByRegisterNumber(semesterSubId, registerNumber);
-		if (tempCount == null)
-		{
-			tempCount = 0;
-		}
-		
-		return tempCount;
-	}
-	
-	public Integer getPSRegisteredTotalCreditsByRegisterNumber2(String registerNumber)
-	{
-		Integer tempCount = 0;
-		
-		tempCount = courseRegistrationRepository.findPSRegisteredTotalCreditsByRegisterNumber2(registerNumber);
-		if (tempCount == null)
-		{
-			tempCount = 0;
-		}
-		
-		return tempCount;
-	}*/
-	
-	/*public List<String> getRegisteredSlots(String semesterSubId, String registerNumber)
-	{
-		return courseRegistrationRepository.findRegisteredSlots(semesterSubId, registerNumber);
-	}*/
-		
-	/*public List<String> getRegisteredSlotsforUpdate(String semesterSubId, String registerNumber, String oldClassId)
-	{
-		return courseRegistrationRepository.findRegisteredSlotsforUpdate(semesterSubId, registerNumber, oldClassId);
-	}*/
-	
-	/*public List<String> getRegisteredCourse(String semesterSubId, String registerNumber)
-	{
-		return courseRegistrationRepository.findRegisteredCourse(semesterSubId, registerNumber);
-	}*/
-	
-	/*public List<CourseRegistrationModel> getRegisterNumberCredits(String semesterSubId, String registerNumber)
-	{
-		return courseRegistrationRepository.findRegisterNumberCredits(semesterSubId, registerNumber);
-	}
-	
-	public String getStudentPrvSemRegCourseCheck(String[] semesterSubId, String registerNumber, String courseCode)
-	{
-		return courseRegistrationRepository.findStudentPrvSemRegCourseCheck(semesterSubId, registerNumber, courseCode);
-	}
-	
-	public List<String> getStudentPrvSemPARequisite(String[] semesterSubId, List<String> registerNumber, 
-			List<String> courseCode)
-	{
-		return courseRegistrationRepository.findStudentPrvSemPARequisite(semesterSubId, registerNumber, courseCode);
-	}
-		
-	public void insertFromWaitingToRegistration(String semesterSubId, String registerNumber, String courseId)
-	{		
-		courseRegistrationRepository.insertWaitingToRegistration(semesterSubId, 
-				registerNumber, courseId);
-	}*/
-		
-	
-	/*//For Procedure
-	public String courseRegistrationAdd(String psemsubid, String pclassid, String pregno, String pcourseid, 
-			String pcomponent_type, String pcourse_option, Integer pregstatus, Integer pregcomponent_type, 
-			String ploguserid, String plogipaddress, String pregtype, String pold_course_code, String pcalltype)
-	{
-		String pold_course_type = "", pold_exam_month = ""; 
-		if ((!pold_course_code.equals(null)) && (!pold_course_code.equals("")))
-		{
-			pold_course_type = pcomponent_type;
-		}
-		
-		return courseRegistrationRepository.registration_insert_prc(psemsubid, pclassid, pregno, pcourseid, 
-				pcomponent_type, pcourse_option, pregstatus, pregcomponent_type, ploguserid, plogipaddress, 
-				pregtype, pold_course_code, pcalltype, pold_course_type, pold_exam_month);
-	}*/
-		
-	/*public String courseRegistrationUpdate(String psemsubid, String pregno, String pcourseid, String pcomponent_type,
-			String pcourse_option, String poldclassid, String pnewclassid, String ploguserid, String plogipaddress,
-			Integer pregstatus, Integer pregcomponent_type, String pregtype, String pold_course_code)
-	{
-		String pold_course_type = "", pold_exam_month = ""; 
-		if ((!pold_course_code.equals(null)) && (!pold_course_code.equals("")))
-		{
-			pold_course_type = pcomponent_type;
-		}
-		
-		return courseRegistrationRepository.registration_update_prc(psemsubid, pregno, pcourseid, pcomponent_type,
-				pcourse_option, poldclassid, pnewclassid, ploguserid, plogipaddress, pregstatus, pregcomponent_type, 
-				pregtype, pold_course_code, pold_course_type, pold_exam_month);
-	}*/
-	
-	/*public String getStudentCourseCancelCheck(List<String> registerNumber, String courseCode)
-	{
-		return courseRegistrationRepository.findStudentCourseCancelCheck(registerNumber, courseCode);
-	}*/
-		
-	/*public List<Object[]> getPrevSemCourseRegistrationByRegisterNumber(String registerNumber, String courseCode)
-	{
-		return courseRegistrationRepository.findPrevSemCourseRegistrationByRegisterNumber(registerNumber, courseCode);
-	}
-	
-	public List<Object[]> getPrevSemCourseRegistrationByRegisterNumber2(String registerNumber, String courseCode)
-	{
-		List<Object[]> prvSemRegList = new ArrayList<Object[]>();
-		List<Object[]> prvSemRPList = new ArrayList<Object[]>();
-		String prvSemSubId = "";
-		
-		prvSemRegList = courseRegistrationRepository.findPrevSemCourseRegistrationByRegisterNumber(registerNumber, courseCode);
-		
-		if (!prvSemRegList.isEmpty())
-		{
-			for (Object[] e: prvSemRegList)
+			if (genericCourseType.equals("ECA"))
 			{
-				prvSemSubId = e[0].toString();
-				break;
+				returnGradeCategory = "NCPF";
 			}
-		
-			prvSemRPList = studentHistoryService.getResultPublishedCourseDataBySemAndRegNo(prvSemSubId, 
-								Arrays.asList(registerNumber));
-		}
-		
-		if (!prvSemRPList.isEmpty())
-		{
-			for (Object[] e: prvSemRPList)
+			else
 			{
-				if (e[3].toString().equals(courseCode))
-				{
-					prvSemRegList.clear();
-					break;
-				}
-			}
+				returnGradeCategory = "NCG";
+			}	
 		}
-						
-		return prvSemRegList;
-	}*/
-	
-	/*public List<Object[]> getPrevSemCourseRegistrationCEByRegisterNumber(String registerNumber, String courseCode)
-	{
-		return courseRegistrationRepository.findPrevSemCourseRegistrationCEByRegisterNumber(registerNumber, courseCode);
+		else if ((admissionYear >= 2021) && (courseCategory.equals("NGCR") || courseCategory.equals("FCNG")))
+		{
+			if (genericCourseType.equals("PJT"))
+			{
+				returnGradeCategory = "NCPF";
+			}
+			else
+			{
+				returnGradeCategory = "NCG";
+			}	
+		}
+		
+		return returnGradeCategory;
 	}
-	
-	public List<Object[]> getPrevSemCourseRegistrationCEByRegisterNumber2(String registerNumber, String courseCode)
-	{
-		List<Object[]> prvSemRegList = new ArrayList<Object[]>();
-		List<Object[]> prvSemRPList = new ArrayList<Object[]>();
-		String prvSemSubId = "", prvSemCourseCode = "";
-				
-		prvSemRegList = courseRegistrationRepository.findPrevSemCourseRegistrationCEByRegisterNumber(registerNumber, courseCode);
-		
-		if (!prvSemRegList.isEmpty())
-		{
-			for (Object[] e: prvSemRegList)
-			{
-				prvSemSubId = e[0].toString();
-				prvSemCourseCode = e[2].toString();
-				break;
-			}
-		}
-		
-		prvSemRPList = studentHistoryService.getResultPublishedCourseDataBySemAndRegNo(prvSemSubId, Arrays.asList(registerNumber));
-		if (!prvSemRPList.isEmpty())
-		{
-			for (Object[] e: prvSemRPList)
-			{
-				//if (e[3].toString().equals(courseCode))
-				if (e[3].toString().equals(prvSemCourseCode))
-				{
-					prvSemRegList.clear();
-					break;
-				}
-			}
-		}
-				
-		return prvSemRegList;
-	}*/
-	
-	/*public Integer getPSRegisteredTotalCreditsByRegisterNumber3(String registerNumber)
-	{		
-		List<Object[]> prvSemRegList = new ArrayList<Object[]>();
-		List<Object[]> prvSemRPList = new ArrayList<Object[]>();
-		List<String> prvSemRPCourseList = new ArrayList<String>();
-		String prvSemSubId = "", dpPrvSemSubId = "";
-		Integer prvSemTotalCredit = 0;
-		
-		prvSemRegList = courseRegistrationRepository.findPSRegisteredCourseCreditsByRegisterNumber(registerNumber);
-		
-		if (!prvSemRegList.isEmpty())
-		{
-			for (Object[] e: prvSemRegList)
-			{
-				prvSemSubId = e[0].toString();
-			
-				if (!dpPrvSemSubId.equals(prvSemSubId))
-				{
-					prvSemRPList.clear();
-					prvSemRPCourseList.clear();
-					
-					prvSemRPList = studentHistoryService.getResultPublishedCourseDataBySemAndRegNo(prvSemSubId, Arrays.asList(registerNumber));
-					if (!prvSemRPList.isEmpty())
-					{
-						for (Object[] e2: prvSemRPList)
-						{
-							prvSemRPCourseList.add(e2[2].toString());
-						}
-					}
-					
-					dpPrvSemSubId = prvSemSubId;
-				}
-				
-				if (prvSemRPCourseList.isEmpty())
-				{
-					prvSemTotalCredit = prvSemTotalCredit + Integer.parseInt(e[2].toString());
-				}
-				else if ((!prvSemRPCourseList.isEmpty()) && (!prvSemRPCourseList.contains(e[1].toString())))
-				{
-					prvSemTotalCredit = prvSemTotalCredit + Integer.parseInt(e[2].toString());
-				}
-			}
-		}
-						
-		return prvSemTotalCredit;
-	}*/
 }

@@ -8,13 +8,16 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.vtop.CourseRegistration.service.CompulsoryCourseConditionDetailService;
 import org.vtop.CourseRegistration.service.CourseRegistrationCommonFunction;
-import org.vtop.CourseRegistration.service.RegistrationLogService;
+import org.vtop.CourseRegistration.service.CourseRegistrationReadWriteService;
 import org.vtop.CourseRegistration.service.StudentHistoryService;
 
 
@@ -22,10 +25,11 @@ import org.vtop.CourseRegistration.service.StudentHistoryService;
 public class CourseRegistrationStartController
 {
 	@Autowired private CourseRegistrationCommonFunction courseRegCommonFn;
-	@Autowired private RegistrationLogService registrationLogService;
 	@Autowired private StudentHistoryService studentHistoryService;
 	@Autowired private CompulsoryCourseConditionDetailService compulsoryCourseConditionDetailService;
+	@Autowired private CourseRegistrationReadWriteService courseRegistrationReadWriteService;
 
+	private static final Logger logger = LogManager.getLogger(CourseRegistrationStartController.class);
 	private static final String RegErrorMethod = "WS2122AD";
 	
 		
@@ -74,7 +78,7 @@ public class CourseRegistrationStartController
 			pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 1);
 			if ((registerNumber != null) && (pageAuthStatus == 1))
 			{
-				returnVal = courseRegCommonFn.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
+				returnVal = courseRegistrationReadWriteService.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
 								registerNumber, updateStatus, IpAddress);
 				String[] statusMsg = returnVal.split("/");
 				allowStatus = Integer.parseInt(statusMsg[0]);
@@ -84,13 +88,13 @@ public class CourseRegistrationStartController
 				{
 					if (historyCallStatus == 1) 
 					{
-						studentHistoryStatus = studentHistoryService.studentHistoryInsertProcess(registerNumber, studentStudySystem);
+						studentHistoryStatus = courseRegistrationReadWriteService.studentHistoryInsertProcess(registerNumber, studentStudySystem);
 					}
 					else
 					{
 						studentHistoryStatus = "SUCCESS";
 					}
-					//System.out.println("studentHistoryStatus: "+ studentHistoryStatus);
+					logger.trace("\n studentHistoryStatus: "+ studentHistoryStatus);
 					
 					if (studentHistoryStatus.equals("SUCCESS"))
 					{
@@ -149,7 +153,7 @@ public class CourseRegistrationStartController
 							}
 				    	}
 				    }
-					//System.out.println("studentCgpaData: "+ studentCgpaData);
+					logger.trace("\n studentCgpaData: "+ studentCgpaData);
 													
 					//Check & Assign the Compulsory Courses
 					if (compulsoryCourseStatus == 1)
@@ -158,7 +162,7 @@ public class CourseRegistrationStartController
 													semesterSubId, programGroupId, studyStartYear, programSpecId, 
 													registerNumberList, programSpecCode, costCenterId, 0);
 					}
-					//System.out.println("compulsoryCourseList :"+ compulsoryCourseList);
+					logger.trace("\n compulsoryCourseList :"+ compulsoryCourseList);
 					
 					session.setAttribute("studentCgpaData", studentCgpaData);
 					session.setAttribute("compulsoryCourseList", compulsoryCourseList);
@@ -175,7 +179,7 @@ public class CourseRegistrationStartController
 			else
 			{
 				model.addAttribute("flag", 1);
-				registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+				courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 				urlPage = "redirectpage";
 			}
 			
@@ -190,10 +194,12 @@ public class CourseRegistrationStartController
 		}
 		catch(Exception ex)
 		{
+			logger.trace(ex);
+			
 			model.addAttribute("flag", 1);
-			registrationLogService.addErrorLog(ex.toString(), RegErrorMethod+"CourseRegistrationStartController", 
+			courseRegistrationReadWriteService.addErrorLog(ex.toString(), RegErrorMethod+"CourseRegistrationStartController", 
 					"checkRegistration", registerNumber, IpAddress);
-			registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			urlPage = "redirectpage";			
 		}
 		

@@ -31,6 +31,7 @@ import org.vtop.CourseRegistration.model.SemesterDetailsModel;
 import org.vtop.CourseRegistration.model.SlotTimeMasterModel;
 import org.vtop.CourseRegistration.model.StudentsLoginDetailsModel;
 import org.vtop.CourseRegistration.service.CourseRegistrationCommonFunction;
+import org.vtop.CourseRegistration.service.CourseRegistrationReadWriteService;
 import org.vtop.CourseRegistration.service.CourseRegistrationService;
 import org.vtop.CourseRegistration.service.CourseRegistrationWaitingService;
 import org.vtop.CourseRegistration.service.ProgrammeSpecializationCurriculumCreditService;
@@ -52,6 +53,7 @@ public class CourseRegistrationPageController
 	@Autowired private ProgrammeSpecializationCurriculumCreditService programmeSpecializationCurriculumCreditService;
 	@Autowired private ProgrammeSpecializationCurriculumDetailService programmeSpecializationCurriculumDetailService;
 	@Autowired private SemesterMasterService semesterMasterService;
+	@Autowired private CourseRegistrationReadWriteService courseRegistrationReadWriteService;
 	
 	private static final Logger logger = LogManager.getLogger(CourseRegistrationPageController.class);
 	private static final String RegErrorMethod = "WS2122AD";
@@ -73,7 +75,7 @@ public class CourseRegistrationPageController
 				{
 					if (registrationLogService.isExist(registerNumber)) 
 					{
-						registrationLogService.UpdateLogoutTimeStamp(request.getRemoteAddr(), registerNumber);
+						courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(request.getRemoteAddr(), registerNumber);
 						
 						cookie = new Cookie("RegisterNumber", null);
 						cookie.setMaxAge(0);
@@ -161,32 +163,9 @@ public class CourseRegistrationPageController
 		
 		courseRegCommonFn.callCaptcha(request, response, session, model);
 		session.setAttribute("CAPTCHA", session.getAttribute("CAPTCHA"));
-		//return "InstructionPage";
+		
 		return "StudentLogin";
 	}
-
-/*	@PostMapping("viewStudentLogin")
-	public String viewStudentLogin(Model model, HttpServletRequest request, HttpSession session, 
-						HttpServletResponse response) throws ServletException, IOException 
-	{
-		String currentDateTimeStr="", userSessionId="";
-		
-		session.setAttribute("baseURL", NetAssist.getBaseURL(request));
-		userSessionId = (String) session.getAttribute("userSessionId");
-		if (userSessionId == null) 
-		{
-			session.setAttribute("userSessionId", session.getId());
-		}
-		
-		currentDateTimeStr = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a").format(new Date());
-		model.addAttribute("CurrentDateTime", currentDateTimeStr);
-		
-		//courseRegCommonFn.callCaptcha(request, response, session, model);
-		//session.setAttribute("CAPTCHA", session.getAttribute("CAPTCHA"));
-		
-		//return "StudentLogin";
-		return "RegistrationStart";
-	}*/
 	
 	@PostMapping("viewStudentLogin1")
 	public String viewStudentLogin1(Model model, HttpServletRequest request, HttpSession session, 
@@ -212,23 +191,7 @@ public class CourseRegistrationPageController
 		String page = "CustomErrorPage";
 		String baseURL = NetAssist.getBaseURL(request);
 		logger.trace("BaseUrl - " + baseURL);
-
-		/*if (baseURL.toLowerCase().contains("vtop8")) 
-		{
-			model.addAttribute("Server1", "https://vtop9.vit.ac.in/CourseRegistration");
-			model.addAttribute("Server2", "https://vtop10.vit.ac.in/CourseRegistration");
-		} 
-		else if (baseURL.toLowerCase().contains("vtop9")) 
-		{
-			model.addAttribute("Server1", "https://vtop10.vit.ac.in/CourseRegistration");
-			model.addAttribute("Server2", "https://vtop8.vit.ac.in:/CourseRegistration");
-		} 
-		else if (baseURL.toLowerCase().contains("vtop10")) 
-		{
-			model.addAttribute("Server1", "https://vtop8.vit.ac.in/CourseRegistration");
-			model.addAttribute("Server2", "https://vtop9.vit.ac.in/CourseRegistration");
-		}*/
-
+		
 		request.getSession().invalidate();
 		model.addAttribute("message", "");
 		model.addAttribute("error", " Please Note: Try one of the following Servers <br/><br/>");
@@ -243,34 +206,11 @@ public class CourseRegistrationPageController
 	{
 		String page = "CustomErrorPage";
 
-		//Testing
-		/*Cookie cookie = new Cookie("RegisterNumber", null);
+		Cookie cookie = new Cookie("RegisterNumber", null);
 		cookie.setMaxAge(0);
 		response.addCookie(cookie);
 		request.getSession().invalidate();
-		model.addAttribute("message", " V TOP ");
-		model.addAttribute("error", " You are logged out due to inactivity .");*/
-		
-		//Production
-		/**/Cookie cookie = new Cookie("RegisterNumber", null);
-		cookie.setMaxAge(0);
-		response.addCookie(cookie);
-		request.getSession().invalidate();
-		model.addAttribute("message", "Session Expired");
-		model.addAttribute("error", "Try Logout and Log-in");
-		model.addAttribute("errno", 3);
-		
-		
-		//Production Naac Visit
-		/*Cookie cookie = new Cookie("RegisterNumber", null);
-		cookie.setMaxAge(0);
-		response.addCookie(cookie);
-		request.getSession().invalidate();
-		model.addAttribute("message", " V TOP ");
-		model.addAttribute("error", " Thank you For Using V TOP Course Registration Portal .");
-		model.addAttribute("errno", 3);*/
-		
-		/**/model.addAttribute("message", "Multi-Tab Access");
+		model.addAttribute("message", "Multi-Tab Access");
 		model.addAttribute("error", "Multiple Tabs Access prevented !!!");
 		model.addAttribute("errno", 6);
 		
@@ -324,7 +264,6 @@ public class CourseRegistrationPageController
 			{
 				info = (String) session.getAttribute("info");
 				
-				//loAllowFlag = 1;
 				if (ProgramGroupCode.equals("RP") || ProgramGroupCode.equals("IEP"))
 				{
 					loAllowFlag = 1;
@@ -356,7 +295,7 @@ public class CourseRegistrationPageController
 								
 				if (loAllowFlag == 1) 
 				{
-					registrationLogService.UpdateLogoutTimeStamp(IpAddress,registerNumber);
+					courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 					model.addAttribute("flag", 4);			
 					page = "redirectpage";
 				}
@@ -389,28 +328,28 @@ public class CourseRegistrationPageController
 		} 
 		catch (Exception ex) 
 		{
+			logger.trace(ex);
+			
 			model.addAttribute("info", "Login with your Username and Password");
-			registrationLogService.addErrorLog(ex.toString(), RegErrorMethod+"CourseRegistrationPageController", 
+			courseRegistrationReadWriteService.addErrorLog(ex.toString(), RegErrorMethod+"CourseRegistrationPageController", 
 					"processLogout", registerNumber, IpAddress);
-			registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			courseRegCommonFn.callCaptcha(request,response,session,model);
 			session.setAttribute("CAPTCHA",session.getAttribute("CAPTCHA"));
 			page = "StudentLogin";
+			
 			return page;
 		}	
 	}
 	
 
 	@PostMapping(value="ViewCredits")
-	public String ViewCredits(Model model,String creditDetailshowFlag, HttpSession session, HttpServletRequest request) 
+	public String ViewCredits(Model model, String creditDetailshowFlag, HttpSession session, HttpServletRequest request) 
 	{
 		String registerNumber = (String) session.getAttribute("RegisterNumber");
 		String semesterSubId = (String) session.getAttribute("SemesterSubId");
 		String[] classGroupId = session.getAttribute("classGroupId").toString().split("/");
 		Integer WaitingListStatus=(Integer) session.getAttribute("waitingListStatus");
-		//int studyStartYear = (int) session.getAttribute("StudyStartYear");
-		//Integer programSpecId = (Integer) session.getAttribute("ProgramSpecId");
-		//Float curriculumVersion = (Float) session.getAttribute("curriculumVersion");
 		List<String> ncCourseList = new ArrayList<String>();
 		
 		String urlPage = "";
@@ -419,6 +358,7 @@ public class CourseRegistrationPageController
 		String IpAddress=(String) session.getAttribute("IpAddress");
 		Integer minCredit = (Integer) session.getAttribute("minCredit");
 		Integer maxCredit = (Integer) session.getAttribute("maxCredit");
+		
 		try
 		{
 			if(creditDetailshowFlag.equals("true"))
@@ -426,8 +366,6 @@ public class CourseRegistrationPageController
 				if (registerNumber!=null)
 				{	
 					ncCourseList.add("NONE");
-					//ncCourseList = programmeSpecializationCurriculumDetailService.getNCCourseByYearAndCCVersion(programSpecId, 
-					//					studyStartYear, curriculumVersion);
 					regCredit = courseRegistrationService.getRegCreditByRegisterNumberAndNCCourseCode(semesterSubId, 
 									registerNumber, ncCourseList);
 					regCount = courseRegistrationService.getRegisterNumberTCCountByClassGroupId(semesterSubId, registerNumber, 
@@ -469,9 +407,11 @@ public class CourseRegistrationPageController
 		}
 		catch(Exception e)
 		{
-			registrationLogService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationPageController", 
+			logger.trace(e);
+			
+			courseRegistrationReadWriteService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationPageController", 
 					"ViewCredits", registerNumber, IpAddress);
-			registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			model.addAttribute("flag", 1);
 			urlPage = "redirectpage";
 			return urlPage;			
@@ -535,9 +475,11 @@ public class CourseRegistrationPageController
 		} 
 		catch (Exception e) 
 		{
-			registrationLogService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationPageController", 
+			logger.trace(e);
+			
+			courseRegistrationReadWriteService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationPageController", 
 					"viewCurriculumCredits", registerNo, IpAddress);
-			registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNo);
+			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNo);
 			model.addAttribute("flag", 1);
 			urlPage = "redirectpage";
 			return urlPage;			
@@ -550,15 +492,19 @@ public class CourseRegistrationPageController
 	{
 		String registerNumber = (String) session.getAttribute("RegisterNumber");
 		String IpAddress = (String) session.getAttribute("IpAddress");
-		Integer WaitingListStatus=(Integer) session.getAttribute("waitingListStatus");
+		Integer WaitingListStatus = (Integer) session.getAttribute("waitingListStatus");
+		Integer minCredit = (Integer) session.getAttribute("minCredit");
+		Integer maxCredit = (Integer) session.getAttribute("maxCredit");
+		
+		String urlPage = "", msg = null, infoMsg = "", checkCourseId = "";
 		List<Object[]> courseRegistrationWaitingModel = new ArrayList<Object[]>();
 		List<Object[]> courseRegistrationModel = new ArrayList<Object[]>();
 		List<Integer> patternIdList = new ArrayList<Integer>();
-		Integer updateStatus = 1;
-		int allowStatus = 2;		
-		String urlPage = "";
-		String msg = null, infoMsg = "";
 		
+		int allowStatus = 2, regCount = 0, wlCount = 0;
+		Integer updateStatus = 1;
+		float wlCredit = 0, regCredit = 0;
+						
 		try
 		{
 			if (registerNumber!=null)
@@ -572,7 +518,7 @@ public class CourseRegistrationPageController
 				String startTime = (String) session.getAttribute("startTime");
 				String endTime = (String) session.getAttribute("endTime");
 				
-				String returnVal = courseRegCommonFn.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
+				String returnVal = courseRegistrationReadWriteService.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
 										registerNumber, updateStatus, IpAddress);
 				String[] statusMsg = returnVal.split("/");
 				allowStatus = Integer.parseInt(statusMsg[0]);
@@ -585,35 +531,54 @@ public class CourseRegistrationPageController
 				{
 					case 1:
 
-						if((semesterSubId !=null) &&(registerNumber !=null))
+						if ((semesterSubId !=null) &&(registerNumber !=null))
 						{
 							courseRegistrationModel = courseRegistrationService.getByRegisterNumber3(semesterSubId, registerNumber);
-						}
-						
-						if(!courseRegistrationModel.isEmpty())
-						{
-							for (Object[] obj : courseRegistrationModel) 
+							if (!courseRegistrationModel.isEmpty())
 							{
-								//System.out.println("Pattern Id: "+obj[31].toString() +" | Slot Id: "+obj[32].toString());
-								
-								if ((Integer.parseInt(obj[30].toString()) > 0) && (!patternIdList.contains(Integer.parseInt(obj[29].toString()))))
+								for (Object[] obj : courseRegistrationModel) 
 								{
-									patternIdList.add(Integer.parseInt(obj[29].toString()));
+									logger.trace("\n Pattern Id: "+ obj[29].toString() +" | Slot Id: "+obj[30].toString());
+									
+									if ((Integer.parseInt(obj[30].toString()) > 0) && (!patternIdList.contains(Integer.parseInt(obj[29].toString()))))
+									{
+										patternIdList.add(Integer.parseInt(obj[29].toString()));
+									}
+									
+									regCredit = Float.parseFloat(obj[14].toString());
+									
+									if (!obj[2].toString().equals(checkCourseId))
+									{
+										regCount++;
+										checkCourseId = obj[2].toString();
+									}
+								}
+							}
+						}
+											
+						if (WaitingListStatus == 1)
+						{
+							courseRegistrationWaitingModel = courseRegistrationWaitingService.getWaitingCourseByRegNoWithRank(
+																			semesterSubId, registerNumber);
+							if (!courseRegistrationModel.isEmpty())
+							{
+								checkCourseId = "";
+								
+								for (Object[] obj : courseRegistrationModel) 
+								{
+									wlCredit = Float.parseFloat(obj[10].toString());
+									
+									if (!obj[1].toString().equals(checkCourseId))
+									{
+										wlCount++;
+										checkCourseId = obj[1].toString();
+									}
 								}
 							}
 						}
 						
 						
-						if(WaitingListStatus==1)
-						{
-							courseRegistrationWaitingModel = courseRegistrationWaitingService.getWaitingCourseByRegNoWithRank(
-																			semesterSubId, registerNumber);
-						}
-						
-						//List<Object[]> ttSessionList = new ArrayList<Object[]>();
-						//List<Object[]> weekDayList = new ArrayList<Object[]>();
 						List<Object[]> ttObjList = new ArrayList<Object[]>();
-						
 						Map<Integer, List<String>> slotTypeMapList = new HashMap<Integer, List<String>>();
 						Map<Integer, List<Object[]>> ttSessionList = new HashMap<Integer, List<Object[]>>();
 						Map<Integer, List<Object[]>> weekDayList = new HashMap<Integer, List<Object[]>>();
@@ -629,10 +594,7 @@ public class CourseRegistrationPageController
 						if (!patternIdList.isEmpty())
 						{
 							for (Integer patternId : patternIdList)
-							{
-								//ttSessionList = timeTablePatternDetailService.getSessionSlotByPatternId(patternId);
-								//weekDayList = slotTimeMasterService.getWeekDayList(patternId);
-								
+							{								
 								//Slot Type Map List
 								ttObjList.clear();
 								ttObjList = semesterMasterService.getPatternTimeMasterSlotTypeByPatternId(Arrays.asList(patternId));
@@ -720,8 +682,7 @@ public class CourseRegistrationPageController
 											tmMapList.put(hashKey, mapTempList);
 										}
 									}
-								}
-								
+								}								
 								
 								//Week Day Session Map List
 								ttObjList.clear();
@@ -782,7 +743,7 @@ public class CourseRegistrationPageController
 										hashValue = parameters[2].toString() +"-"+ parameters[3].toString() 
 														+"-"+ parameters[4].toString() +"-"+ parameters[5].toString() 
 														+"-"+ parameters[8].toString();
-										//System.out.println("hashKey: "+ hashKey +" | hashValue: "+ hashValue);
+										logger.trace("\n hashKey: "+ hashKey +" | hashValue: "+ hashValue);
 										if(regMapList.containsKey(hashKey))
 										{
 											hashValue = regMapList.get(hashKey) +"/ "+ hashValue;
@@ -805,18 +766,23 @@ public class CourseRegistrationPageController
 							model.addAttribute("stmMapList", stmMapList);
 							model.addAttribute("regMapList", regMapList);
 						}
-												
+																		
 						model.addAttribute("sdm", sdm);
 						model.addAttribute("cDate", new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a").format(new Date()));
 						model.addAttribute("courseRegistrationModel", courseRegistrationModel);
 						model.addAttribute("courseRegistrationWaitingModel", courseRegistrationWaitingModel);
-						//model.addAttribute("RegisteredTotalCredits", courseRegistrationService.getRegisterNumberTotalCredits(semesterSubId, registerNumber));
 						model.addAttribute("WaitingListCourse",	courseRegistrationWaitingService.getRegisterNumberCRWCount(semesterSubId, registerNumber));
 						model.addAttribute("studentsLoginDetailsModel", studentsLoginDetailsModel);
 						model.addAttribute("showFlag", 0);
 						model.addAttribute("curriculumMapList", programmeSpecializationCurriculumDetailService.
 								getCurriculumBySpecIdYearAndCCVersionAsMap(programSpecId, studyStartYear, curriculumVersion));
 						model.addAttribute("WaitingListStatus", WaitingListStatus);
+						model.addAttribute("regCredit", regCredit);
+						model.addAttribute("regCount", regCount);
+						model.addAttribute("wlCount", wlCount);
+						model.addAttribute("wlCredit", wlCredit);
+						model.addAttribute("minCredit", minCredit);
+						model.addAttribute("maxCredit", maxCredit);
 						
 						session.removeAttribute("registrationOption");
 						urlPage = "mainpages/ViewRegistered::section";
@@ -840,9 +806,11 @@ public class CourseRegistrationPageController
 		}
 		catch(Exception e)
 		{
-			registrationLogService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationPageController", 
+			logger.trace(e);
+			
+			courseRegistrationReadWriteService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationPageController", 
 					"viewRegistered", registerNumber, IpAddress);
-			registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			model.addAttribute("flag", 1);
 			urlPage = "redirectpage";
 			return urlPage;
@@ -873,10 +841,12 @@ public class CourseRegistrationPageController
 		}
 		catch(Exception e)
 		{
+			logger.trace(e);
+			
 			model.addAttribute("flag", 1);
-			registrationLogService.addErrorLog(e.toString()+" <-Guide School-> "+guideSchoolOpt, RegErrorMethod+"CourseRegistrationPageController", 
+			courseRegistrationReadWriteService.addErrorLog(e.toString()+" <-Guide School-> "+guideSchoolOpt, RegErrorMethod+"CourseRegistrationPageController", 
 					"getSchoolWiseGuideList", registerNumber, IpAddress);
-			registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			urlPage = "redirectpage";
 			return urlPage;
 		}
@@ -916,10 +886,10 @@ public class CourseRegistrationPageController
 		}
 		catch(Exception ex)
 		{
-			ex.printStackTrace();
+			logger.trace(ex);
 		}
 							
-		//          THEORY STARTING TIMINGS 
+		//THEORY STARTING TIMINGS 
 		int i = 1;
 		for(PatternTimeMasterModel ls: list1)
 		{
@@ -1021,11 +991,11 @@ public class CourseRegistrationPageController
 		}
 		catch(Exception ex)
 		{
-			ex.printStackTrace();
+			logger.trace(ex);
 		}
 		
 		
-		//          THEORY STARTING TIMINGS 
+		//THEORY STARTING TIMINGS 
 		int i = 1;
 		for(PatternTimeMasterModel ls: list1)
 		{
@@ -1122,7 +1092,7 @@ public class CourseRegistrationPageController
 		} 
 		catch (Exception ex) 
 		{
-			ex.printStackTrace();
+			logger.trace(ex);
 		}
 	
 		int i = 1;

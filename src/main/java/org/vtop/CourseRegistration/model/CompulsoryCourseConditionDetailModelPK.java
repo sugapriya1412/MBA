@@ -97,4 +97,10 @@ public class CompulsoryCourseConditionDetailModelPK implements Serializable
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "CompulsoryCourseConditionDetailModelPK [semesterSubId=" + semesterSubId + ", programGroupId="
+				+ programGroupId + ", studentBatch=" + studentBatch + ", courseId=" + courseId + "]";
+	}
 }

@@ -1,8 +1,11 @@
 package org.vtop.CourseRegistration.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,13 +13,15 @@ import org.vtop.CourseRegistration.repository.CompulsoryCourseConditionDetailRep
 
 
 @Service
-@Transactional("transactionManager")
+@Transactional(readOnly=true)
 public class CompulsoryCourseConditionDetailService
 {	
 	@Autowired private CompulsoryCourseConditionDetailRepository compulsoryCourseConditionDetailRepository;
 	@Autowired private StudentHistoryService studentHistoryService;
 	@Autowired private CourseRegistrationService courseRegistrationService;
 	@Autowired private SemesterMasterService semesterMasterService;
+	
+	private static final Logger logger = LogManager.getLogger(CompulsoryCourseConditionDetailService.class);
 		
 		
 	public List<String> getEligibleCompulsoryCourseList(String semesterSubId, Integer progGroupId, Integer studentBatch, 
@@ -31,10 +36,10 @@ public class CompulsoryCourseConditionDetailService
 		List<Object[]> tempObjectList = new ArrayList<Object[]>();
 		List<Object[]> tempObjectList2 = new ArrayList<Object[]>();
 				
-		/*System.out.println("semesterSubId: "+ semesterSubId +" | progGroupId: "+ progGroupId 
+		logger.trace("\n semesterSubId: "+ semesterSubId +" | progGroupId: "+ progGroupId 
 				+" | studentBatch: "+ studentBatch +" | progSpecId: "+ progSpecId 
 				+" | registerNumber: "+ registerNumber +" | progSpecCode: "+ progSpecCode 
-				+" | costCenterId: "+ costCenterId +" | studentSemester: "+ studentSemester);*/
+				+" | costCenterId: "+ costCenterId +" | studentSemester: "+ studentSemester);
 		
 		if (allowCompFlag == 1)
 		{
@@ -83,8 +88,8 @@ public class CompulsoryCourseConditionDetailService
 						}
 					}
 				}
-				//System.out.println("preReqType: "+ preReqType +" | preReqParam: "+ preReqParam 
-				//		+" | preReqParam2: "+ preReqParam2 +" | preReqParam3: "+ preReqParam3);
+				logger.trace("\n preReqType: "+ preReqType +" | preReqParam: "+ preReqParam 
+						+" | preReqParam2: "+ preReqParam2 +" | preReqParam3: "+ preReqParam3);
 				
 				//Default
 				if (preReqType == 1)
@@ -170,7 +175,7 @@ public class CompulsoryCourseConditionDetailService
 				{
 					for (String prqp : preReqParam2.split("/"))
 					{
-						System.out.println("prqp: "+ prqp);
+						logger.trace("\n prqp: "+ prqp);
 						tempObjectList2 = courseRegistrationService.getByRegisterNumberCourseCode3(preReqParam, 
 												registerNumber, prqp);
 						if (!tempObjectList2.isEmpty())
@@ -326,8 +331,8 @@ public class CompulsoryCourseConditionDetailService
 					}
 				}
 				
-				//System.out.println(Arrays.deepToString(e));
-				//System.out.println("compCheckFlag: "+ compCheckFlag);
+				logger.trace("\n "+ Arrays.deepToString(e));
+				logger.trace("\n compCheckFlag: "+ compCheckFlag);
 				if (compCheckFlag == 1)
 				{
 					tempCompCourseList.add(courseId);

@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,16 +17,14 @@ import org.vtop.CourseRegistration.repository.CourseAllocationRepository;
 
 
 @Service
-@Transactional("transactionManager")
+@Transactional(readOnly=true)
 public class CourseAllocationService
 {
 	@Autowired private CourseAllocationRepository courseAllocationRepository;
-		
-	// public CourseAllocationModel getOne(String classId)
-	// {
-	// 	return courseAllocationRepository.findOne(classId);
-	// }
-
+	
+	private static final Logger logger = LogManager.getLogger(CourseAllocationService.class);
+	
+	
 	public CourseAllocationModel getOne(String classId)
 	{
 		return courseAllocationRepository.findById(classId).orElse(null);
@@ -143,7 +143,7 @@ public class CourseAllocationService
 		int filterType = 2; 
 		List<CourseAllocationModel> tempModelList = new ArrayList<CourseAllocationModel>();
 		List<String> classIdList = new ArrayList<String>();
-		//System.out.println("ccCourseSystem: "+ ccCourseSystem +" | combineClassId: "+ combineClassId);
+		logger.trace("\n ccCourseSystem: "+ ccCourseSystem +" | combineClassId: "+ combineClassId);
 		
 		if ((!camList.isEmpty()) && (employeeId != null) && (!employeeId.equals("")))
 		{
@@ -231,8 +231,8 @@ public class CourseAllocationService
 				
 		try
 		{
-			//System.out.println("patternId: "+ patternId +" | clashSlot: "+ clashSlot);
-			//System.out.println("allottedSlot size: "+ allottedSlot.size() +" | slotTimeMapList size: "+ slotTimeMapList.size());
+			logger.trace("\n patternId: "+ patternId +" | clashSlot: "+ clashSlot);
+			logger.trace("\n allottedSlot size: "+ allottedSlot.size() +" | slotTimeMapList size: "+ slotTimeMapList.size());
 			
 			if ((patternId != null) && (patternId > 0) && (clashSlot != null) && (!clashSlot.equals("")) 
 					&& (allottedSlot.isEmpty()))
@@ -251,7 +251,7 @@ public class CourseAllocationService
 					{
 						stmModelList.addAll(slotTimeMapList.get(key));
 					}
-					//System.out.println("Clash=> key: "+ key +" | stmModelList size: "+ stmModelList.size());
+					logger.trace("\n Clash=> key: "+ key +" | stmModelList size: "+ stmModelList.size());
 										
 					if (!stmModelList.isEmpty())
 					{
@@ -261,14 +261,14 @@ public class CourseAllocationService
 							clashStartTime = Long.parseLong(sdf.format(stm.getStmPkId().getSlotStartingTime()));
 							clashEndTime = Long.parseLong(sdf.format(stm.getStmPkId().getSlotEndingTime()));
 							clashSlotType = stm.getSlotType();
-							//System.out.println("clashWeekDay: "+ clashWeekDay +" | clashStartTime: "+ clashStartTime 
-							//		+" | clashEndTime: "+ clashEndTime +" | clashSlotType: "+ clashSlotType);
+							logger.trace("\n clashWeekDay: "+ clashWeekDay +" | clashStartTime: "+ clashStartTime 
+									+" | clashEndTime: "+ clashEndTime +" | clashSlotType: "+ clashSlotType);
 							
 							for (Object[] obj : allottedSlot)
 							{
 								allotPatternId = Integer.parseInt(obj[0].toString());
 								allotSlot = obj[1].toString();
-								//System.out.println("allotPatternId: "+ allotPatternId +" | allotSlot: "+ allotSlot);
+								logger.trace("\n allotPatternId: "+ allotPatternId +" | allotSlot: "+ allotSlot);
 								
 								for (String altSt : allotSlot.split("\\+"))
 								{
@@ -279,7 +279,7 @@ public class CourseAllocationService
 									{
 										stmModelList2.addAll(slotTimeMapList.get(key2));
 									}
-									//System.out.println("Allot=> key2: "+ key2 +" | stmModelList2 size: "+ stmModelList2.size());
+									logger.trace("\n Allot=> key2: "+ key2 +" | stmModelList2 size: "+ stmModelList2.size());
 									
 									if (!stmModelList2.isEmpty())
 									{
@@ -292,20 +292,20 @@ public class CourseAllocationService
 											allotStartTime = Long.parseLong(sdf.format(stm2.getStmPkId().getSlotStartingTime()));
 											allotEndTime = Long.parseLong(sdf.format(stm2.getStmPkId().getSlotEndingTime()));
 											allotSlotType = stm2.getSlotType();
-											//System.out.println("allotWeekDay: "+ allotWeekDay +" | allotStartTime: "+ allotStartTime 
-											//		+" | allotEndTime: "+ allotEndTime +" | allotSlotType: "+ allotSlotType);
+											logger.trace("\n allotWeekDay: "+ allotWeekDay +" | allotStartTime: "+ allotStartTime 
+													+" | allotEndTime: "+ allotEndTime +" | allotSlotType: "+ allotSlotType);
 											
 											if (altSt.equals(clhSt))
 											{
 												checkSlot = altSt;
-												//System.out.println("Clash Check Level 1: Failed");
+												logger.trace("\n Clash Check Level 1: Failed");
 											}
 											else if (allotWeekDay.equals(clashWeekDay) && allotSlotType.equals(clashSlotType) 
 															&& (((allotStartTime >= clashStartTime) && (allotStartTime <= clashEndTime))
 																	|| ((allotEndTime >= clashStartTime) && (allotEndTime <= clashEndTime))))
 											{
 												checkSlot = altSt;
-												//System.out.println("Clash Check Level 2: Failed");
+												logger.trace("\n Clash Check Level 2: Failed");
 											}
 											else if (allotWeekDay.equals(clashWeekDay) && (!allotSlotType.equals(clashSlotType))  
 															&& (clashSlotType.equals("GENERAL") || allotSlotType.equals("GENERAL")) 
@@ -313,13 +313,13 @@ public class CourseAllocationService
 																	|| ((allotEndTime >= clashStartTime) && (allotEndTime <= clashEndTime))))
 											{
 												checkSlot = altSt;
-												//System.out.println("Clash Check Level 3: Failed");
+												logger.trace("\n Clash Check Level 3: Failed");
 											}
 											else
 											{
 												clashStatus = 1;
 											}
-											//System.out.println("clashStatus: "+ clashStatus);
+											logger.trace("\n clashStatus: "+ clashStatus);
 											
 											if (clashStatus == 2) break;
 										}
@@ -341,7 +341,7 @@ public class CourseAllocationService
 		}
 		catch (Exception e)
 		{
-			//System.out.println("Exception: "+ e);
+			logger.trace(e);
 		}
 		
 		return clashStatus +"|"+ checkSlot;
@@ -352,24 +352,18 @@ public class CourseAllocationService
 	{
 		int clashStatus = 2, allotPatternId = 0;
 		long allotBuildingId = 0, diffValue = 0;
-		//long clashStartTime = 0, clashEndTime = 0, allotStartTime = 0, allotEndTime = 0;
 		String message = "NONE", allotSlot = "", clashWeekDay = "", allotWeekDay = "", key = "", key2 = "", color = "";
-		//String clashSlotType = "", allotSlotType = "";
-		
-		//Date startDate = null, endDate = null;
-		//SimpleDateFormat sdf = new SimpleDateFormat("HHmmss");
-		//SimpleDateFormat sdf2 = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-		
+				
 		List<SlotTimeMasterModel> stmModelList = new ArrayList<SlotTimeMasterModel>();
 		List<SlotTimeMasterModel> stmModelList2 = new ArrayList<SlotTimeMasterModel>();
 				
 		try
 		{
-			//System.out.println("patternId: "+ patternId +" | slot: "+ slot 
-			//		+" | buildingId: "+ buildingId +" | buildingCode: "+ buildingCode);
-			//System.out.println("allottedSlot size: "+ allottedSlot.size() 
-			//		+" | slotTimeMapList size: "+ slotTimeMapList.size() 
-			//		+" | slotFixedInfoList size: "+ slotFixedInfoList.size());
+			logger.trace("\n patternId: "+ patternId +" | slot: "+ slot 
+					+" | buildingId: "+ buildingId +" | buildingCode: "+ buildingCode);
+			logger.trace("\n allottedSlot size: "+ allottedSlot.size() 
+					+" | slotTimeMapList size: "+ slotTimeMapList.size() 
+					+" | slotFixedInfoList size: "+ slotFixedInfoList.size());
 			
 			if ((patternId != null) && (patternId > 0) && (slot != null) && (!slot.equals("")) 
 					&& (allottedSlot.isEmpty()))
@@ -388,27 +382,22 @@ public class CourseAllocationService
 					{
 						stmModelList.addAll(slotTimeMapList.get(key));
 					}
-					//System.out.println("Clash=> key: "+ key +" | stmModelList size: "+ stmModelList.size());
+					logger.trace("\n Clash=> key: "+ key +" | stmModelList size: "+ stmModelList.size());
 										
 					if (!stmModelList.isEmpty())
 					{
 						for (SlotTimeMasterModel stm : stmModelList)
 						{
 							clashWeekDay = stm.getStmPkId().getWeekdays();
-							//clashStartTime = Long.parseLong(sdf.format(stm.getStmPkId().getSlotStartingTime()));
-							//clashEndTime = Long.parseLong(sdf.format(stm.getStmPkId().getSlotEndingTime()));
-							//clashSlotType = stm.getSlotType();
-							//System.out.println("clashWeekDay: "+ clashWeekDay +" | clashStartTime: "+ clashStartTime 
-							//		+" | clashEndTime: "+ clashEndTime +" | clashSlotType: "+ clashSlotType);
+							logger.trace("\n clashWeekDay: "+ clashWeekDay);
 							
 							for (Object[] obj : allottedSlot)
 							{
 								allotPatternId = Integer.parseInt(obj[0].toString());
 								allotSlot = obj[1].toString();
 								allotBuildingId = Long.parseLong(obj[4].toString());
-								//allotBuildingCode = obj[5].toString();
-								//System.out.println("allotPatternId: "+ allotPatternId +" | allotSlot: "+ allotSlot 
-								//		+" | allotBuildingId: "+ allotBuildingId);
+								logger.trace("\n allotPatternId: "+ allotPatternId +" | allotSlot: "+ allotSlot 
+										+" | allotBuildingId: "+ allotBuildingId);
 								
 								for (String altSt : allotSlot.split("\\+"))
 								{
@@ -419,7 +408,7 @@ public class CourseAllocationService
 									{
 										stmModelList2.addAll(slotTimeMapList.get(key2));
 									}
-									//System.out.println("Allot=> key2: "+ key2 +" | stmModelList2 size: "+ stmModelList2.size());
+									logger.trace("\n Allot=> key2: "+ key2 +" | stmModelList2 size: "+ stmModelList2.size());
 									
 									if (!stmModelList2.isEmpty())
 									{	
@@ -433,30 +422,10 @@ public class CourseAllocationService
 											diffValue = 0;
 																						
 											allotWeekDay = stm2.getStmPkId().getWeekdays();
-											//allotStartTime = Long.parseLong(sdf.format(stm2.getStmPkId().getSlotStartingTime()));
-											//allotEndTime = Long.parseLong(sdf.format(stm2.getStmPkId().getSlotEndingTime()));
-											//allotSlotType = stm2.getSlotType();
-											//System.out.println("allotWeekDay: "+ allotWeekDay +" | allotStartTime: "+ allotStartTime 
-											//		+" | allotEndTime: "+ allotEndTime +" | allotSlotType: "+ allotSlotType);
+											logger.trace("\n allotWeekDay: "+ allotWeekDay);
 											
 											if (allotWeekDay.equals(clashWeekDay))
-											{	
-												//if (allotEndTime > clashStartTime)
-												//{
-												//	startDate = sdf2.parse(sdf2.format(stm.getStmPkId().getSlotStartingTime()));
-												//	endDate = sdf2.parse(sdf2.format(stm2.getStmPkId().getSlotEndingTime()));
-												//	diffValue = endDate.getTime() - startDate.getTime();
-												//	//System.out.println("Check Time Level 1=> startDate: "+ startDate +" | endDate: "+ endDate);
-												//}
-												//else if (clashEndTime < allotStartTime)
-												//{
-												//	endDate = sdf2.parse(sdf2.format(stm.getStmPkId().getSlotEndingTime()));
-												//	startDate = sdf2.parse(sdf2.format(stm2.getStmPkId().getSlotStartingTime()));
-												//	diffValue = endDate.getTime() - startDate.getTime();
-												//	//System.out.println("Check Time Level 2=> startDate: "+ startDate +" | endDate: "+ endDate);
-												//}
-												//diffValue = (diffValue / (1000 * 60)) % 60;//Minute Difference
-												
+											{													
 												if (slotFixedInfoList.containsKey(slt +"_"+ altSt))
 												{
 													diffValue = slotFixedInfoList.get(slt +"_"+ altSt);
@@ -465,7 +434,7 @@ public class CourseAllocationService
 												{
 													diffValue = slotFixedInfoList.get(altSt +"_"+ slt);
 												}
-												//System.out.println("diffValue: "+ diffValue);
+												logger.trace("\n diffValue: "+ diffValue);
 												
 												if (allotBuildingId != buildingId) 
 												{
@@ -511,7 +480,7 @@ public class CourseAllocationService
 											}
 												
 											if (clashStatus == 2) break;
-											//System.out.println("Block & Time Check Status: "+ clashStatus);
+											logger.trace("\n Block & Time Check Status: "+ clashStatus);
 										}
 									}
 									
@@ -531,7 +500,7 @@ public class CourseAllocationService
 		}
 		catch (Exception e)
 		{
-			//System.out.println("Exception: "+ e);
+			logger.trace(e);
 		}
 				
 		return clashStatus +"|"+ message +"|"+ color;
@@ -586,132 +555,4 @@ public class CourseAllocationService
 		
 		return returnMapList;
 	}
-	
-	/*public List<CourseAllocationModel> getAll()
-	{
-		return courseAllocationRepository.findAll();
-	}*/
-	
-	/*public List<CourseAllocationModel> getCourseAllocationList(String semesterSubId, String[] classGroupId, 
-											String[] classType, String progGroupCode, String progSpecCode, 
-											String costCentreCode)
-	{
-		List<CourseAllocationModel> tempModelList = new ArrayList<CourseAllocationModel>();
-		
-		if (progGroupCode.equals("RP"))
-		{
-			tempModelList = courseAllocationRepository.findByClassGroupAndClassType(semesterSubId, classGroupId, 
-								classType);
-		}
-		else
-		{
-			tempModelList = courseAllocationRepository.findByClassGroupClassTypeAndClassOption(semesterSubId, 
-								classGroupId, classType, progGroupCode, progSpecCode, costCentreCode);
-		}
-		
-		return tempModelList;
-	}
-	
-	public List<CourseAllocationModel> getCourseAllocationCourseIdList(String semesterSubId, String[] classGroupId, 
-											String[] classType, String courseId, String progGroupCode, 
-											String progSpecCode, String costCentreCode)
-	{
-		List<CourseAllocationModel> tempModelList = new ArrayList<CourseAllocationModel>();
-		
-		if (progGroupCode.equals("RP"))
-		{
-			tempModelList = courseAllocationRepository.findByCourseId(semesterSubId, classGroupId, classType, courseId);
-		}
-		else
-		{
-			tempModelList = courseAllocationRepository.findByCourseIdAndClassOption(semesterSubId, classGroupId, 
-								classType, courseId, progGroupCode, progSpecCode, costCentreCode);
-		}
-		
-		return tempModelList;
-	}*/
-	
-	/*public List<CourseAllocationModel> getCourseAllocationCourseIdTypeEmpidAssocList(String semesterSubId, 
-											String[] classGroupId, String[] classType, String courseId, String courseType, 
-											String erpId, String progGroupCode, String progSpecCode, String costCentreCode)
-	{
-		List<CourseAllocationModel> tempModelList = new ArrayList<CourseAllocationModel>();
-		
-		if (progGroupCode.equals("RP"))
-		{
-			tempModelList = courseAllocationRepository.findAssociateClassByCourseIdCourseTypeAndEmpId(
-								semesterSubId, classGroupId, classType, courseId, courseType, erpId);
-		}
-		else
-		{
-			tempModelList = courseAllocationRepository.findAssociateClassByCourseIdCourseTypeEmpIdAndClassOption(
-								semesterSubId, classGroupId, classType, courseId, courseType, erpId, progGroupCode, 
-								progSpecCode, costCentreCode);
-		}
-		
-		return tempModelList;
-	}
-	
-	public CourseAllocationModel getCourseAllocationCourseIdTypeEmpidSlotList(String semesterSubId, 
-									String[] classGroupId, String[] classType, String courseId, String courseType, 
-									String erpId, Long slotId, String progGroupCode, String progSpecCode, 
-									String costCentreCode)
-	{
-		CourseAllocationModel tempModel = new CourseAllocationModel();
-		
-		if (progGroupCode.equals("RP"))
-		{
-			tempModel = courseAllocationRepository.findByCourseIdCourseTypeEmpIdAndSlotId(semesterSubId, 
-							classGroupId, classType, courseId, courseType, erpId, slotId);
-		}
-		else
-		{
-			tempModel = courseAllocationRepository.findByCourseIdCourseTypeEmpIdSlotIdAndClassOption(semesterSubId, 
-							classGroupId, classType, courseId, courseType, erpId, slotId, progGroupCode, progSpecCode, 
-							costCentreCode);
-		}
-		
-		return tempModel;
-	}*/
-	
-	/*public List<CourseAllocationModel> getCourseAllocationCourseIdAvbList(String semesterSubId, String[] classGroupId, 
-											String[] classType, String courseId, String progGroupCode, String progSpecCode, 
-											String costCentreCode)
-	{
-		List<CourseAllocationModel> tempModelList = new ArrayList<CourseAllocationModel>();
-		
-		if (progGroupCode.equals("RP"))
-		{
-			tempModelList = courseAllocationRepository.findAvailableClassByCourseId(semesterSubId, classGroupId, 
-								classType, courseId);
-		}
-		else
-		{
-			tempModelList = courseAllocationRepository.findAvailableClassByCourseIdAndClassOption(semesterSubId, 
-								classGroupId, classType, courseId, progGroupCode, progSpecCode, costCentreCode);
-		}
-		
-		return tempModelList;
-	}*/
-	
-	
-	/*public Integer getAvailableRegisteredSeatsWithLock(String classId)
-	{
-		return courseAllocationRepository.findAvailableRegisteredSeatsWithLock(classId);
-	}
-	
-	public Integer getAvailableWaitingSeatsWithLock(String classId)
-	{
-		return courseAllocationRepository.findAvailableWaitingSeatsWithLock(classId);
-	}
-	
-	public void increaseRegisteredSeatsByOne(String classId)
-	{
-		courseAllocationRepository.increaseRegisteredSeats(classId);
-	}
-	
-	public void decreaseRegisteredSeatsByOne(String classId)
-	{
-		courseAllocationRepository.decreaseRegisteredSeats(classId);
-	}*/
 }

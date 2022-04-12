@@ -10,15 +10,15 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+
 @Entity
 @Table(name="COURSE_CATALOG", schema="academics")
-public class CourseCatalogModel implements Serializable {
-	
+public class CourseCatalogModel implements Serializable
+{	
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -107,7 +107,6 @@ public class CourseCatalogModel implements Serializable {
 	@Column(name="CAMPUS_CODE")
 	private String campusCode;
 	
-	@MapsId("campusCode")
 	@ManyToOne
 	@JoinColumn(name="CAMPUS_CODE", insertable = false, updatable = false)
 	private Campus campusModel;
@@ -144,7 +143,6 @@ public class CourseCatalogModel implements Serializable {
 
 	public float getCourseVersion() {
 		return courseVersion;
-		//return String.format ("%3.2f", courseVersion);
 	}
 
 	public void setCourseVersion(float courseVersion) {

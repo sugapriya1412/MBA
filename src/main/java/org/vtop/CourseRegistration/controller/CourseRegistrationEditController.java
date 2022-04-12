@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,9 +21,9 @@ import org.vtop.CourseRegistration.model.CourseRegistrationPKModel;
 import org.vtop.CourseRegistration.service.CourseAllocationService;
 import org.vtop.CourseRegistration.service.CourseCatalogService;
 import org.vtop.CourseRegistration.service.CourseRegistrationCommonFunction;
+import org.vtop.CourseRegistration.service.CourseRegistrationReadWriteService;
 import org.vtop.CourseRegistration.service.CourseRegistrationService;
 import org.vtop.CourseRegistration.service.ProgrammeSpecializationCurriculumDetailService;
-import org.vtop.CourseRegistration.service.RegistrationLogService;
 
 
 @Controller
@@ -31,12 +33,14 @@ public class CourseRegistrationEditController
 	@Autowired private CourseAllocationService courseAllocationService;
 	@Autowired private CourseRegistrationService courseRegistrationService;
 	@Autowired private CourseRegistrationCommonFunction courseRegCommonFn;
-	@Autowired private RegistrationLogService registrationLogService;
 	@Autowired private ProgrammeSpecializationCurriculumDetailService programmeSpecializationCurriculumDetailService;
 	@Autowired private CourseRegistrationFormController courseRegistrationFormController;
+	@Autowired private CourseRegistrationReadWriteService courseRegistrationReadWriteService;
+	
 	
 	private static final String[] classType = { "BFS" };
 	private static final String RegErrorMethod = "WS2122AD";
+	private static final Logger logger = LogManager.getLogger(CourseRegistrationEditController.class);
 	
 
 	@PostMapping("modifySlots")
@@ -67,7 +71,7 @@ public class CourseRegistrationEditController
 				String startTime = (String) session.getAttribute("startTime");
 				String endTime = (String) session.getAttribute("endTime");
 				
-				String returnVal = courseRegCommonFn.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
+				String returnVal = courseRegistrationReadWriteService.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
 										registerNumber, updateStatus, IpAddress);
 				String[] statusMsg = returnVal.split("/");
 				allowStatus = Integer.parseInt(statusMsg[0]);
@@ -104,10 +108,12 @@ public class CourseRegistrationEditController
 		}
 		catch(Exception ex)
 		{
+			logger.trace(ex);
+			
 			model.addAttribute("flag", 1);
-			registrationLogService.addErrorLog(ex.toString(), RegErrorMethod+"CourseRegistrationEditController", 
+			courseRegistrationReadWriteService.addErrorLog(ex.toString(), RegErrorMethod+"CourseRegistrationEditController", 
 					"modifySlots", registerNumber, IpAddress);
-			registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			urlPage = "redirectpage";
 			return urlPage;
 		}
@@ -136,12 +142,15 @@ public class CourseRegistrationEditController
 			if ((registerNumber != null) && (pageAuthStatus == 1))
 			{	
 				session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+				
 				String semesterSubId = (String) session.getAttribute("SemesterSubId");
+				String semesterDesc = (String) session.getAttribute("SemesterDesc");
+				String semesterShortDesc = (String) session.getAttribute("SemesterShortDesc");
 				String[] classGroupId = session.getAttribute("classGroupId").toString().split("/");
 				String programGroupCode = (String) session.getAttribute("ProgramGroupCode");
 				String ProgramSpecCode = (String) session.getAttribute("ProgramSpecCode");
 				String costCentreCode = (String) session.getAttribute("costCentreCode");
-				
+							
 				Integer programSpecId = (Integer) session.getAttribute("ProgramSpecId");
 				int studyStartYear = (int) session.getAttribute("StudyStartYear");
 				Float curriculumVersion = (Float) session.getAttribute("curriculumVersion");
@@ -153,7 +162,7 @@ public class CourseRegistrationEditController
 				String startTime = (String) session.getAttribute("startTime");
 				String endTime = (String) session.getAttribute("endTime");
 				
-				String returnVal = courseRegCommonFn.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
+				String returnVal = courseRegistrationReadWriteService.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
 										registerNumber, updateStatus, IpAddress);
 				String[] statusMsg = returnVal.split("/");
 				allowStatus = Integer.parseInt(statusMsg[0]);
@@ -280,7 +289,7 @@ public class CourseRegistrationEditController
 									classIdList = courseAllocationList.stream()
 														.filter(e -> e.getAvailableSeats() > 0)
 														.map(e -> e.getClassId()).collect(Collectors.toList());
-									//System.out.println("classIdList size: "+ classIdList.size());
+									logger.trace("\n classIdList size: "+ classIdList.size());
 									if (!classIdList.isEmpty())
 									{
 										statusFlag = 1;
@@ -323,9 +332,10 @@ public class CourseRegistrationEditController
 							statusFlag = 2;
 							
 							if (otpStatus == 1)
-							{
-								validateStatusArr = courseRegCommonFn.validateCourseAndSendOTP(semesterSubId, registerNumber, 
-														courseId2, studentEMailId, IpAddress, "MODIFY").split("\\|");
+							{								
+								validateStatusArr = courseRegistrationReadWriteService.validateCourseAndSendOTP(semesterSubId, semesterDesc, 
+														semesterShortDesc, registerNumber, courseId2, courseCode, studentEMailId, IpAddress, 
+														"MODIFY").split("\\|");
 								statusFlag = Integer.parseInt(validateStatusArr[0]);
 								courseAuthStatus = validateStatusArr[1];
 								msg = validateStatusArr[3];
@@ -348,8 +358,6 @@ public class CourseRegistrationEditController
 							model.addAttribute("oldCourseType", courseType);
 							model.addAttribute("courseAllocationList", courseAllocationList);
 							
-							//model.addAttribute("tlClashMapList", courseRegCommonFn.getClashSlotStatus(semesterSubId, 
-							//		registerNumber, courseAllocationList));
 							courseRegistrationFormController.callSlotInformation(model, semesterSubId, registerNumber, courseAllocationList);
 							
 							model.addAttribute("oldSlot", oldSlot);
@@ -389,10 +397,12 @@ public class CourseRegistrationEditController
 		}
 		catch(Exception ex)
 		{
+			logger.trace(ex);
+			
 			model.addAttribute("flag", 1);
-			registrationLogService.addErrorLog(ex.toString(), RegErrorMethod+"CourseRegistrationEditController", 
+			courseRegistrationReadWriteService.addErrorLog(ex.toString(), RegErrorMethod+"CourseRegistrationEditController", 
 					"editRegisteredSlots", registerNumber, IpAddress);
-			registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			urlPage = "redirectpage";
 			return urlPage;
 		}
@@ -412,11 +422,11 @@ public class CourseRegistrationEditController
 		
 		String urlPage = "", msg = null, message = null, infoMsg = "";
 		String[] courseDetailArr = {}, regStatusArr = {};		
-		String oldGenericType = "", oldCourseType = "", newEpjClassId = "", oldCourseOption = "";
+		String oldGenericType = "", oldCourseCode = "", oldCourseType = "", newEpjClassId = "", oldCourseOption = "";
 		String newCourseId = "", newClassId = "", newCourseType = "", newSlotClash = "", 
 					newGenericType = "", newErpId = "", newAssoClassId = "";
 		String pClassIdArr = "", pCompTypeArr = "", pOldClassIdArr = "", mailOTP = "";
-		String pRegStatus = "", oldErpId = "";
+		String pRegStatus = "", oldErpId = "", oldGradeCategory = "";
 		int pageAuthStatus = 2;
 		Integer patternId = 0;
 		String pageAuthKey = "";
@@ -429,14 +439,17 @@ public class CourseRegistrationEditController
 		
 		pageAuthKey = (String) session.getAttribute("pageAuthKey");
 		pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
-		
-		
+				
 		try
 		{
+			logger.trace("\n registerNumber: "+ registerNumber +" | pageAuthStatus: "+ pageAuthStatus);
 			if ((registerNumber != null) && (pageAuthStatus == 1))
 			{								
 				session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+				
 				String semesterSubId = (String) session.getAttribute("SemesterSubId");
+				String semesterDesc = (String) session.getAttribute("SemesterDesc");
+				String semesterShortDesc = (String) session.getAttribute("SemesterShortDesc");
 				String[] classGroupId = session.getAttribute("classGroupId").toString().split("/");
 				Integer programSpecId = (Integer) session.getAttribute("ProgramSpecId");
 				int studyStartYear = (int) session.getAttribute("StudyStartYear");
@@ -451,7 +464,7 @@ public class CourseRegistrationEditController
 				String startTime = (String) session.getAttribute("startTime");
 				String endTime = (String) session.getAttribute("endTime");
 								
-				String returnVal = courseRegCommonFn.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
+				String returnVal = courseRegistrationReadWriteService.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
 										registerNumber, updateStatus, IpAddress);
 				String[] statusMsg = returnVal.split("/");
 				allowStatus = Integer.parseInt(statusMsg[0]);
@@ -460,10 +473,8 @@ public class CourseRegistrationEditController
 				int statusFlag = 2, redirectFlag = 2;
 				List<String> clashslot = new ArrayList<String>();
 				String[] validateStatusArr = new String[]{};
-				
 				courseAllocationModel = new CourseAllocationModel();
-				
-				
+								
 				mailOTP = request.getParameter("mailOTP");
 				if ((mailOTP != null) && (!mailOTP.equals("")))
 				{
@@ -483,6 +494,8 @@ public class CourseRegistrationEditController
 						newCourseId = courseDetailArr[1];
 						newCourseType = courseDetailArr[2];
 						newSlotClash = courseDetailArr[3];
+						logger.trace("\n newClassId: "+ newClassId +" | newCourseId: "+ newCourseId 
+								+" | newCourseType: "+ newCourseType +" | newSlotClash: "+ newSlotClash);
 						
 						if ((!newSlotClash.equals("")) && (!newSlotClash.equals("NONE")))
 						{
@@ -494,7 +507,7 @@ public class CourseRegistrationEditController
 						String authStatus = (String) session.getAttribute("authStatus");
 						int authCheckStatus = courseRegCommonFn.validateCourseAuthKey(authStatus, registerNumber, 
 												newCourseId, 2);
-						
+						logger.trace("\n authStatus: "+ authStatus +" | authCheckStatus: "+ authCheckStatus);
 						
 						courseCatalogModel = courseCatalogService.getOne(newCourseId);
 						
@@ -502,12 +515,14 @@ public class CourseRegistrationEditController
 														registerNumber, newCourseId, newCourseType);
 						if (courseRegistrationModel2 != null)
 						{
+							oldCourseCode = courseRegistrationModel2.getCourseCatalogModel().getCode();
 							oldGenericType = courseRegistrationModel2.getCourseCatalogModel().getGenericCourseType();
 							oldCourseType = courseRegistrationModel2.getCourseRegistrationPKId().getCourseType();
 							oldCourseOption = courseRegistrationModel2.getCourseOptionCode();
 							oldRegStatus = courseRegistrationModel2.getStatusNumber();
 							oldCompType = courseRegistrationModel2.getComponentType();
 							oldErpId = courseRegistrationModel2.getCourseAllocationModel().getErpId();
+							oldGradeCategory = courseRegistrationModel2.getGradeCategory();
 						}
 						
 						
@@ -524,9 +539,10 @@ public class CourseRegistrationEditController
 						if (authCheckStatus == 1)
 						{
 							if (otpStatus == 1)
-							{
-								validateStatusArr = courseRegCommonFn.validateCourseAndOTP(semesterSubId, registerNumber, 
-														newCourseId, mailOTP, IpAddress, "MODIFY").split("\\|");
+							{																
+								validateStatusArr = courseRegistrationReadWriteService.validateCourseAndOTP(semesterSubId, 
+														semesterDesc, semesterShortDesc, registerNumber, newCourseId, 
+														oldCourseCode, mailOTP, IpAddress, "MODIFY").split("\\|");
 								statusFlag = Integer.parseInt(validateStatusArr[0]);
 								redirectFlag = Integer.parseInt(validateStatusArr[1]);
 								message = validateStatusArr[2];
@@ -570,7 +586,6 @@ public class CourseRegistrationEditController
 						
 						if (checkflag == 1) 
 						{
-							//regStatusArr = courseRegCommonFn.checkClash(clashslot, semesterSubId, registerNumber, "MODIFY", oldClassId).split("/");
 							regStatusArr = courseRegCommonFn.checkClash(patternId, clashslot, semesterSubId, registerNumber, "MODIFY", oldClassId).split("/");
 							regStatusFlag = Integer.parseInt(regStatusArr[0]);
 							message = regStatusArr[1];
@@ -628,9 +643,9 @@ public class CourseRegistrationEditController
 							}
 							
 							
-							pRegStatus = courseRegistrationService.courseRegistrationUpdate2(semesterSubId, registerNumber, 
-											newCourseId, pCompTypeArr, oldCourseOption, pOldClassIdArr, pClassIdArr, 
-											registerNumber, IpAddress, oldRegStatus, oldCompType, "GEN", "", "", "");
+							pRegStatus = courseRegistrationReadWriteService.courseRegistrationUpdate2(semesterSubId, registerNumber, newCourseId, 
+												pCompTypeArr, oldCourseOption, pOldClassIdArr, pClassIdArr, registerNumber, IpAddress, 
+												oldRegStatus, oldCompType, "GEN", "", "", "", oldGradeCategory);
 							if (pRegStatus.equals("SUCCESS"))
 							{
 								msg = "Slot Modified Successfully";
@@ -639,9 +654,9 @@ public class CourseRegistrationEditController
 							else if ((pRegStatus.equals("FAIL")) || (pRegStatus.substring(0, 5).toLowerCase().equals("error")))
 							{
 								message = "Technical error.";
-								registrationLogService.addErrorLog(pRegStatus+"Code"+newCourseId, RegErrorMethod+"CourseRegistrationEditController", 
+								courseRegistrationReadWriteService.addErrorLog(pRegStatus+"Code"+newCourseId, RegErrorMethod+"CourseRegistrationEditController", 
 										"UpdateRegProc", registerNumber, IpAddress);
-								registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+								courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 							}
 							else
 							{
@@ -663,9 +678,7 @@ public class CourseRegistrationEditController
 												classGroupId, classType, newCourseId, oldCourseType, programGroupCode,
 												ProgramSpecCode, costCentreCode);							
 							}
-							
-							//session.setAttribute("authStatus", courseAuthStatus);
-							
+														
 							model.addAttribute("courseCatalogModel", courseCatalogModel);
 							model.addAttribute("oldClassId", oldClassId);
 							model.addAttribute("oldCourseId", newCourseId);
@@ -673,8 +686,6 @@ public class CourseRegistrationEditController
 							model.addAttribute("courseAllocationList", camList);
 							model.addAttribute("otpAllowStatus", otpStatus);
 							
-							//model.addAttribute("tlClashMapList", courseRegCommonFn.getClashSlotStatus(semesterSubId, 
-							//		registerNumber, camList));
 							courseRegistrationFormController.callSlotInformation(model, semesterSubId, registerNumber, camList);
 							
 							model.addAttribute("info", msg);
@@ -716,10 +727,12 @@ public class CourseRegistrationEditController
 		}
 		catch(Exception ex)
 		{
+			logger.trace(ex);
+			
 			model.addAttribute("flag", 1);
-			registrationLogService.addErrorLog(ex.toString(), RegErrorMethod+"CourseRegistrationEditController", 
+			courseRegistrationReadWriteService.addErrorLog(ex.toString(), RegErrorMethod+"CourseRegistrationEditController", 
 					"UpdateRegisteredSlots", registerNumber, IpAddress);
-			registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			urlPage = "redirectpage";
 			return urlPage;
 		}

@@ -62,5 +62,9 @@ public class AdditionalLearningCourseCatalogPkModel implements Serializable {
 			return false;
 		return true;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "AdditionalLearningCourseCatalogPkModel [code=" + code + ", courseId=" + courseId + "]";
+	}
 }

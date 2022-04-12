@@ -7,6 +7,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,14 +18,16 @@ import org.vtop.CourseRegistration.repository.ProgrammeSpecializationCurriculumC
 
 
 @Service
-@Transactional("transactionManager")
+@Transactional(readOnly=true)
 public class ProgrammeSpecializationCurriculumCreditService
 {		
 	@Autowired private ProgrammeSpecializationCurriculumCreditRepository programmeSpecializationCurriculumCreditRepository;
 	@Autowired private CourseRegistrationService courseRegistrationService;
 	@Autowired private ProgrammeSpecializationCurriculumDetailService programmeSpecializationCurriculumDetailService;
 	@Autowired private StudentHistoryService studentHistoryService;
-	@Autowired private SemesterMasterService semesterMasterService;	
+	@Autowired private SemesterMasterService semesterMasterService;
+	
+	private static final Logger logger = LogManager.getLogger(ProgrammeSpecializationCurriculumCreditService.class);
 
 	
 	public List<Object[]> getMaxVerDetailBySpecIdAndAdmYear2(Integer specId, Integer admissionYear)
@@ -61,12 +65,12 @@ public class ProgrammeSpecializationCurriculumCreditService
 			//Result Published (i.e. Academics History) - Credit Count
 			objectList = studentHistoryService.getByRegisterNumberCourseOptionAndGrade(registerNumber, Arrays.asList("HON","MIN"), 
 								Arrays.asList("U","W"));
-			//System.out.println("Result Published Data: "+ objectList.size());
+			logger.trace("\n Result Published Data: "+ objectList.size());
 			if (!objectList.isEmpty())
 			{
 				for (Object[] e : objectList)
 				{
-					//System.out.println(Arrays.deepToString(e));
+					logger.trace("\n "+ Arrays.deepToString(e));
 					categoryCode = "UE";
 					catalogType = "CC";
 					basketCode = "NONE";
@@ -133,7 +137,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 						categoryCode = entry.getKey();
 						totalCredit = 0;
 						curriculumCreditCalculationDto = new CurriculumCreditCalculationDto();
-						//System.out.println("entry key: "+ entry.getKey());
+						logger.trace("\n entry key: "+ entry.getKey());
 						
 						if (ccCalculationMapList.containsKey(categoryCode))
 						{
@@ -143,7 +147,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 								totalCredit = curriculumCreditCalculationDto.getResultPublishedCredit();
 								for (Map.Entry<String, Float> entry2 : entry.getValue().entrySet())
 								{
-									//System.out.println("entry2 key: "+ entry2.getKey() +" | entry2 value: "+ entry2.getValue());
+									logger.trace("\n entry2 key: "+ entry2.getKey() +" | entry2 value: "+ entry2.getValue());
 									totalCredit = totalCredit + entry2.getValue();
 								}
 								
@@ -154,7 +158,6 @@ public class ProgrammeSpecializationCurriculumCreditService
 					}
 				}
 			}
-			
 			
 			//Result UnPublished (i.e. Previous Semester Registration) - Credit Count
 			objectList.clear();
@@ -168,12 +171,12 @@ public class ProgrammeSpecializationCurriculumCreditService
 			}
 			
 			objectList = courseRegistrationService.getResultUnpublishedSemesterCreditDetail(registerNumber, courseOption, psCourseCode);
-			//System.out.println("Result UnPublished Data: "+ objectList.size());
+			logger.trace("\n Result UnPublished Data: "+ objectList.size());
 			if (!objectList.isEmpty())
 			{
 				for (Object[] e : objectList)
 				{
-					//System.out.println(Arrays.deepToString(e));
+					logger.trace("\n "+ Arrays.deepToString(e));
 					categoryCode = "UE";
 					catalogType = "CC";
 					basketCode = "NONE";
@@ -240,7 +243,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 						categoryCode = entry.getKey();
 						totalCredit = 0;
 						curriculumCreditCalculationDto = new CurriculumCreditCalculationDto();
-						//System.out.println("entry key: "+ entry.getKey());
+						logger.trace("\n entry key: "+ entry.getKey());
 						
 						if (ccCalculationMapList.containsKey(categoryCode))
 						{
@@ -250,7 +253,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 								totalCredit = curriculumCreditCalculationDto.getResultUnpublishedCredit();
 								for (Map.Entry<String, Float> entry2 : entry.getValue().entrySet())
 								{
-									//System.out.println("entry2 key: "+ entry2.getKey() +" | entry2 value: "+ entry2.getValue());
+									logger.trace("\n entry2 key: "+ entry2.getKey() +" | entry2 value: "+ entry2.getValue());
 									totalCredit = totalCredit + entry2.getValue();
 								}
 								
@@ -262,19 +265,18 @@ public class ProgrammeSpecializationCurriculumCreditService
 				}
 			}
 			
-			
 			//Course Registration (i.e. Registered/Ongoing Semester) - Credit Count
 			objectList.clear();
 			totalMapList.clear();
 			totalMapList2.clear();
 			
 			objectList = courseRegistrationService.getRegisteredSemesterCreditDetail(registerNumber, courseOption);
-			//System.out.println("Registered Semester Data: "+ objectList.size());
+			logger.trace("\n Registered Semester Data: "+ objectList.size());
 			if (!objectList.isEmpty())
 			{
 				for (Object[] e : objectList)
 				{
-					//System.out.println(Arrays.deepToString(e));
+					logger.trace("\n "+ Arrays.deepToString(e));
 					categoryCode = "UE";
 					catalogType = "CC";
 					basketCode = "NONE";
@@ -341,7 +343,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 						categoryCode = entry.getKey();
 						totalCredit = 0;
 						curriculumCreditCalculationDto = new CurriculumCreditCalculationDto();
-						//System.out.println("entry key: "+ entry.getKey());
+						logger.trace("\n entry key: "+ entry.getKey());
 						
 						if (ccCalculationMapList.containsKey(categoryCode))
 						{
@@ -351,7 +353,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 								totalCredit = curriculumCreditCalculationDto.getRegisteredCredit();
 								for (Map.Entry<String, Float> entry2 : entry.getValue().entrySet())
 								{
-									//System.out.println("entry2 key: "+ entry2.getKey() +" | entry2 value: "+ entry2.getValue());
+									logger.trace("\n entry2 key: "+ entry2.getKey() +" | entry2 value: "+ entry2.getValue());
 									totalCredit = totalCredit + entry2.getValue();
 								}
 								
@@ -362,20 +364,19 @@ public class ProgrammeSpecializationCurriculumCreditService
 					}
 				}
 			}
-			
-			
+						
 			//Course Registration Waiting List (i.e. Ongoing Semester) - Credit Count
 			objectList.clear();
 			totalMapList.clear();
 			totalMapList2.clear();
 			
 			objectList = courseRegistrationService.getWaitingListSemesterCreditDetail(registerNumber, courseOption);
-			//System.out.println("Waiting List Semester Data: "+ objectList.size());
+			logger.trace("\n Waiting List Semester Data: "+ objectList.size());
 			if (!objectList.isEmpty())
 			{
 				for (Object[] e : objectList)
 				{
-					//System.out.println(Arrays.deepToString(e));
+					logger.trace("\n "+ Arrays.deepToString(e));
 					categoryCode = "UE";
 					catalogType = "CC";
 					basketCode = "NONE";
@@ -442,7 +443,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 						categoryCode = entry.getKey();
 						totalCredit = 0;
 						curriculumCreditCalculationDto = new CurriculumCreditCalculationDto();
-						//System.out.println("entry key: "+ entry.getKey());
+						logger.trace("\n entry key: "+ entry.getKey());
 						
 						if (ccCalculationMapList.containsKey(categoryCode))
 						{
@@ -452,7 +453,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 								totalCredit = curriculumCreditCalculationDto.getWaitingListCredit();
 								for (Map.Entry<String, Float> entry2 : entry.getValue().entrySet())
 								{
-									//System.out.println("entry2 key: "+ entry2.getKey() +" | entry2 value: "+ entry2.getValue());
+									logger.trace("\n entry2 key: "+ entry2.getKey() +" | entry2 value: "+ entry2.getValue());
 									totalCredit = totalCredit + entry2.getValue();
 								}
 								
@@ -494,7 +495,6 @@ public class ProgrammeSpecializationCurriculumCreditService
 		List<String> tempPSCourseCode = new ArrayList<String>();
 				
 		tempHistGrade.addAll(Arrays.asList("U","W"));
-		//tempCourseOption.addAll(Arrays.asList("HON","MIN","RGCE","RGP","RGR","RGW","RPCE","RWCE","RPEUE","RUCUE"));
 		tempCourseOption.addAll(Arrays.asList("RGCE","RGP","RGR","RGW","RPCE","RWCE","RPEUE","RUCUE","RUEPE"));
 				
 		tempUECourseCode = courseRegistrationService.getUECourseByRegisterNumber(registerNumber);
@@ -515,29 +515,11 @@ public class ProgrammeSpecializationCurriculumCreditService
 			tempPSCourseCode.add("NONE");
 		}
 		
-		//System.out.println("semSubId: "+ semSubId +" | registerNumber: "+ registerNumber 
-		//		+" | basketId: "+ basketId);
-				
-		//System.out.println("PE as UE Registered Course: ");
-		//for(String e: tempPECourseCode)
-		//{
-		//	System.out.println(e);
-		//}
+		logger.trace("\n semSubId: "+ semSubId +" | registerNumber: "+ registerNumber 
+				+" | basketId: "+ basketId);				
+		logger.trace("\n Basket Course: "+ tempBasketCourseCode);
+		logger.trace("\n Result Published Course: "+ tempPSCourseCode);
 		
-		//System.out.println("Basket Course: ");
-		//for (String e: tempBasketCourseCode)
-		//{
-		//	System.out.println(e);
-		//}
-		
-		//System.out.println("Result Published Course: ");
-		//for(String e: tempPSCourseCode)
-		//{
-		//	System.out.println(e);
-		//}
-		
-		//tempCredit = programmeSpecializationCurriculumCreditRepository.findStudentBasketCreditDetailByRegisterNo(semSubId, 
-		//					registerNumber, tempHistGrade, tempCourseOption, tempUECourseCode, tempBasketCourseCode);
 		tempCredit = programmeSpecializationCurriculumCreditRepository.findStudentBasketCreditDetailByRegisterNo(
 							semSubId, registerNumber, tempHistGrade, tempCourseOption, tempUECourseCode, 
 							tempBasketCourseCode, tempPSCourseCode);
@@ -547,14 +529,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 		}
 		
 		return tempCredit;
-	}	
-	
-	/*public List<Object[]> getStudentHonourEligibleDetailByRegisterNo(Integer specId, Integer admissionYear, 
-								Float ccVersion, List<String> registerNumber)
-	{
-		return programmeSpecializationCurriculumCreditRepository.findStudentHonourEligibleDetailByRegisterNo(
-					specId, admissionYear, ccVersion, registerNumber);
-	}*/
+	}
 	
 	private LinkedHashMap<String, CurriculumCreditCalculationDto> getCreditDetail(Integer specializationId, Integer admissionYear, Float curriculumVersion)
 	{	
@@ -596,34 +571,4 @@ public class ProgrammeSpecializationCurriculumCreditService
 		return programmeSpecializationCurriculumCreditRepository.findBySpecializationIdAdmissionYearAndVersion(
 						specializationId, admissionYear, curriculumVersion);
 	}
-		
-	
-	/*public ProgrammeSpecializationCurriculumCreditModel getOne(ProgrammeSpecializationCurriculumCreditPKModel 
-				programmeSpecializationCurriculumCreditPKModel)
-	{
-		return programmeSpecializationCurriculumCreditRepository.findOne(programmeSpecializationCurriculumCreditPKModel);
-	}
-		
-	public List<ProgrammeSpecializationCurriculumCreditModel> getAll()
-	{
-		return programmeSpecializationCurriculumCreditRepository.findAll();
-	}
-		
-	public List<ProgrammeSpecializationCurriculumCreditModel> getBySpecId(Integer specId)
-	{
-		return programmeSpecializationCurriculumCreditRepository.findBySpecId(specId);
-	}
-	
-	public List<ProgrammeSpecializationCurriculumCreditModel> getBySpecIdAdmYear(Integer specId, 
-				Integer admissionYear)
-	{
-		return programmeSpecializationCurriculumCreditRepository.findBySpecIdAdmYear(specId, admissionYear);
-	}
-	
-	public ProgrammeSpecializationCurriculumCreditModel getMaxVerDetailBySpecIdAndAdmYear(Integer specId, 
-				Integer admissionYear)
-	{
-		return programmeSpecializationCurriculumCreditRepository.findMaxVerDetailBySpecIdAndAdmYear(specId, 
-					admissionYear);
-	}*/
 }

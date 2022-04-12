@@ -131,5 +131,4 @@ public class AdditionalLearningCourseCatalogModel implements Serializable {
 				+ ", logUserId=" + logUserId + ", logTimestamp=" + logTimestamp + ", logIpaddress=" + logIpaddress
 				+ "]";
 	}
-	
 }

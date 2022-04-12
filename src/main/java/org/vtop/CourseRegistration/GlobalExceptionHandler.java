@@ -32,7 +32,7 @@ public class GlobalExceptionHandler //implements ErrorController
 		} 
 		catch (ServletException e) 
 		{		
-			logger.catching(e);			
+			logger.trace(e);			
 		}
 		
 		ModelAndView mav = new ModelAndView();
@@ -55,7 +55,7 @@ public class GlobalExceptionHandler //implements ErrorController
 		} 
 		catch (ServletException e) 
 		{			
-			logger.catching(e);
+			logger.trace(e);
 		}   
 	    
 	    ModelAndView mav = new ModelAndView();
@@ -78,7 +78,7 @@ public class GlobalExceptionHandler //implements ErrorController
 		} 
 		catch (ServletException e) 
 		{
-			logger.catching(e);
+			logger.trace(e);
 		}		
 	
 		ModelAndView mav = new ModelAndView();
@@ -101,7 +101,7 @@ public class GlobalExceptionHandler //implements ErrorController
 		} 
 		catch (ServletException e) 
 		{
-			logger.catching(e);		
+			logger.trace(e);		
 		}
 		
 		ModelAndView mav = new ModelAndView();
@@ -122,7 +122,7 @@ public class GlobalExceptionHandler //implements ErrorController
 		} 
 		catch (ServletException e) 
 		{			
-			logger.catching(e);
+			logger.trace(e);
 		}
 
 		String page="CustomErrorPage";

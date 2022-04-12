@@ -163,7 +163,7 @@
 												th:if="${RegisteredList.getAvailableSeats()  &gt; 0}"
 												th:checked="${oldClassId == RegisteredList.getClassId()}"
 												th:value="${RegisteredList.getClassId() 
-													+','+  RegisteredList.getClassId() 
+													+','+  RegisteredList.getCourseId() 
 													+','+ RegisteredList.getCourseType() 
 													+','+ RegisteredList.getTimeTableModel().getClashSlot()}" />
 											<span th:text="${RegisteredList.getAvailableSeats()}"></span>
@@ -196,16 +196,10 @@
 									<tr>
 										<td colspan="5"
 											style="text-align: center; border: 1px solid #3c8dbc;">
-											<!-- <button type="button"
+											<button type="button"
 												th:if="${courseAllocationList.size() > 1}"
 												class="btn-success w3-btn w3-btn-green w3-round-large"
-												th:onclick="'javascript: UpdateSlots(\''+ ${oldClassId} +'\');'"
-												>Update</button> -->
-												
-												<button type="button"
-												th:if="${courseAllocationList.size() > 1}"
-												class="btn-success w3-btn w3-btn-green w3-round-large"
-												 th:data-parameter1="${oldClassId}"												
+												th:data-parameter1="${oldClassId}"												
 												th:onclick="javascript: UpdateSlots(this.getAttribute('data-parameter1'))">Update</button>
 											&nbsp;&nbsp;&nbsp;
 											<button type="button"

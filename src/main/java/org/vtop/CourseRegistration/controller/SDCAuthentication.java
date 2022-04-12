@@ -7,7 +7,6 @@ public class SDCAuthentication {
     
     public String getrandom(int keylen) 
 	{
-		//final String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
 		final String alphabet = "ABCDEFGHJKMNPRSTUVWXYZ23456789abcdefghjkmnprstuvwxyz";
 		final int N = alphabet.length();
 		String key = "";
@@ -35,7 +34,6 @@ public class SDCAuthentication {
 		{
 			md = MessageDigest.getInstance("SHA-512");
 			md.update(hash_string.getBytes("UTF_16LE"));
-			//md.update(hash_string.getBytes("UTF-8"));
 		    byte[] digest = md.digest();    
 		    hashval = convertByteToHex(digest);
 		} catch (Exception e) {
@@ -74,5 +72,4 @@ public class SDCAuthentication {
 		
 		return result;
 	}
-    
 }

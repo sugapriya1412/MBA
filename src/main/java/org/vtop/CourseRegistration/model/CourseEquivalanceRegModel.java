@@ -114,5 +114,4 @@ public class CourseEquivalanceRegModel implements Serializable {
 				+ ", equivalanceCourseId=" + equivalanceCourseId + ", logUserId=" + logUserId + ", logTimestamp="
 				+ logTimestamp + ", logIpaddress=" + logIpaddress + "]";
 	}
-	
 }

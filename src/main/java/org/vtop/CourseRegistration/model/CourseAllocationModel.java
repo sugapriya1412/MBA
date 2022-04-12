@@ -49,16 +49,7 @@ public class CourseAllocationModel {
 	@ManyToOne
 	@JoinColumn(name="TIME_TABLE_SLOT_ID", referencedColumnName="SLOT_ID", insertable = false, updatable = false)
 	private TimeTableModel timeTableModel;
-	
-	/*@ManyToOne
-	@JoinColumns({ 
-		@JoinColumn(name="SEMSTR_DETAILS_SEMESTER_SUB_ID",insertable = false, updatable = false),
-		@JoinColumn(name="COURSE_CATALOG_COURSE_ID",insertable = false, updatable = false),
-		@JoinColumn(name="CRSTYPCMPNTMASTER_COURSE_TYPE",insertable = false, updatable = false),
-		@JoinColumn(name="TIME_TABLE_SLOT_ID",insertable = false, updatable = false)
-	})
-	private CourseSchedulingModel courseSchedulingModel;*/
-				
+					
 	@Column(name="BUILDING_MASTER_BUILDING_ID")
 	private Long buildingMasterBuildingId;
 			
@@ -85,7 +76,7 @@ public class CourseAllocationModel {
 	
 	@ManyToOne
 	@JoinColumn(name="COURSE_MODE_MASTER_CODE", referencedColumnName="CODE", insertable = false, updatable = false)
-	private CourseModeMasterModel courseModeMasterModel;
+	private CourseModeMaster courseModeMasterModel;
 	
 	@Column(name="CLSSGRP_MASTER_CLASS_GROUP_ID")
 	private String clsGrpMasterGroupId;
@@ -267,11 +258,11 @@ public class CourseAllocationModel {
 		this.courseModeMasterCode = courseModeMasterCode;
 	}
 
-	public CourseModeMasterModel getCourseModeMasterModel() {
+	public CourseModeMaster getCourseModeMasterModel() {
 		return courseModeMasterModel;
 	}
 
-	public void setCourseModeMasterModel(CourseModeMasterModel courseModeMasterModel) {
+	public void setCourseModeMasterModel(CourseModeMaster courseModeMasterModel) {
 		this.courseModeMasterModel = courseModeMasterModel;
 	}
 
@@ -428,7 +419,6 @@ public class CourseAllocationModel {
 
 	public Integer getAvailableWaitingSeats() {
 		
-		//availableWaitingSeats = 60 - this.waitingSeats;
 		availableWaitingSeats = 10 - this.waitingSeats;
 		
 		if (availableWaitingSeats <= 0){

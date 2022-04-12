@@ -99,5 +99,4 @@ public class CourseOptionModel implements Serializable {
 				+ ", logUserId=" + logUserId + ", logTimestamp=" + logTimestamp + ", logIpaddress=" + logIpaddress
 				+ "]";
 	}
-	
 }

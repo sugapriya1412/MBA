@@ -5,6 +5,9 @@ import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,11 +18,10 @@ import org.vtop.CourseRegistration.model.CourseRegistrationWaitingModel;
 import org.vtop.CourseRegistration.service.CourseCatalogService;
 import org.vtop.CourseRegistration.service.CourseEquivalanceRegService;
 import org.vtop.CourseRegistration.service.CourseRegistrationCommonFunction;
+import org.vtop.CourseRegistration.service.CourseRegistrationReadWriteService;
 import org.vtop.CourseRegistration.service.CourseRegistrationService;
 import org.vtop.CourseRegistration.service.CourseRegistrationWaitingService;
 import org.vtop.CourseRegistration.service.ProgrammeSpecializationCurriculumDetailService;
-import org.vtop.CourseRegistration.service.ProjectRegistrationService;
-import org.vtop.CourseRegistration.service.RegistrationLogService;
 
 
 @Controller
@@ -27,14 +29,13 @@ public class CourseRegistrationDeleteController
 {
 	@Autowired private CourseRegistrationService courseRegistrationService;
 	@Autowired private CourseEquivalanceRegService courseEquivalanceRegService;
-	@Autowired private ProjectRegistrationService projectRegistrationService;
 	@Autowired private CourseRegistrationCommonFunction courseRegCommonFn;
-	@Autowired private RegistrationLogService registrationLogService;
 	@Autowired private ProgrammeSpecializationCurriculumDetailService programmeSpecializationCurriculumDetailService;
 	@Autowired private CourseRegistrationWaitingService courseRegistrationWaitingService;
 	@Autowired private CourseCatalogService courseCatalogService;
+	@Autowired private CourseRegistrationReadWriteService courseRegistrationReadWriteService;
 	
-	//private static final Logger logger = LogManager.getLogger(CourseRegistrationDeleteController.class);
+	private static final Logger logger = LogManager.getLogger(CourseRegistrationDeleteController.class);
 	private static final String RegErrorMethod = "WS2122AD";
 	
 	
@@ -87,7 +88,7 @@ public class CourseRegistrationDeleteController
 				String startTime = (String) session.getAttribute("startTime");
 				String endTime = (String) session.getAttribute("endTime");
 				
-				String returnVal = courseRegCommonFn.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
+				String returnVal = courseRegistrationReadWriteService.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
 										registerNumber, updateStatus, IpAddress);
 				String[] statusMsg = returnVal.split("/");
 				allowStatus = Integer.parseInt(statusMsg[0]);
@@ -114,7 +115,9 @@ public class CourseRegistrationDeleteController
 					{
 						for (CourseRegistrationModel e : courseRegistrationModel3)
 						{
-							if (e.getCourseOptionCode().equals("RGR"))
+							if (e.getCourseOptionCode().equals("RGR") || e.getCourseOptionCode().equals("RGCE") 
+									|| e.getCourseOptionCode().equals("RGP") || e.getCourseOptionCode().equals("RGW") 
+									|| e.getCourseOptionCode().equals("RPCE") || e.getCourseOptionCode().equals("RWCE"))
 							{
 								crCourseId = e.getCourseCatalogModel().getCourseId();
 								crCourseStatus = 1;
@@ -215,10 +218,12 @@ public class CourseRegistrationDeleteController
 		}
 		catch(Exception e)
 		{
+			logger.trace(e);
+			
 			model.addAttribute("flag", 1);
-			registrationLogService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationDeleteController", 
+			courseRegistrationReadWriteService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationDeleteController", 
 					"processDeleteCourseRegistration", registerNumber, IpAddress);
-			registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			urlPage = "redirectpage";
 			return urlPage;
 		}		
@@ -238,7 +243,7 @@ public class CourseRegistrationDeleteController
 		Integer updateStatus = 1;
 		
 		int deleteAllowStatus = 0, redirectFlag = 2, statusFlag = 2;
-		String urlPage = "", msg = null, infoMsg = "", courseAuthStatus = "", deleteMessage = "";
+		String urlPage = "", msg = null, infoMsg = "", courseAuthStatus = "", deleteMessage = "", courseCode = "";
 		String[] validateStatusArr = new String[]{};
 		List<CourseRegistrationModel> courseRegistrationModel = new ArrayList<CourseRegistrationModel>();
 		List<Object[]> courseRegistrationModel2 = new ArrayList<Object[]>();
@@ -253,7 +258,10 @@ public class CourseRegistrationDeleteController
 			if ((registerNumber != null) && (pageAuthStatus == 1))
 			{	
 				session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+				
 				String semesterSubId = (String) session.getAttribute("SemesterSubId");
+				String semesterDesc = (String) session.getAttribute("SemesterDesc");
+				String semesterShortDesc = (String) session.getAttribute("SemesterShortDesc");
 				String[] classGroupId = session.getAttribute("classGroupId").toString().split("/");
 				int studyStartYear = (int) session.getAttribute("StudyStartYear");
 				Integer programSpecId = (Integer) session.getAttribute("ProgramSpecId");
@@ -267,7 +275,7 @@ public class CourseRegistrationDeleteController
 				String startTime = (String) session.getAttribute("startTime");
 				String endTime = (String) session.getAttribute("endTime");
 				
-				String returnVal = courseRegCommonFn.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
+				String returnVal = courseRegistrationReadWriteService.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
 										registerNumber, updateStatus, IpAddress);
 				String[] statusMsg = returnVal.split("/");
 				allowStatus = Integer.parseInt(statusMsg[0]);
@@ -281,14 +289,21 @@ public class CourseRegistrationDeleteController
 													courseId, 1);
 						
 						if ((authCheckStatus == 1) && (otpStatus == 1))
-						{							
-							validateStatusArr = courseRegCommonFn.validateCourseAndSendOTP(semesterSubId, registerNumber, 
-													courseId, studentEMailId, IpAddress, "DELETE").split("\\|");
+						{	
+							CourseCatalogModel courseCatalogModel = courseCatalogService.getOne(courseId);
+							if (courseCatalogModel != null)
+							{
+								courseCode = courseCatalogModel.getCode();
+							}
+														
+							validateStatusArr = courseRegistrationReadWriteService.validateCourseAndSendOTP(semesterSubId, semesterDesc, 
+													semesterShortDesc, registerNumber, courseId, courseCode, studentEMailId, IpAddress, 
+													"MODIFY").split("\\|");
 							statusFlag = Integer.parseInt(validateStatusArr[0]);
 							courseAuthStatus = validateStatusArr[1];
 							deleteMessage = validateStatusArr[3];
-							//System.out.println("statusFlag: "+ statusFlag +" | courseAuthStatus: "+ courseAuthStatus 
-							//		+" | deleteMessage: "+ deleteMessage); 
+							logger.trace("\n statusFlag: "+ statusFlag +" | courseAuthStatus: "+ courseAuthStatus 
+									+" | deleteMessage: "+ deleteMessage); 
 							
 							if (statusFlag == 1)
 							{
@@ -361,10 +376,12 @@ public class CourseRegistrationDeleteController
 		}
 		catch(Exception e)
 		{
+			logger.trace(e);
+			
 			model.addAttribute("flag", 1);
-			registrationLogService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationDeleteController", 
+			courseRegistrationReadWriteService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationDeleteController", 
 					"processDeleteCourseRegistration", registerNumber, IpAddress);
-			registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			urlPage = "redirectpage";
 			return urlPage;
 		}		
@@ -384,7 +401,7 @@ public class CourseRegistrationDeleteController
 		String msg = null, message = null, infoMsg = "";
 		
 		Integer allowStatus = 2, updateStatus = 1;
-		String oldCourseId = "", pDelStatus = "", mailOTP = "";
+		String oldCourseId = "", pDelStatus = "", mailOTP = "", courseCode = "";
 		String[] validateStatusArr = new String[]{};
 		
 		pageAuthKey = (String) session.getAttribute("pageAuthKey");
@@ -394,7 +411,9 @@ public class CourseRegistrationDeleteController
 		{	
 			if ((registerNumber != null) && (pageAuthStatus == 1))
 			{
-				String semesterSubId = (String) session.getAttribute("SemesterSubId");			
+				String semesterSubId = (String) session.getAttribute("SemesterSubId");
+				String semesterDesc = (String) session.getAttribute("SemesterDesc");
+				String semesterShortDesc = (String) session.getAttribute("SemesterShortDesc");
 				String[] classGroupId = session.getAttribute("classGroupId").toString().split("/");
 				Integer programSpecId = (Integer) session.getAttribute("ProgramSpecId");
 				int studyStartYear = (int) session.getAttribute("StudyStartYear");
@@ -406,7 +425,7 @@ public class CourseRegistrationDeleteController
 				int otpStatus = (int) session.getAttribute("otpStatus");
 				String crCourseId = (String) session.getAttribute("crCourseId");
 				
-				String returnVal = courseRegCommonFn.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
+				String returnVal = courseRegistrationReadWriteService.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
 										registerNumber, updateStatus, IpAddress);
 				String[] statusMsg = returnVal.split("/");
 				allowStatus = Integer.parseInt(statusMsg[0]);
@@ -437,11 +456,17 @@ public class CourseRegistrationDeleteController
 						{
 							if (otpStatus == 1)
 							{
-								validateStatusArr = courseRegCommonFn.validateCourseAndOTP(semesterSubId, registerNumber, 
-														courseId, mailOTP, IpAddress, "DELETE").split("\\|");
+								CourseCatalogModel courseCatalogModel = courseCatalogService.getOne(courseId);
+								if (courseCatalogModel != null)
+								{
+									courseCode = courseCatalogModel.getCode();
+								}
+																
+								validateStatusArr = courseRegistrationReadWriteService.validateCourseAndOTP(semesterSubId, 
+														semesterDesc, semesterShortDesc, registerNumber, courseId, 
+														courseCode, mailOTP, IpAddress, "MODIFY").split("\\|");
 								statusFlag = Integer.parseInt(validateStatusArr[0]);
 								redirectFlag = Integer.parseInt(validateStatusArr[1]);
-								//message = validateStatusArr[2];
 								
 								if(validateStatusArr[2].toString().equals("SUCCESS"))
 								{
@@ -456,10 +481,9 @@ public class CourseRegistrationDeleteController
 							{
 								statusFlag = 1;
 								redirectFlag = 2;
-								//message = "SUCCESS";
 							}
-							//System.out.println("statusFlag: "+ statusFlag +" | redirectFlag: "+ redirectFlag 
-							//		+" | message: "+ message); 
+							logger.trace("\n statusFlag: "+ statusFlag +" | redirectFlag: "+ redirectFlag 
+									+" | message: "+ message); 
 			
 							oldCourseId = courseEquivalanceRegService.getEquivCourseByRegisterNumberAndCourseId(
 												semesterSubId, registerNumber, courseId);
@@ -480,28 +504,21 @@ public class CourseRegistrationDeleteController
 								{
 									for (String crsId : courseIdList)
 									{
-										//pDelStatus = courseRegistrationService.courseRegistrationDelete(semesterSubId, 
-										//					registerNumber, courseId, "DELETE", registerNumber, IpAddress, 
-										//					"GEN", oldCourseId);
-										pDelStatus = courseRegistrationService.courseRegistrationDelete(semesterSubId, 
+										pDelStatus = courseRegistrationReadWriteService.courseRegistrationDelete(semesterSubId, 
 														registerNumber, crsId, "DELETE", registerNumber, IpAddress, 
 														"GEN", oldCourseId);
 										if (pDelStatus.equals("SUCCESS"))
 										{
-											//projectRegistrationService.deleteByRegisterNumberCourseId(semesterSubId, 
-											//		registerNumber, courseId);
-											projectRegistrationService.deleteByRegisterNumberCourseId(semesterSubId, 
+											courseRegistrationReadWriteService.projectRegDeleteByRegisterNumberAndCourseId(semesterSubId, 
 													registerNumber, crsId);
 											msg = "Selected course successfully deleted.";
 										}
 										else if ((pDelStatus.equals("FAIL")) || (pDelStatus.substring(0, 5).equals("error")))
 										{
 											message = "Technical error.";
-											//registrationLogService.addErrorLog(pDelStatus.toString()+"<-CODE->"+courseId, RegErrorMethod+"CourseRegistrationDeleteController", 
-											//		"processRegisterProjectCourseDELPROC", registerNumber, IpAddress);
-											registrationLogService.addErrorLog(pDelStatus.toString()+"<-CODE->"+crsId, RegErrorMethod+"CourseRegistrationDeleteController", 
+											courseRegistrationReadWriteService.addErrorLog(pDelStatus.toString()+"<-CODE->"+crsId, RegErrorMethod+"CourseRegistrationDeleteController", 
 													"processRegisterProjectCourseDELPROC", registerNumber, IpAddress);
-											registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+											courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 										}
 										else
 										{
@@ -572,10 +589,12 @@ public class CourseRegistrationDeleteController
 		}
 		catch(Exception e)
 		{
+			logger.trace(e);
+			
 			model.addAttribute("flag", 1);
-			registrationLogService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationDeleteController", 
+			courseRegistrationReadWriteService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationDeleteController", 
 					"processDeleteConfirmationCourseRegistration", registerNumber, IpAddress);
-			registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			urlPage = "redirectpage";
 			return urlPage;
 		}
@@ -616,7 +635,7 @@ public class CourseRegistrationDeleteController
 				String startTime = (String) session.getAttribute("startTime");
 				String endTime = (String) session.getAttribute("endTime");
 				
-				String returnVal = courseRegCommonFn.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
+				String returnVal = courseRegistrationReadWriteService.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
 										registerNumber, updateStatus, IpAddress);
 				String[] statusMsg = returnVal.split("/");
 				allowStatus = Integer.parseInt(statusMsg[0]);
@@ -661,10 +680,12 @@ public class CourseRegistrationDeleteController
 		}
 		catch(Exception e)
 		{
+			logger.trace(e);
+			
 			model.addAttribute("flag", 1);
-			registrationLogService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationDeleteController", 
+			courseRegistrationReadWriteService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationDeleteController", 
 					"processDeleteConfirmationCourseRegistrationRirect", registerNumber, IpAddress);
-			registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			urlPage = "redirectpage";
 			return urlPage;
 		}
@@ -701,7 +722,7 @@ public class CourseRegistrationDeleteController
 				String startTime = (String) session.getAttribute("startTime");
 				String endTime = (String) session.getAttribute("endTime");
 				
-				String returnVal = courseRegCommonFn.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
+				String returnVal = courseRegistrationReadWriteService.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
 										registerNumber, updateStatus, IpAddress);
 				String[] statusMsg = returnVal.split("/");
 				allowStatus = Integer.parseInt(statusMsg[0]);
@@ -746,10 +767,12 @@ public class CourseRegistrationDeleteController
 		}
 		catch(Exception e)
 		{
+			logger.trace(e);
+			
 			model.addAttribute("flag", 1);
-			registrationLogService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationDeleteController", 
+			courseRegistrationReadWriteService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationDeleteController", 
 					"deleteRegisteredCourse", registerNumber, IpAddress);
-			registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			urlPage = "redirectpage";
 			return urlPage;
 		}
@@ -788,7 +811,7 @@ public class CourseRegistrationDeleteController
 				String startTime = (String) session.getAttribute("startTime");
 				String endTime = (String) session.getAttribute("endTime");
 				
-				String returnVal = courseRegCommonFn.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
+				String returnVal = courseRegistrationReadWriteService.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
 										registerNumber, updateStatus, IpAddress);						
 				String[] statusMsg = returnVal.split("/");
 				allowStatus = Integer.parseInt(statusMsg[0]);
@@ -805,11 +828,11 @@ public class CourseRegistrationDeleteController
 						{
 							synchronized (this)
 							{	
-								courseRegistrationWaitingService.addWaitingToWaitingMove(semesterSubId, registerNumber, 
+								courseRegistrationReadWriteService.courseRegWaitingAddWaitingToWaitingMove(semesterSubId, registerNumber, 
 										courseId, 0, IpAddress);		
-								courseRegistrationWaitingService.deleteByRegisterNumberCourseId(semesterSubId, registerNumber, 
+								courseRegistrationReadWriteService.courseRegWaitingDeleteByRegisterNumberAndCourseId(semesterSubId, registerNumber, 
 										courseId);	
-								courseEquivalanceRegService.deleteByRegisterNumberCourseId(semesterSubId, registerNumber, 
+								courseRegistrationReadWriteService.courseEquRegDeleteByRegisterNumberAndCourseId(semesterSubId, registerNumber, 
 										courseId);	
 							}
 							
@@ -855,10 +878,12 @@ public class CourseRegistrationDeleteController
 		}
 		catch(Exception e)
 		{
+			logger.trace(e);
+			
 			model.addAttribute("flag", 1);
-			registrationLogService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationDeleteController", 
+			courseRegistrationReadWriteService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationDeleteController", 
 					"processDeleteConfirmationCourseRegistrationWaiting", registerNumber, IpAddress);
-			registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			urlPage = "redirectpage";
 			return urlPage;
 		}
@@ -904,7 +929,7 @@ public class CourseRegistrationDeleteController
 				String startTime = (String) session.getAttribute("startTime");
 				String endTime = (String) session.getAttribute("endTime");
 				
-				String returnVal = courseRegCommonFn.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
+				String returnVal = courseRegistrationReadWriteService.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
 										registerNumber, updateStatus, IpAddress);
 				String[] statusMsg = returnVal.split("/");
 				allowStatus = Integer.parseInt(statusMsg[0]);
@@ -976,10 +1001,12 @@ public class CourseRegistrationDeleteController
 		}
 		catch(Exception e)
 		{
+			logger.trace(e);
+			
 			model.addAttribute("flag", 1);
-			registrationLogService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationDeleteController", 
+			courseRegistrationReadWriteService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationDeleteController", 
 					"processDeleteCourseRegistrationWaiting", registerNumber, IpAddress);
-			registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			urlPage = "redirectpage";
 			return urlPage;
 		}
@@ -1015,7 +1042,7 @@ public class CourseRegistrationDeleteController
 				String startTime = (String) session.getAttribute("startTime");
 				String endTime = (String) session.getAttribute("endTime");
 				
-				String returnVal = courseRegCommonFn.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
+				String returnVal = courseRegistrationReadWriteService.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
 										registerNumber, updateStatus, IpAddress);
 				String[] statusMsg = returnVal.split("/");
 				allowStatus = Integer.parseInt(statusMsg[0]);
@@ -1060,10 +1087,12 @@ public class CourseRegistrationDeleteController
 		}
 		catch(Exception e)
 		{
+			logger.trace(e);
+			
 			model.addAttribute("flag", 1);
-			registrationLogService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationDeleteController", 
+			courseRegistrationReadWriteService.addErrorLog(e.toString(), RegErrorMethod+"CourseRegistrationDeleteController", 
 					"processDeleteConfirmationCourseRegistrationWaitingRirect", registerNumber, IpAddress);
-			registrationLogService.UpdateLogoutTimeStamp2(IpAddress,registerNumber);
+			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			urlPage = "redirectpage";
 			return urlPage;
 		}

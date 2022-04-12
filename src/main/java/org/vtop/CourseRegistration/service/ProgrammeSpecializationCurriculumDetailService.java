@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,11 +15,13 @@ import org.vtop.CourseRegistration.repository.ProgrammeSpecializationCurriculumD
 
 
 @Service
-@Transactional("transactionManager")
+@Transactional(readOnly=true)
 public class ProgrammeSpecializationCurriculumDetailService
 {
 	@Autowired private ProgrammeSpecializationCurriculumDetailRepository programmeSpecializationCurriculumDetailRepository;
 	@Autowired private CourseRegistrationService courseRegistrationService;
+	
+	private static final Logger logger = LogManager.getLogger(ProgrammeSpecializationCurriculumDetailService.class);
 	
 	
 	public List<Object[]> getCurriculumByAdmsnYearCCVersionAndCourseCode(Integer specId, Integer admissionYear, 
@@ -92,16 +96,16 @@ public class ProgrammeSpecializationCurriculumDetailService
 			{
 				ueCourseCode.add("NONE");
 			}
-			//System.out.println("ueCourseCode: "+ ueCourseCode.toString());
+			logger.trace("\n ueCourseCode: "+ ueCourseCode.toString());
 			
 			objectList = programmeSpecializationCurriculumDetailRepository.findStudentCurriculumByRegisterNumberUECourseAndPECourseOption(
 								specializationId, admissionYear, curriculumVersion, registerNumber, ueCourseCode, Arrays.asList("RUEPE","CSUPE"));
-			//System.out.println("Curriculum Detail Data: "+ objectList.size());
+			logger.trace("\n Curriculum Detail Data: "+ objectList.size());
 			if (!objectList.isEmpty())
 			{
 				for (Object[] e : objectList)
 				{
-					//System.out.println(Arrays.deepToString(e));
+					logger.trace("\n "+ Arrays.deepToString(e));
 					courseCode = e[4].toString();
 					if(!returnMapList.containsKey(courseCode))
 					{
@@ -113,30 +117,4 @@ public class ProgrammeSpecializationCurriculumDetailService
 		
 		return returnMapList;
 	}
-	
-	/*public ProgrammeSpecializationCurriculumDetailModel getOne(ProgrammeSpecializationCurriculumDetailPKModel programmeSpecializationCurriculumDetailPKModel)
-	{
-		return programmeSpecializationCurriculumDetailRepository.findOne(programmeSpecializationCurriculumDetailPKModel);
-	}
-	
-	public List<ProgrammeSpecializationCurriculumDetailModel>getAll()
-	{
-		return programmeSpecializationCurriculumDetailRepository.findAll();
-	}
-	
-	public List<ProgrammeSpecializationCurriculumDetailModel> getBySpecId(Integer specId)
-	{
-		return programmeSpecializationCurriculumDetailRepository.findBySpecId(specId);
-	}
-	
-	public List<ProgrammeSpecializationCurriculumDetailModel> getBySpecIdAdmYear(Integer specId, Integer admissionYear)
-	{
-		return programmeSpecializationCurriculumDetailRepository.findBySpecIdAdmYear(specId, admissionYear);
-	}
-	
-	public List<ProgrammeSpecializationCurriculumDetailModel> getBySpecIdAdmYearCCVersion(Integer specId, Integer admissionYear, 
-																	Float ccVersion)
-	{
-		return programmeSpecializationCurriculumDetailRepository.findBySpecIdAdmYearCCVersion(specId, admissionYear, ccVersion);
-	}*/
 }

@@ -12,19 +12,16 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+
 @Entity
 @Table(name="COURSE_EQUIVALANCES", schema="ACADEMICS")
-public class CourseEquivalancesModel implements Serializable {
-	
+public class CourseEquivalancesModel implements Serializable
+{	
 	private static final long serialVersionUID = 1L;
 	
 	@EmbeddedId
     private CourseEquivalancesPKModel courseEquivalancesPkId;
-	
-	/*@ManyToOne
-	@JoinColumn(name="COURSE_CATALOG_COURSE_ID", insertable = false, updatable = false)
-	private CourseCatalogModel courseCatalogModel;*/
-		
+			
 	@Column(name="REMARKS")
 	private String remarks;
 	
@@ -54,14 +51,6 @@ public class CourseEquivalancesModel implements Serializable {
 	public void setCourseEquivalancesPkId(CourseEquivalancesPKModel courseEquivalancesPkId) {
 		this.courseEquivalancesPkId = courseEquivalancesPkId;
 	}
-
-	/*public CourseCatalogModel getCourseCatalogModel() {
-		return courseCatalogModel;
-	}
-
-	public void setCourseCatalogModel(CourseCatalogModel courseCatalogModel) {
-		this.courseCatalogModel = courseCatalogModel;
-	}*/
 	
 	public String getRemarks() {
 		return remarks;
@@ -156,13 +145,4 @@ public class CourseEquivalancesModel implements Serializable {
 				+ ", logIpaddress=" + logIpaddress + ", courseCode=" + courseCode + ", equivalentCourseCode="
 				+ equivalentCourseCode + "]";
 	}
-
-	/*@Override
-	public String toString() {
-		return "CourseEquivalancesModel [courseEquivalancesPkId=" + courseEquivalancesPkId + ", courseCatalogModel="
-				+ courseCatalogModel + ", remarks=" + remarks + ", status=" + status + ", logUserId=" + logUserId
-				+ ", logTimestamp=" + logTimestamp + ", logIpaddress=" + logIpaddress + ", courseCode=" + courseCode
-				+ ", equivalentCourseCode=" + equivalentCourseCode + "]";
-	}*/
-	
 }

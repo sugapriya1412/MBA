@@ -6,8 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class CourseEquivalancesPKModel implements Serializable {
-	
+public class CourseEquivalancesPKModel implements Serializable
+{	
 	private static final long serialVersionUID = 1L;
 	
 	@Column(name="COURSE_CATALOG_COURSE_ID")
@@ -62,5 +62,9 @@ public class CourseEquivalancesPKModel implements Serializable {
 			return false;
 		return true;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "CourseEquivalancesPKModel [courseId=" + courseId + ", equivalentCourseId=" + equivalentCourseId + "]";
+	}
 }

@@ -8,44 +8,30 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.Table;
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 
 @Entity
 @Table(name="ACTIVITY_MASTER", schema="ACADEMICS")
 public class ActivityMasterModel {
 	
-	@Valid
 	@Id
 	@Column(name="ACTIVITY_ID")
 	private Integer activityId;
-	
-	
-	@NotEmpty(message="Enter the Activity Name")
+		
 	@Column(name="SHORT_DESCRIPTION")
 	private String shortDescription;
 	
-	
-	
-	@NotEmpty(message="Enter the Activty Description")
 	@Column(name="DESCRIPTION")
 	private String description;
 	
-	@NotNull(message="Select the Cost Center")
 	@Column(name="COST_CENTRE_CENTRE_ID")
 	private Integer costCentreCentreId;
 	
-	
-	@MapsId("costCentreCentreId")
 	@ManyToOne
 	@JoinColumn(name="COST_CENTRE_CENTRE_ID", insertable = false, updatable = false)
 	private CostCentre costCentre;
-	
-			
+				
 	@Column(name="LOCK_STATUS")
 	private Integer lockStatus;
 	
@@ -136,7 +122,5 @@ public class ActivityMasterModel {
 				+ ", description=" + description + ", costCentreCentreId=" + costCentreCentreId + ", costCentre="
 				+ costCentre + ", lockStatus=" + lockStatus + ", logUserId=" + logUserId + ", logTimeStamp="
 				+ logTimeStamp + ", logIpAddress=" + logIpAddress + "]";
-	}
-
-	
+	}	
 }

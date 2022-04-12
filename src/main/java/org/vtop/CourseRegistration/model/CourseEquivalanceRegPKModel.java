@@ -5,9 +5,10 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+
 @Embeddable
-public class CourseEquivalanceRegPKModel implements Serializable {
-	
+public class CourseEquivalanceRegPKModel implements Serializable
+{	
 	private static final long serialVersionUID = 1L;
 	
 	@Column(name="STDNTSLGNDTLS_REGISTER_NUMBER")
@@ -97,4 +98,9 @@ public class CourseEquivalanceRegPKModel implements Serializable {
 		return true;
 	}
 	
+	@Override
+	public String toString() {
+		return "CourseEquivalanceRegPKModel [registerNumber=" + registerNumber + ", courseId=" + courseId
+				+ ", courseType=" + courseType + ", semesterSubId=" + semesterSubId + "]";
+	}	
 }

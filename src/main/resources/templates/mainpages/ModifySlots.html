@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<!-- <base th:href="@{${session.baseURL}}" /> --> 
 </head>
 <body class="hold-transition skin-blue-light sidebar-mini fixed">
   <div class="wrapper">
@@ -16,7 +15,7 @@
 			<div style="padding-left: 75px;">
 				<span style="color: red;"><b>NOTE :</b></span><br />
 				<span style="color: black; line-height: 25px;">1. Once Invoice Generated Modification of Course is not possible.</span><br/>
-				<span style="color: black; line-height: 25px;">2. Invoice Cancelation Option is available in VTOP.</span><br/>
+				<span style="color: black; line-height: 25px;">2. Invoice Cancellation Option is available in VTOP.</span><br/>
 			</div>
 			<br />
             <div align="center" style="color: Red; font-weight: bold;" th:if="${ModifyCourse.size()==0}" th:text="${'No Records Found'}"></div>
@@ -74,15 +73,11 @@
               <thead>
                 <tr class="w3-blue">
                   <th style="border:1px solid #3c8dbc; text-align: center; width: 15%;">Course Detail</th>
-              <!--     <th style="border:1px solid #3c8dbc; text-align: center;">Course Title</th>
-                  <th style="border:1px solid #3c8dbc; text-align: center; width: 10%;">Course Type</th> -->
                   <th style="border:1px solid #3c8dbc; text-align: center; width: 4%;">L T P J</th>
                   <th style="border:1px solid #3c8dbc; text-align: center; width: 2%;">Credit</th>
                   <th style="border:1px solid #3c8dbc; text-align: center; width: 5%;">Course Category</th>
                   <th style="border:1px solid #3c8dbc; text-align: center; width: 5%;">Course Option</th>
                   <th style="border:1px solid #3c8dbc; text-align: center; width: 15%;">Class Detail</th>
-<!--                   <th style="border:1px solid #3c8dbc; text-align: center; width: 8%;">Slot</th>
-                  <th style="border:1px solid #3c8dbc; text-align: center; width: 5%;">Venue</th> -->
                   <th style="border:1px solid #3c8dbc; text-align: center; width: 10%;">Faculty</th>
                   <th style="border:1px solid #3c8dbc; text-align: center; width: 8%;">Status</th>
                   <th style="border:1px solid #3c8dbc; text-align: center; width: 5%;">Action</th>                
@@ -92,10 +87,7 @@
               <tr th:each="RegisteredList : ${ModifyCourse}">
                   
                   <td style="border:1px solid #3c8dbc; text-align: center;" 
-                  		th:text="${RegisteredList[1]+ ' -' +RegisteredList[2]+ ' - ' +RegisteredList[7]}"></td>
-                 <!--  <td style="border:1px solid #3c8dbc;" th:text="${RegisteredList[2]}"></td>
-                  <td style="border:1px solid #3c8dbc;" th:text="${RegisteredList[7]}"></td> -->
-                  
+                  		th:text="${RegisteredList[1]+ ' -' +RegisteredList[2]+ ' - ' +RegisteredList[7]}"></td>                  
                   <td style="border:1px solid #3c8dbc; text-align: center;">
                   		<span th:text="${RegisteredList[8] +' '+ RegisteredList[9] 
                   				+' '+ RegisteredList[10] +' '+ RegisteredList[11]}"></span></td>
@@ -126,15 +118,8 @@
 												th:text="${RegisteredList[15]+ ' - '}"></span>
 						<span th:if="${(RegisteredList[6] == 'EPJ') or (RegisteredList[6] == 'PJT')}" 
 												th:text="${'NIL'+ ' - '}"></span>
-					    <span th:text="${RegisteredList[16]}"></span></td>
-                 <!--  <td style="border:1px solid #3c8dbc; text-align: center;">
-                 	 	<span th:if="${(RegisteredList[6] != 'EPJ') and (RegisteredList[6] != 'PJT')}"
-												th:text="${RegisteredList[15]}"></span>
-						<span th:if="${(RegisteredList[6] == 'EPJ') or (RegisteredList[6] == 'PJT')}" 
-												th:text="${'NIL'}"></span>
-                  	</td> 
-                  <td style="border:1px solid #3c8dbc; text-align: center;" 
-                  		th:text="${RegisteredList[16]}"></td>-->
+					    <span th:text="${RegisteredList[16]}"></span>
+				  </td>
                   <td style="border:1px solid #3c8dbc; text-align: center;" 
                   		th:text="${RegisteredList[18] +' - '+ RegisteredList[19]}"></td>
                   <td th:style="${'color:'+ RegisteredList[22] + ';' + 'border:1px solid #3c8dbc;'}"
@@ -143,11 +128,7 @@
 				  <td style="border:1px solid #3c8dbc; text-align: center;" 
 				  		th:if="${(RegisteredList[6] != 'EPJ') and 
 							(#lists.contains(blockedCourse, RegisteredList[0]) == false)}">
-				<!-- <button class="btn-success w3-btn w3-btn-red w3-round-large" type="button"  
-                  		style="border:1px solid #3c8dbc;" 
-                  		th:onclick="'javascript: editRegisteredSlots(\''+ ${RegisteredList[14]} 
-                  			+'/'+ ${RegisteredList[0]} +'/'+ ${RegisteredList[6]} +'\');'">Modify</button> -->
-                  			
+				                  			
                   	<button class="btn-success w3-btn w3-btn-red w3-round-large" type="button"  
                   		style="border:1px solid #3c8dbc;"                   		
                   		 th:data-parameter1="${RegisteredList[14] +'/'+ RegisteredList[0] +'/'+ RegisteredList[6]}"  				  		  

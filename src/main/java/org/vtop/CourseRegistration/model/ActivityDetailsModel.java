@@ -20,19 +20,16 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Entity
 @Table(name="ACTIVITY_DETAILS", schema="ACADEMICS")
 public class ActivityDetailsModel implements Serializable {
-	
-	
+		
 	private static final long serialVersionUID = 1L;
 
 	@EmbeddedId
 	private ActivityDetailsModelPK admPkId;
 	
-	//@MapsId("activityId")
 	@ManyToOne
 	@JoinColumn(name="ACTIVITY_MASTER_ACTIVITY_ID",insertable = false, updatable = false)
 	private ActivityMasterModel activitymastermodel;
 	
-	//@MapsId("semSubId")
 	@ManyToOne
 	@JoinColumn(name="SEMSTR_DETAILS_SEMESTER_SUB_ID",insertable = false, updatable = false)
 	private SemesterDetailsModel semesterdetailsmodel;
@@ -91,7 +88,6 @@ public class ActivityDetailsModel implements Serializable {
 	public void setSemesterdetailsmodel(SemesterDetailsModel semesterdetailsmodel) {
 		this.semesterdetailsmodel = semesterdetailsmodel;
 	}
-	
 	
 	public Date getFromDate() {
 		return fromDate;
@@ -172,7 +168,4 @@ public class ActivityDetailsModel implements Serializable {
 				+ ", logUserId=" + logUserId + ", logTimestamp=" + logTimestamp + ", logIpaddress=" + logIpaddress
 				+ "]";
 	}
-
-	
-	
 }

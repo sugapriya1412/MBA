@@ -5,16 +5,19 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.vtop.CourseRegistration.model.HistoryCourseData;
 import org.vtop.CourseRegistration.model.StudentCGPAData;
 
 
 @Service
+@Transactional(readOnly=true)
 public class CGPACalcService
 {
 	@Autowired private SemesterMasterService semesterMasterService;
 	
-	public StudentCGPAData doProcess(String PRegNo,String PType,String PAdlPra,List<HistoryCourseData> historyCourseList,Short PProgSplnId)
+	public StudentCGPAData doProcess(String PRegNo, String PType, String PAdlPra, List<HistoryCourseData> historyCourseList, 
+								Short PProgSplnId)
 	{
 		Integer LoopCounter;
 		Float tot_cre_reg;
@@ -58,7 +61,8 @@ public class CGPACalcService
 		dcount=0;
 		ecount=0;
 		fcount=0;
-		ncount=0;   
+		ncount=0; 
+		
 		for (HistoryCourseData hCourse : historyCourseList) {
 
 			if (!hCourse.getGrade().equals("W") && !hCourse.getGrade().equals("U"))
@@ -73,9 +77,7 @@ public class CGPACalcService
 					{
 						tot_cre_ear=tot_cre_ear+(hCourse.getCredits());
 					}
-
-				}    
-
+				}
 			}
 
 			if (hCourse.getGrade().equals("W") && hCourse.getCourseOption().equals("NIL"))
@@ -83,9 +85,11 @@ public class CGPACalcService
 				tot_cre_reg=tot_cre_reg+(hCourse.getCredits());
 				tot_arrear= tot_arrear+1;
 			}
+			
 			tot_course=tot_course+1;
 			LoopCounter=LoopCounter+1;
 			vGradePoint = semesterMasterService.getGradePoint(hCourse.getGrade(),hCourse.getCredits());
+			
 			if (!hCourse.getGrade().equals("W") && !hCourse.getGrade().equals("U") && !hCourse.getGrade().equals("P"))
 			{
 				if( vGradePoint==0.0f )
@@ -113,8 +117,6 @@ public class CGPACalcService
 				fcount= fcount + 1;
 			else if (hCourse.getGrade().equals("N"))
 				ncount= ncount + 1;
-
-
 		}
 
 		if (tot_cre_reg > 0 && (tot_cre_reg-tot_passfailcredits)>0)// then --if_004
@@ -141,18 +143,15 @@ public class CGPACalcService
 			cgpaData.seteGradeCount(ecount+"");
 			cgpaData.setfGradeCount(fcount+"");
 			cgpaData.setnGradeCount(ncount+"");
-
 		}
-		else if (returnType==0 )
+		else if (returnType == 0)
 		{
-
 			cgpaData.setCreditRegistered(tot_cre_reg+"");
 			cgpaData.setCreditEarned(tot_cre_ear+"");
 			
 			BigDecimal cgpaTemp =  new BigDecimal(CGPA.toString());
 			cgpaTemp=cgpaTemp.setScale(2, BigDecimal.ROUND_HALF_UP);
 			cgpaData.setCGPA((cgpaTemp).toString());
-		
 			
 			cgpaData.setTotalArrear(tot_arrear+"");
 			cgpaData.setTotalCourse(tot_course+"");
@@ -165,7 +164,7 @@ public class CGPACalcService
 			cgpaData.setfGradeCount(fcount+"");
 			cgpaData.setnGradeCount(ncount+"");
 		}
-		else if (returnType==1)
+		else if (returnType == 1)
 		{
 			cgpaData.setCreditRegistered(tot_cre_reg+"");
 			cgpaData.setCreditEarned(tot_cre_ear+"");
@@ -179,6 +178,5 @@ public class CGPACalcService
 		}
 
 		return cgpaData;
-
 	}
 }

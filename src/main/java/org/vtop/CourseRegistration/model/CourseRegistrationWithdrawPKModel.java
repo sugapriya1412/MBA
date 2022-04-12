@@ -96,5 +96,10 @@ public class CourseRegistrationWithdrawPKModel implements Serializable {
 			return false;
 		return true;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "CourseRegistrationWithdrawPKModel [semesterSubId=" + semesterSubId + ", registerNumber="
+				+ registerNumber + ", courseId=" + courseId + ", courseType=" + courseType + "]";
+	}	
 }

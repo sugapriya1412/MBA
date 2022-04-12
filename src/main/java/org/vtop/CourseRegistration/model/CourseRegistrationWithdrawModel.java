@@ -78,6 +78,13 @@ public class CourseRegistrationWithdrawModel implements Serializable {
 	@Column(name="EXTERNAL_FOILCARD_NUMBER")
 	private Long externalFoilcardNumber;
 	
+	@Column(name="ATTENDANCE_DATE")
+	@Temporal(TemporalType.DATE)
+	private Date attendanceDate;
+	
+	@Column(name="GRADE_CATEGORY")
+	private String gradeCategory;
+	
 	@Column(name="LOG_USERID")
 	private String logUserId;
 	
@@ -218,6 +225,22 @@ public class CourseRegistrationWithdrawModel implements Serializable {
 		this.externalFoilcardNumber = externalFoilcardNumber;
 	}
 
+	public Date getAttendanceDate() {
+		return attendanceDate;
+	}
+
+	public void setAttendanceDate(Date attendanceDate) {
+		this.attendanceDate = attendanceDate;
+	}
+
+	public String getGradeCategory() {
+		return gradeCategory;
+	}
+
+	public void setGradeCategory(String gradeCategory) {
+		this.gradeCategory = gradeCategory;
+	}
+
 	public String getLogUserId() {
 		return logUserId;
 	}
@@ -300,10 +323,9 @@ public class CourseRegistrationWithdrawModel implements Serializable {
 				+ courseOptionModel + ", statusNumber=" + statusNumber + ", registrationStatusMasterModel="
 				+ registrationStatusMasterModel + ", componentType=" + componentType + ", invoiceNumber="
 				+ invoiceNumber + ", internalFoilcardNumber=" + internalFoilcardNumber + ", externalFoilcardNumber="
-				+ externalFoilcardNumber + ", logUserId=" + logUserId + ", logTimestamp=" + logTimestamp
-				+ ", logIpaddress=" + logIpaddress + ", withdrawnLogUserId=" + withdrawnLogUserId
-				+ ", withdrawnLogTimestamp=" + withdrawnLogTimestamp + ", withdrawnLogIpaddress="
-				+ withdrawnLogIpaddress + "]";
+				+ externalFoilcardNumber + ", attendanceDate=" + attendanceDate + ", gradeCategory=" + gradeCategory
+				+ ", logUserId=" + logUserId + ", logTimestamp=" + logTimestamp + ", logIpaddress=" + logIpaddress
+				+ ", withdrawnLogUserId=" + withdrawnLogUserId + ", withdrawnLogTimestamp=" + withdrawnLogTimestamp
+				+ ", withdrawnLogIpaddress=" + withdrawnLogIpaddress + "]";
 	}
-	
 }

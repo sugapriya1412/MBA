@@ -39,44 +39,93 @@
 					</span>
 				<input type="hidden" id="currentDateTime" name="currentDateTime" th:value="${CurrentDateTime}" />
 			</div>
-	</div> 
+	</div>
+	
 		<div class="container" id="page-wrapper">
-			<form  action="checkRegistration" method="post" id="checkRegistration"
-				style="padding-top: 100px;">
-
-				<div class="login-container" style="border-style: solid; 
-					background: #000e36;  /* fallback for old browsers */
-					background: -webkit-linear-gradient(to right, #000e36, #004e92, #004e92, #000e36);  /* Chrome 10-25, Safari 5.1-6 */
-					background: linear-gradient(to right, #000e36, #004e92, #004e92, #000e36); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-					color: white; border:12px solid #ddd;box-shadow:10px 10px 5px #888888;">
-					<input type="hidden" id="infoSuccess" name="infoSuccess" th:value="${infoSuccess}"/>
-					<input type="hidden" id="info" name="info" th:value="${info}"/> 
-					<div style="padding-left: 10px;">
-					<h4 style="font-weight: bolder; text-align: center; text-decoration: underline;">Key Points</h4>
-						<ol>
-							 <li style="text-align: justify;"><span> Kindly don't <strong  style="color: #ffeb3b;"> share your password  </strong> 
-									 		with your friends / Others. The <strong  style="color: #ffeb3b;"> University does not take any responsibility if 
-									 		your registrations are altered/ deleted</strong>.</span></li>
-							 <li style="text-align: justify;">To proceed registration click <b style="font-weight: bold; color: #ffeb54;">"Start Registration"</b> button.</li>
-						</ol>
-						
-					</div>  				  					  	
-				   	
-				    <div class="login-reset-btn">
-					  	<br/><button type="submit" style="font-weight: bold;" class="btn-success w3-btn w3-btn-green w3-round-large">Start Registration</button>
-					    &nbsp;&nbsp;&nbsp;&nbsp;<button type="button" style="font-weight: bold;" class="btn-warning w3-btn w3-btn-red w3-round-large" onclick="location.href='processLogout'">Sign out</button>	
-					</div> 	    	        		    		    
-				  </div>								  	   
-			      
-			</form>	
+	
+			<div class="instr-box" style="box-shadow:10px 10px 5px #888888; border-radius: 10px;">
+			
+			<div class="panel-heading panel-head-custom" style="text-align:center; 
+				border-top-left-radius: 10px; border-top-right-radius: 10px;
+				background: #000428;  /* fallback for old browsers */
+				background: -webkit-linear-gradient(to right, #004e92, #000428);  /* Chrome 10-25, Safari 5.1-6 */
+				background: linear-gradient(to right, #004e92, #000428); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	 			color: #fff; padding: 10px 0; width: 100%; font-weight:bold; font-size: 15px;">INSTRUCTIONS</div>
+			
+			<div class="panel-body">									
+				
+				<h2><span style="color: red; font-size: 13px;">DO NOT SKIP READING THESE IMPORTANT INSTRUCTIONS</span></h2><br/>
+				
+				<ul style="font-size: 12px;"> 
+					<li style="text-align: justify;">Registration link will available <b>from 10:00 AM of 14-FEB-2022 to mid night of 16-FEB-2022</b>.</li>
+				 	<li style="text-align: justify;"><b>Only B.Tech. (Except BBS), M.Sc., M.Sc.(5 Years Integrated), MCA, M.Tech., M.S.(SE), M.Tech.(5 Years Integrated) &amp; Research programme Fresher students (i.e. 2021 Batch) are allowed for registration.</b></li>
+				 	<li style="text-align: justify;"><b>All types of category courses &amp; options are permitted for registration.  Grade Improvement/ Audit/ Additional courses are not allowed.</b></li>
+				 	<li style="text-align: justify;"><Strong style="color: red;">Login with Username &amp; Password (as per your VTOP credentials).</Strong></li>
+				 	<li style="text-align: justify;"><Strong style="color: red;">An OTP will be sent to your E-Mail Id (as per your VTOP Student Profile) for each Course Delete or Modify.</Strong></li>		
+					<li style="text-align: justify;"><span>The students should <strong style="color: red;">not share their credentials</strong> with their friends.  
+	 					The <strong  style="color: red;">University does not take any responsibility if their course registrations are altered/ deleted</strong>.</span></li>
+				 	<li style="text-align: justify;">For <strong style="color: red;">issues related to course scheduling and availability</strong>, please contact your <strong style="color: red;">Head of the Department.</strong></li>
+				 	<li style="text-align: justify;">For <b>any further clarifications please contact <span style="color: blue;">helpdesk.acad@vit.ac.in</span></b>.</li>
+				 	<li style="text-align: justify;">Recommended browsers are "<b style="color:red;">MOZILLA FIREFOX</b>" and "<b style="color:red;">GOOGLE CHROME</b>"</li>
+				 	<li style="text-align: justify;">Session will be timed out automatically after 3 minutes of idle time period. To re-login without proper "<b>Log out</b>"" the student has to wait for 3 minutes.</li>
+				 	<li style="text-align: justify;"><strong  style="color: red;">If "Multi-Tab" error or "Session Timed Out" message displayed, close your web browser or clear the cache and then "Re-Login" to website.</strong></li>
+				</ul>
+				
+				<div class="small-info" style="text-align:center;
+					border-bottom-left-radius:10px; border-bottom-right-radius:10px; 
+					background: #000428;  /* fallback for old browsers */
+					background: -webkit-linear-gradient(to right, #004e92, #000428);  /* Chrome 10-25, Safari 5.1-6 */
+					background: linear-gradient(to right, #004e92, #000428); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	 				color: #fff; padding: 10px 0; width: 100%; font-weight:bold;  font-size: 13px;">
+	 									
+					<div id="dvCountDown" style= "display:none; font-size:20px">
+						You will be redirected after <span id = "lblCount"></span>&nbsp;seconds.
+					</div>
+					
+					<div id="agreeButton" style="display:none">
+						<form name="checkRegistration"  id="checkRegistration" action="checkRegistration" method="post">
+							<div class="login-reset-btn">
+						  		<button type="submit" style="font-weight: bold;" class="btn-success w3-btn w3-btn-green w3-round-large">Start Registration</button>
+						  		&nbsp;&nbsp;&nbsp;&nbsp;
+						  		<button type="button" style="font-weight: bold;" class="btn-warning w3-btn w3-btn-red w3-round-large" onclick="location.href='processLogout'">Sign out</button>
+						  	</div>
+					   	</form>
+					</div>
+				</div>
+				
+			</div>
+			</div>
 		</div>			
 	<footer class="main-footer" th:include="layouts/Footer::footer"></footer>
 </body>
 <script th:inline="javascript">
 /*<![CDATA[*/
-	//doRefreshCaptcha();
-
 	
+	DelayRedirect();
+	
+	function DelayRedirect() 
+	{
+		var seconds = 5;
+		var dvCountDown = document.getElementById("dvCountDown");
+		var agreeButton = document.getElementById("agreeButton");
+		var lblCount = document.getElementById("lblCount");
+		dvCountDown.style.display = "block";
+		lblCount.innerHTML = seconds;
+		
+		setInterval(
+			function () 
+		    {
+				seconds--;
+			    lblCount.innerHTML = seconds;
+				
+			    if (seconds == 0) 
+				{ 
+					dvCountDown.style.display = "none";  
+					agreeButton.style.display = "block";
+				}
+			}, 1000);
+	}
+												
 	$(function() {
 	    $('#registerNo').keyup(function() {
 	        $(this).val($(this).val().toUpperCase());
@@ -111,26 +160,7 @@
 				}, 0);		    			    	
 		    }
 		});
-	}
-		
-	function doRefreshCaptcha()
-	{
-		$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
-		
-		$.ajax({
-			url : "viewStudentLogin1",
-			type : "POST",
-			cache : false,
-			processData : false,
-			contentType : false,												
-			success : function(response) 
-			{
-				$('#test').html(response);
-				$.unblockUI();
-			}
-		});
-	}
-	
+	}	
 /*]]>*/		
 </script>
 </html>

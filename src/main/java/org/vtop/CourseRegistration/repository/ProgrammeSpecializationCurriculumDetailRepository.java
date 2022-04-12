@@ -51,20 +51,6 @@ public interface ProgrammeSpecializationCurriculumDetailRepository extends
 	List<Object[]> findCurriculumByAdmsnYearCCVersionAndCourseCode(Integer specId, Integer admissionYear, Float ccVersion, 
 						String courseCode);
 	
-	
-	/*@Query(value="select a.COURSE_CODE from ("+
-					"(select b.CODE as COURSE_CODE from ACADEMICS.PRG_SPLZTN_CURRICULUM_DETAILS a, "+
-					"ACADEMICS.COURSE_CATALOG b where a.PRGSPLZN_PRG_SPECIALIZATION_ID=?1 and a.ADMISSION_YEAR=?2 and "+
-					"a.CURRICULUM_VERSION=?3 and a.COURSE_CATEGORY in (?4) and a.CATALOG_TYPE='CC' and a.LOCK_STATUS=0 and "+
-					"a.COURSE_BASKET_ID=b.COURSE_ID) "+
-					"union all "+
-					"(select d.CODE as COURSE_CODE from ACADEMICS.PRG_SPLZTN_CURRICULUM_DETAILS a, ACADEMICS.BASKET_DETAILS b, "+
-					"ACADEMICS.BASKET_COURSE_CATALOG c, ACADEMICS.COURSE_CATALOG d where a.PRGSPLZN_PRG_SPECIALIZATION_ID=?1 "+
-					"and a.ADMISSION_YEAR=?2 and a.CURRICULUM_VERSION=?3 and a.COURSE_CATEGORY in (?4) and a.CATALOG_TYPE='BC' "+
-					"and a.LOCK_STATUS=0 and b.LOCK_STATUS=0 and c.LOCK_STATUS=0 and a.COURSE_BASKET_ID=b.BASKET_ID "+
-					"and a.COURSE_BASKET_ID=c.BASKET_DETAILS_BASKET_ID and b.BASKET_ID=c.BASKET_DETAILS_BASKET_ID and "+
-					"c.COURSE_CATALOG_COURSE_ID=d.COURSE_ID)) a order by a.COURSE_CODE", nativeQuery=true)
-	List<String> findNCCourseByYearAndCCVersion(Integer specId, Integer admissionYear, Float ccVersion, List<String> courseCategory);*/
 	@Query(value="select a.COURSE_CODE from ("+
 					"(select b.CODE as COURSE_CODE from ACADEMICS.PRG_SPLZTN_CURRICULUM_DETAILS a, "+
 					"ACADEMICS.COURSE_CATALOG b where a.PRGSPLZN_PRG_SPECIALIZATION_ID=?1 and a.ADMISSION_YEAR=?2 and "+
@@ -82,7 +68,6 @@ public interface ProgrammeSpecializationCurriculumDetailRepository extends
 					"b.BASKET_ID=c.BASKET_DETAILS_BASKET_ID and c.COURSE_CATALOG_COURSE_ID=d.COURSE_ID)) a order by a.COURSE_CODE", 
 					nativeQuery=true)
 	List<String> findNCCourseByYearAndCCVersion(Integer specId, Integer admissionYear, Float ccVersion, List<String> courseCategory);
-
 	
 	@Query(value="select a.COURSE_CATEGORY, a.CATALOG_TYPE, a.COURSE_BASKET_ID, a.COURSE_ID, a.course_code, a.basket_code, "+
 					"a.basket_credit, a.basket_category, b.DESCRIPTION as course_category_desc from ( "+ 
@@ -113,42 +98,4 @@ public interface ProgrammeSpecializationCurriculumDetailRepository extends
 					"order by a.COURSE_CATEGORY, a.CATALOG_TYPE, a.COURSE_BASKET_ID, a.COURSE_ID", nativeQuery=true)
 	List<Object[]> findStudentCurriculumByRegisterNumberUECourseAndPECourseOption(Integer specializationId, Integer admissionYear, 
 						Float curriculumVersion, List<String> registerNumber, List<String> ueCourseCode, List<String> peCourseOptionCode);
-	
-	
-	/*@Query("select a from ProgrammeSpecializationCurriculumDetailModel a order by "+
-				"a.psccdPkId.specializationId, a.psccdPkId.admissionYear desc, a.psccdPkId.curriculumVersion, "+
-				"a.courseCategory, a.catalogType, a.psccdPkId.courseBasketId")
-	List<ProgrammeSpecializationCurriculumDetailModel> findAll();
-	
-	@Query("select a from ProgrammeSpecializationCurriculumDetailModel a where a.psccdPkId.specializationId=?1 "+
-			"order by a.psccdPkId.admissionYear desc, a.psccdPkId.curriculumVersion, a.courseCategory, "+
-			"a.catalogType, a.psccdPkId.courseBasketId")
-	List<ProgrammeSpecializationCurriculumDetailModel> findBySpecId(Integer specId);
-	
-	@Query("select a from ProgrammeSpecializationCurriculumDetailModel a where a.psccdPkId.specializationId=?1 "+
-			"and a.psccdPkId.admissionYear=?2 order by a.psccdPkId.curriculumVersion, a.courseCategory, "+
-			"a.catalogType, a.psccdPkId.courseBasketId")
-	List<ProgrammeSpecializationCurriculumDetailModel> findBySpecIdAdmYear(Integer specId, Integer admissionYear);
-	
-	@Query("select a from ProgrammeSpecializationCurriculumDetailModel a where a.psccdPkId.specializationId=?1 "+
-			"and a.psccdPkId.admissionYear=?2 and a.psccdPkId.curriculumVersion=?3 order by a.courseCategory, "+
-			"a.catalogType, a.psccdPkId.courseBasketId")
-	List<ProgrammeSpecializationCurriculumDetailModel> findBySpecIdAdmYearCCVersion(Integer specId, Integer admissionYear, 
-															Float ccVersion);
-	
-	//Program Specialization & Year based Curriculum Category detail
-	@Query(value="select COURSE_CATEGORY, CATALOG_TYPE, COURSE_BASKET_ID, COURSE_ID, CODE from "+
-				"((select a.COURSE_CATEGORY, a.CATALOG_TYPE, a.COURSE_BASKET_ID, b.COURSE_ID, b.CODE from "+
-				"ACADEMICS.PRG_SPLZTN_CURRICULUM_DETAILS a, ACADEMICS.COURSE_CATALOG b where "+
-				"a.PRGSPLZN_PRG_SPECIALIZATION_ID=?1 and a.ADMISSION_YEAR=?2 and a.CURRICULUM_VERSION=?3 "+
-				"and a.CATALOG_TYPE='CC' and a.LOCK_STATUS=0 and a.COURSE_BASKET_ID=b.COURSE_ID) "+
-				"union all "+
-				"(select a.COURSE_CATEGORY, a.CATALOG_TYPE, a.COURSE_BASKET_ID, b.COURSE_CATALOG_COURSE_ID as "+
-				"COURSE_ID, c.CODE from ACADEMICS.PRG_SPLZTN_CURRICULUM_DETAILS a, ACADEMICS.BASKET_COURSE_CATALOG b, "+
-				"ACADEMICS.COURSE_CATALOG c where a.PRGSPLZN_PRG_SPECIALIZATION_ID=?1 and a.ADMISSION_YEAR=?2 and "+
-				"a.CURRICULUM_VERSION=?3 and a.CATALOG_TYPE='BC' and a.LOCK_STATUS=0 and "+
-				"a.COURSE_BASKET_ID=b.BASKET_DETAILS_BASKET_ID and b.LOCK_STATUS=0 and "+
-				"b.COURSE_CATALOG_COURSE_ID=c.COURSE_ID)) "+
-				"order by COURSE_CATEGORY, CATALOG_TYPE, COURSE_ID", nativeQuery=true)
-	List<Object[]> findCurriculumByAdmsnYearAndCCVersion(Integer specId, Integer admissionYear, Float ccVersion);*/
 }

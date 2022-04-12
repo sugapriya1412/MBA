@@ -37,8 +37,6 @@ public class CaptchaManager {
 
     private String[] fontNames = { "Arial", "Arial Black", "Courier", "Garamond", "Helvetica", "Times New Roman" };
 
-    //private final Logger LOG = LoggerFactory.getLogger(this.getClass());
-
     public String createCaptcha(String randomChars) throws IOException {
 
         BufferedImage captchaImage = createCaptchaImage(randomChars);
@@ -247,5 +245,4 @@ public class CaptchaManager {
         }
         this.isGridLines = isGridLines;
     }
-
 }

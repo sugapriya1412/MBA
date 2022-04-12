@@ -13,6 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.DatatypeConverter;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.vtop.CourseRegistration.CaptchaConstants;
 import java.security.MessageDigest;
 import java.util.*;
@@ -26,15 +31,14 @@ import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
-/**
- *
- * @author
- */
+
+@Service
+@Transactional(readOnly=true)
 public class Sdc_common_functions 
 {
+	private static final Logger logger = LogManager.getLogger(Sdc_common_functions.class);
+			
 	public static final String FILE_TYPE = "jpeg";
-	
-	
 	private static final Set<String> s = new HashSet<String>();
 
 	static {
@@ -48,7 +52,6 @@ public class Sdc_common_functions
 	private static final Random r = new Random(System.currentTimeMillis());
 
 	public String getWord() {
-		//int length = ThreadLocalRandom.current().nextInt(5,8);
 		int length = 6;
 		String cand = getrandom(length);
 		while (isSwearWord(cand)) {
@@ -77,8 +80,6 @@ public class Sdc_common_functions
     
     public String getrandom(int keylen) 
 	{
-		//final String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
-    	//final String alphabet = "ABCDEFGHJKMNPRSTUVWXYZ23456789abcdefghjkmnprstuvwxyz";
     	final String alphabet = "ABCDEFGHJKMNPRSTUVWXYZ23456789";
     	
     	StringBuilder stringBuilder = new StringBuilder();
@@ -86,7 +87,6 @@ public class Sdc_common_functions
 				
 		for (int i = 0; i < keylen; i++)
 		{
-			//stringBuilder.append(charRepository.charAt(random.nextInt(charRepository.length())));
 			stringBuilder.append(alphabet.charAt(r.nextInt(alphabet.length())));
 		}
 		
@@ -114,7 +114,7 @@ public class Sdc_common_functions
 		Random r = new Random();
 		for (int i = 0; i < keyLength; i++) 
 		{
-			//System.out.print(alphabet.charAt(r.nextInt(N)));
+			//logger.trace("\n"+ alphabet.charAt(r.nextInt(N)));
 			key = key + alphabet.charAt(r.nextInt(N));
 		}
 		return key;
@@ -140,7 +140,6 @@ public class Sdc_common_functions
 		    byte[] digest = md.digest();    
 		    hashval = convertByteToHex(digest);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -203,17 +202,8 @@ public class Sdc_common_functions
 	
 	public void drawTextOnImage(Graphics2D graphics, String captchaText, HttpServletRequest request)
     {
-
 		String displayCaptcha = "";
-		/*Sdc_common_functions sdf = new Sdc_common_functions();		
-		String captchaString = sdf.Encrypt_String(sdf.getrandom(64));
-		String captcha = captchaString + sdf.Hash512(captchaString);		
-		int fromValue = sdf.getrandom1(1);
-		int toValue = fromValue + 6;		
-		displayCaptcha = captcha.substring(fromValue, toValue);	*/
 		
-		
-		//displayCaptcha = getrandom(6);
 		displayCaptcha = getWord();
 		captchaText = "";
 		captchaText = displayCaptcha;
@@ -272,18 +262,16 @@ public class Sdc_common_functions
             HttpSession session = request.getSession(true);          
             session.setAttribute("ENCDATA", res);             
             out.flush();
-            out.close();          
-           
+            out.close();
         } 
         catch (Exception e) 
         {
-        	e.printStackTrace();
+        	logger.trace(e);
         }
     }
 	
 	public static void applyCurrentGradientPaint(Graphics2D graphics,int width, int height, Color startingColor, Color endingColor)
     {
-
         GradientPaint gradientPaint = new GradientPaint(0, 0, startingColor,width, height, endingColor);
         graphics.setPaint(gradientPaint);
     }

@@ -5,7 +5,7 @@
 </head>
 <body class="hold-transition skin-blue-light sidebar-mini fixed">
 	<div class="wrapper">
-		<!-- Content Wrapper. Contains page content -->
+	
 		<div class="content-wrapper" id="page-wrapper">
 			<div class="" th:fragment="section">
 					<div class="margin-homepage">
@@ -73,19 +73,15 @@
 						<input type="hidden" name="courseId" id="courseId" th:value="${courseId}" />
 						<div style="text-align:center; margin-top:10px;">
 								<h3 style="color:red;margin-bottom:10px;">Do you want to delete above mentioned course ? </h3>
-							<!-- 	<button type="button" class="btn-warning w3-btn w3-btn-green w3-round-large"							         
-								    th:onclick="'javascript:processDeleteConfirmationCourseRegistrationWaiting(\''+ ${courseId} +'\');'" >
-								    <i class="fa fa-check"></i>Yes
-								</button> -->
-								
+													
 								<button type="button" class="btn-warning w3-btn w3-btn-green w3-round-large"	
-								 th:data-parameter1="${courseId}" 						         
-								    th:onclick="javascript:processDeleteConfirmationCourseRegistrationWaiting(this.getAttribute('data-parameter1'))" >
+									th:data-parameter1="${courseId}" 						         
+								    th:onclick="javascript:processDeleteConfirmationCourseRegistrationWaiting(this.getAttribute('data-parameter1'))">
 								    <i class="fa fa-check"></i>Yes
 								</button>
 								&nbsp;&nbsp;
 								<button type="button" class="btn-success w3-btn w3-btn-red w3-round-large" 
-								th:onclick="'javascript:processDeleteConfirmationCourseRegistrationWaitingRirect();'" >
+									th:onclick="'javascript:processDeleteConfirmationCourseRegistrationWaitingRirect();'">
 								    <i class="fa fa-close"></i>No
 								</button>
 							</div>	 											
@@ -95,7 +91,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- /.content-wrapper -->
 	</div>
 </body>
 </html>

@@ -57,6 +57,9 @@ public class CourseRegistrationWaitingMoveModel implements Serializable {
 	@Column(name="REGISTRATION_COMPONENT_TYPE")
 	private int componentType;
 	
+	@Column(name="GRADE_CATEGORY")
+	private String gradeCategory;
+	
 	@Column(name="WAITING_STATUS")
 	private int waitingStatus;
 			
@@ -159,6 +162,14 @@ public class CourseRegistrationWaitingMoveModel implements Serializable {
 		this.componentType = componentType;
 	}
 
+	public String getGradeCategory() {
+		return gradeCategory;
+	}
+
+	public void setGradeCategory(String gradeCategory) {
+		this.gradeCategory = gradeCategory;
+	}
+
 	public int getWaitingStatus() {
 		return waitingStatus;
 	}
@@ -225,8 +236,8 @@ public class CourseRegistrationWaitingMoveModel implements Serializable {
 				+ courseTypeComponentModel + ", classId=" + classId + ", courseAllocationModel=" + courseAllocationModel
 				+ ", courseOptionCode=" + courseOptionCode + ", courseOptionModel=" + courseOptionModel
 				+ ", statusNumber=" + statusNumber + ", registrationStatusMasterModel=" + registrationStatusMasterModel
-				+ ", componentType=" + componentType + ", waitingStatus=" + waitingStatus + ", logTimestamp="
-				+ logTimestamp + ", logIpaddress=" + logIpaddress + ", movedIpaddress=" + movedIpaddress + "]";
-	}
-	
+				+ ", componentType=" + componentType + ", gradeCategory=" + gradeCategory + ", waitingStatus="
+				+ waitingStatus + ", logTimestamp=" + logTimestamp + ", logIpaddress=" + logIpaddress
+				+ ", movedIpaddress=" + movedIpaddress + "]";
+	}	
 }

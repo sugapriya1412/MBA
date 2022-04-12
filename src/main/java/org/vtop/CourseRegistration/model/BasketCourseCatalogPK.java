@@ -60,4 +60,8 @@ public class BasketCourseCatalogPK implements Serializable {
 		return true;
 	}
 	
+	@Override
+	public String toString() {
+		return "BasketCourseCatalogPK [basketId=" + basketId + ", courseId=" + courseId + "]";
+	}
 }
