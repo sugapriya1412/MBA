@@ -43,7 +43,9 @@
 	</div> 
 		<div class="container" id="page-wrapper">		
 			<form name="studLogin" id="studLogin" method="post" 
-					action="processStudentLogin" autocomplete="off">
+					th:action="@{/}" autocomplete="off">
+			<input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
+			
 			<br/>
 				<div class="login-container" style="border-style: solid; border-radius:20px; 
 					background: #000e36;  /* fallback for old browsers */
@@ -54,7 +56,7 @@
 				   	</div>				  					  	
 				    <div class="reg">
 						<label class="left-panel"><b>Username</b></label>
-					    <input type="text" name="userName" id="userName" class="right-panel" 
+					    <input type="text" name="username" id="username" class="right-panel" 
 					    	 maxlength="12" placeholder="Enter Username" />
 					</div>		
 				    
@@ -94,8 +96,8 @@
 	
 	function validateLogin() 
 	{					
-		if (($('#userName').val() == null) || ($('#userName').val() == "") 
-				|| ($('#userName').val().trim().length <= 0))
+		if (($('#username').val() == null) || ($('#username').val() == "") 
+				|| ($('#username').val().trim().length <= 0))
 		{
 		
 			swal({
@@ -110,14 +112,14 @@
 			    {
 			    	window.setTimeout(function ()
 			    	{
-			    		document.getElementById('userName').focus();
+			    		document.getElementById('username').focus();
 			    	}, 0);		    			    	
 			    }
 			});		
 		
 			return false;
 		}
-		else if (($('#userName').val().trim().length < 6) || ($('#userName').val().trim().length > 12))
+		else if (($('#username').val().trim().length < 6) || ($('#username').val().trim().length > 12))
 		{
 		
 			swal({
@@ -187,7 +189,7 @@
 	}
 	
 	$(function() {
-	    $('#userName').keyup(function() {
+	    $('#username').keyup(function() {
 	        $(this).val($(this).val().toUpperCase());
 	    });
 	    
@@ -218,7 +220,7 @@
 		    {
 		    	window.setTimeout(function ()
 		    	{
-		    		document.getElementById('userName').focus();
+		    		document.getElementById('username').focus();
 		    	}, 0);		    			    	
 		    }
 		});

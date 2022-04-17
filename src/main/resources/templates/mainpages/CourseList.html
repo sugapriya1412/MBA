@@ -119,6 +119,7 @@
 						    							
     					<form role="form" method="post" autocomplete="off" 
     							id="courseListForm" name="courseListForm">
+    						<input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
     					
     					<input type="hidden" name="selectedPageSize" id="selectedPageSize" th:value="${selectedPageSize}" />
     					<input type="hidden" name="pageNo" id="pageNo" th:value="${page}" />

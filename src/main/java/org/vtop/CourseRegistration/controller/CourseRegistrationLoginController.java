@@ -16,9 +16,14 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.vtop.CourseRegistration.service.CourseRegistrationCommonFunction;
 import org.vtop.CourseRegistration.service.CourseRegistrationReadWriteService;
 import org.vtop.CourseRegistration.service.ProgrammeSpecializationCurriculumCreditService;
@@ -41,6 +46,53 @@ public class CourseRegistrationLoginController
 	
 	private static final Logger logger = LogManager.getLogger(CourseRegistrationLoginController.class);
 	private static final String RegErrorMethod = "WS2122AD";
+	
+	
+	@RequestMapping("/login/error")
+	  public String loginError(Model model, HttpServletRequest request, HttpServletResponse response,
+	      @RequestParam(value = "error", required = false) String error) {
+
+	    String file = "StudentLogin";
+	    HttpSession session = request.getSession(false);
+	    String errMsg = "";
+	    try {
+	      AuthenticationException exp = (AuthenticationException) session
+	          .getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+
+	      if (exp != null) {
+	        errMsg = exp.getMessage();
+	        /*
+	         * if(exp.getClass().isAssignableFrom(BadCredentialsException.class)){
+	         * errMsg="Invalid username or password."; model.addAttribute("error", true);
+	         * }else if(exp.getClass().isAssignableFrom(AccountLocked.class)) {
+	         * errMsg="Account Locked "; model.addAttribute("error", true); }
+	         */ }
+	    } catch (Exception x) {
+	      x.printStackTrace();
+	      errMsg=x.getMessage();
+	    }
+
+
+	        model.addAttribute("errMsg",errMsg);
+
+	    return file;
+	  }
+	@RequestMapping("/login/success")
+	  public String loginError(Model model, HttpServletRequest request,HttpSession session, HttpServletResponse response) 
+		{
+			String registerNumber ="";
+			 registerNumber = (String) session.getAttribute("RegisterNumber");
+			String IpAddress = (String) session.getAttribute("IpAddress");
+	
+			System.out.println("login success calling");
+			System.out.println("registerNumber"+registerNumber);
+			System.out.println("IpAddress"+IpAddress);
+			
+			return "RegistrationStart";
+		}
+
+	
+	
 	
 	
 	@PostMapping("processStudentLogin")
