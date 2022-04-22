@@ -69,23 +69,27 @@
 						</table>
 						</div> 
 						
-						<form role="form" method="POST">	
 						<input type="hidden" name="courseId" id="courseId" th:value="${courseId}" />
 						<div style="text-align:center; margin-top:10px;">
-								<h3 style="color:red;margin-bottom:10px;">Do you want to delete above mentioned course ? </h3>
+							<h3 style="color:red;margin-bottom:10px;">Do you want to delete above mentioned course ? </h3>
 													
-								<button type="button" class="btn-warning w3-btn w3-btn-green w3-round-large"	
-									th:data-parameter1="${courseId}" 						         
-								    th:onclick="javascript:processDeleteConfirmationCourseRegistrationWaiting(this.getAttribute('data-parameter1'))">
-								    <i class="fa fa-check"></i>Yes
-								</button>
-								&nbsp;&nbsp;
-								<button type="button" class="btn-success w3-btn w3-btn-red w3-round-large" 
-									th:onclick="'javascript:processDeleteConfirmationCourseRegistrationWaitingRirect();'">
-								    <i class="fa fa-close"></i>No
-								</button>
-							</div>	 											
-						</form>	
+							<button type="button" class="btn-warning w3-btn w3-btn-green w3-round-large"	
+								th:data-parameter1="${courseId}" 
+								th:data-csrfname="${_csrf?.parameterName}" 
+								th:data-csrfvalue="${_csrf?.token}"						         
+							    th:onclick="javascript: processDeleteConfirmationCourseRegistrationWaiting(
+							    	this.getAttribute('data-parameter1'), this)">
+							    <i class="fa fa-check"></i>Yes
+							</button>
+							&nbsp;&nbsp;
+							<button type="button" class="btn-success w3-btn w3-btn-red w3-round-large" 
+								th:data-csrfname="${_csrf?.parameterName}" 
+								th:data-csrfvalue="${_csrf?.token}"	
+								th:onclick="'javascript: processDeleteConfirmationCourseRegistrationWaitingRirect(this);'">
+							    <i class="fa fa-close"></i>No
+							</button>
+						</div>	 											
+							
 						<br/><br/>													
 					</div>
 				</div>

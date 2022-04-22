@@ -52,6 +52,9 @@
 	</div>
 	
 	<div>
+		<form name="mainPageForm" id="mainPageForm">
+		<input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
+		
 		<table class="w3-table-all w3-card-4" 
 			style="background-color: #e0f8f8; padding: 11px 10px;">
 			<tr>
@@ -89,6 +92,7 @@
 					
 			</tr>
 		</table> 
+		</form>
 	</div>
 			
 	<div class="content-wrapper" id="page-wrapper">
@@ -145,12 +149,15 @@
 		
 		
 		function viewRegOption() 
-		{			
-			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
+		{	
+			var bindData = new FormData(document.getElementById("mainPageForm"));
 			
+			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
+						
 			$.ajax({
 				url : "viewRegistrationOption",
 				type : "POST",
+				data : bindData,	
 				cache : false,
 				processData : false,
 				contentType : false,													
@@ -181,7 +188,8 @@
 			});
 		}
 
-		function viewRegistrationOption() 
+		//function viewRegistrationOption()
+		function viewRegistrationOption(event)
 		{
 			var subCourseOpt = "";
 			var chkFlag = 0;
@@ -213,10 +221,15 @@
 			}
 			
 			if (chkFlag == 1)
-			{
-				var params = "registrationOption="+ regOption +"&pageSize=5&page=1&subCourseOption="+ 
-								subCourseOpt +"&flag=0";
+			{				
+				//var params = "registrationOption="+ regOption +"&pageSize=5&page=1" 
+				//				+"&subCourseOption="+ subCourseOpt +"&flag=0";
 				
+				var csrfId = event.getAttribute('data-csrfname') + "=" + event.getAttribute('data-csrfvalue');
+				var params = "registrationOption="+ regOption +"&pageSize=5&page=1" 
+								+"&subCourseOption="+ subCourseOpt +"&flag=0"
+								+"&"+ csrfId;			
+								
 				$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 				
 				$.ajax({
@@ -263,7 +276,6 @@
 				url : "processSearch",
 				type : "POST",
 				data : dataParameter,
-				
 				success : function(response) 
 				{
 					$('#page-wrapper').html(response);
@@ -273,13 +285,17 @@
 		}		
 
 		function viewRegistered() 
-		{			
+		{	
+			var bindData = new FormData(document.getElementById("mainPageForm"));			
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
 			$.ajax({
 				url : "viewRegistered",
 				type : "POST",
-				
+				data : bindData,
+				cache : false,
+				processData : false,
+				contentType : false,
 				success : function(response) 
 				{
 					$('#page-wrapper').html(response);
@@ -290,15 +306,17 @@
 
 		function deleteCourse() 
 		{
+			var bindData = new FormData(document.getElementById("mainPageForm"));
+			
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
 			$.ajax({
 				url : "deleteRegisteredCourse",
 				type : "POST",
+				data : bindData,
 				cache : false,
 				processData : false,
-				contentType : false,
-													
+				contentType : false,								
 				success : function(response) 
 				{
 					$('#page-wrapper').html(response);
@@ -309,15 +327,17 @@
 		
 		function curriculumCredits() 
 		{
+			var bindData = new FormData(document.getElementById("mainPageForm"));
+			
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
 			$.ajax({
 				url : "viewCurriculumCredits",
 				type : "POST",
+				data : bindData,
 				cache : false,
 				processData : false,
-				contentType : false,
-													
+				contentType : false,							
 				success : function(response) 
 				{
 					$('#page-wrapper').html(response);
@@ -326,15 +346,17 @@
 			});
 		}
 		
-		function callCourseRegistration(courseId, page, searchType, searchVal) 
+		function callCourseRegistration(courseId, page, searchType, searchVal, event) 
 		{
 			if (typeof $("#pageNo").val() !== "undefined")
 			{
 				page = $("#pageNo").val();
 			}
 			
-			var dataParameter = "courseId="+ courseId +"&page="+ page +"&searchType="+ 
-									searchType +"&searchVal=" + searchVal;
+			var csrfId = event.getAttribute('data-csrfname') + "=" + event.getAttribute('data-csrfvalue');
+			var dataParameter = "courseId="+ courseId +"&page="+ page 
+									+"&searchType="+ searchType +"&searchVal=" + searchVal 
+									+"&"+ csrfId;
 						
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
@@ -530,7 +552,7 @@
 
 		/************COURSE REGISTRATION*****************/
 		
-		function RegisterProjectCourse(urlPage) 
+		function RegisterProjectCourse(urlPage, event) 
 		{			
 			var costCentreId = "";
 			var guideEmpId =  "";
@@ -688,34 +710,35 @@
 				}
 				
 			}		
-			
-			
-			var dataParameter =	"costCentreId=" +costCentreId + 
-			 					"&guideErpId=" + guideEmpId + 
-								"&projectTitle=" + projectTitle +
-								"&courseCode=" + courseCode +
-								"&courseType=" + courseType +
-								"&courseId=" + courseId +
-								"&projectOption=" + projectOption +
-								"&clashSlot=" + clashSlot +
-								"&slotId=" + slotId +
-								"&page=" + page +
-								"&classId=" + classId +
-								"&projectDuration=" + projectDuration +
-								"&searchType= " + searchType +
-								"&searchVal=" +  searchVal +
-								"&courseOption=" + courseOption + 
-								"&subCourseOption=" + subCourseOption;
-						
+									
 			if (vldFlg == 1 && vldFlg2 == 1)
 			{
+				//var dataParameter =	"costCentreId="+ costCentreId +"&guideErpId="+ guideEmpId 
+				//						+"&projectTitle="+ projectTitle +"&courseCode="+ courseCode 
+				//						+"&courseType="+ courseType +"&courseId="+ courseId 
+				//						+"&projectOption="+ projectOption +"&clashSlot=" + clashSlot 
+				//						+"&slotId="+ slotId +"&page="+ page 
+				//						+"&classId="+ classId +"&projectDuration="+ projectDuration 
+				//						+"&searchType="+ searchType +"&searchVal="+ searchVal 
+				//						+"&courseOption="+ courseOption +"&subCourseOption="+ subCourseOption;
+				
+				var csrfId = event.getAttribute('data-csrfname') + "=" + event.getAttribute('data-csrfvalue');
+				var dataParameter =	"costCentreId="+ costCentreId +"&guideErpId="+ guideEmpId 
+										+"&projectTitle="+ projectTitle +"&courseCode="+ courseCode 
+										+"&courseType="+ courseType +"&courseId="+ courseId 
+										+"&projectOption="+ projectOption +"&clashSlot=" + clashSlot 
+										+"&slotId="+ slotId +"&page="+ page 
+										+"&classId="+ classId +"&projectDuration="+ projectDuration 
+										+"&searchType="+ searchType +"&searchVal="+ searchVal 
+										+"&courseOption="+ courseOption +"&subCourseOption="+ subCourseOption 
+										+"&"+ csrfId;
+				
 				$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 				
 				$.ajax({
 					url : urlPage,
 					type : "POST",
 					data : dataParameter,
-					
 					success : function(response) 
 					{
 						$('#page-wrapper').html(response);
@@ -737,20 +760,19 @@
 					
 					if (d == 'MIN')
 					{
-							document.getElementById("show1").style.visibility = "visible";
+						document.getElementById("show1").style.visibility = "visible";
 							
-							if (document.getElementById("show2")!=null)
-							{
-								document.getElementById("show2").style.visibility = 'hidden';
-								document.getElementById("subCourseOption").selectedIndex = 0;
-							}
-							
-							if (document.getElementById("show3")!=null)
-							{
-								document.getElementById("show3").style.visibility = 'hidden';
-								document.getElementById("subCourseOption").selectedIndex = 0;
-							} 
-																				
+						if (document.getElementById("show2")!=null)
+						{
+							document.getElementById("show2").style.visibility = 'hidden';
+							document.getElementById("subCourseOption").selectedIndex = 0;
+						}
+						
+						if (document.getElementById("show3")!=null)
+						{
+							document.getElementById("show3").style.visibility = 'hidden';
+							document.getElementById("subCourseOption").selectedIndex = 0;
+						}														
 					}
 					else if (d == 'HON')
 					{
@@ -770,19 +792,18 @@
 					}
 					else if (d == 'CS')
 					{
-							document.getElementById("show3").style.visibility = "visible";
-							if (document.getElementById("show2")!=null)
-							{
-								document.getElementById("show2").style.visibility = 'hidden';
-								document.getElementById("subCourseOption").selectedIndex = 0;
-							}
-							
-							if (document.getElementById("show1")!=null)
-							{
-								document.getElementById("show1").style.visibility = 'hidden';
-								document.getElementById("subCourseOption").selectedIndex = 0;
-							}
-																			
+						document.getElementById("show3").style.visibility = "visible";
+						if (document.getElementById("show2")!=null)
+						{
+							document.getElementById("show2").style.visibility = 'hidden';
+							document.getElementById("subCourseOption").selectedIndex = 0;
+						}
+						
+						if (document.getElementById("show1")!=null)
+						{
+							document.getElementById("show1").style.visibility = 'hidden';
+							document.getElementById("subCourseOption").selectedIndex = 0;
+						}																		
 					}
 					else
 					{
@@ -808,7 +829,7 @@
 			}			
 		}
 
-		function registerCourse(urlPage) 
+		function registerCourse(urlPage, event) 
 		{	
 			var classId1 = $('input:radio[name=classnbr1]:checked').val();
 			var classId2 = "";
@@ -1050,8 +1071,7 @@
 						});
 					} 
 					else 
-					{						
-						
+					{	
 						courseOption =  $('input[name=CourseOption]:checked').val();						
 					
 						if ((courseOption == 'CS') || (courseOption == 'HON') || (courseOption == 'MIN'))
@@ -1108,22 +1128,35 @@
 				subCourseType = $("#subCourseType").val();
 				subCourseDate = $("#subCourseDate").val();
 			}
-			
-						
-			var classIdVal = classId1 + "," + classId2 + "," + classId3;					
-			var dataParameter = "ClassID="+ classIdVal +"&courseId="+ courseId 
-									+"&courseType="+ courseType +"&courseCode="+ courseCode 
-									+"&courseOption="+ courseOption +"&clashSlot="+ clashSlot 
-									+"&pageSize=5&page="+ $('#page').val() 
-									+"&subCourseOption="+ subCourseOption +"&subCourseType=" + subCourseType 
-									+"&subCourseDate="+ subCourseDate +"&searchType="+ searchType 
-									+"&searchVal="+ searchVal +"&clArr="+ clArr 
-									+"&epjSlotFlag="+ epjSlotFlag +"&crCourseStatus="+ crCourseStatus 
-									+"&crCourseId="+ crCourseId +"&crCourseCode="+ crCourseCode 
-									+"&crCourseType="+ crCourseType;
-						
+									
 			if (chkflg == 1) 
 			{
+				var classIdVal = classId1 + "," + classId2 + "," + classId3;					
+				
+				//var dataParameter = "ClassID="+ classIdVal +"&courseId="+ courseId 
+				//						+"&courseType="+ courseType +"&courseCode="+ courseCode 
+				//						+"&courseOption="+ courseOption +"&clashSlot="+ clashSlot 
+				//						+"&pageSize=5&page="+ $('#page').val() 
+				//						+"&subCourseOption="+ subCourseOption +"&subCourseType=" + subCourseType 
+				//						+"&subCourseDate="+ subCourseDate +"&searchType="+ searchType 
+				//						+"&searchVal="+ searchVal +"&clArr="+ clArr 
+				//						+"&epjSlotFlag="+ epjSlotFlag +"&crCourseStatus="+ crCourseStatus 
+				//						+"&crCourseId="+ crCourseId +"&crCourseCode="+ crCourseCode 
+				//						+"&crCourseType="+ crCourseType;
+				
+				var csrfId = event.getAttribute('data-csrfname') + "=" + event.getAttribute('data-csrfvalue');
+				
+				var dataParameter = "ClassID="+ classIdVal +"&courseId="+ courseId 
+										+"&courseType="+ courseType +"&courseCode="+ courseCode 
+										+"&courseOption="+ courseOption +"&clashSlot="+ clashSlot 
+										+"&pageSize=5&page="+ $('#page').val() 
+										+"&subCourseOption="+ subCourseOption +"&subCourseType=" + subCourseType 
+										+"&subCourseDate="+ subCourseDate +"&searchType="+ searchType 
+										+"&searchVal="+ searchVal +"&clArr="+ clArr 
+										+"&epjSlotFlag="+ epjSlotFlag +"&crCourseStatus="+ crCourseStatus 
+										+"&crCourseId="+ crCourseId +"&crCourseCode="+ crCourseCode 
+										+"&crCourseType="+ crCourseType +"&"+ csrfId;
+				
 				$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 				
 				$.ajax({
@@ -1140,10 +1173,15 @@
 			} 
 		}
 	
-		function goBack() 
+		function goBack(event) 
 		{
+			//var params = "&pageSize=5&page="+ $('#page').val() +"&searchType="+ $('#searchType').val() 
+			//					+"&searchVal="+ $('#searchVal').val() +"&flag=0";
+			
+			var csrfId = event.getAttribute('data-csrfname') + "=" + event.getAttribute('data-csrfvalue');
 			var params = "&pageSize=5&page="+ $('#page').val() +"&searchType="+ $('#searchType').val() 
-								+"&searchVal="+ $('#searchVal').val() +"&flag=0";			
+							+"&searchVal="+ $('#searchVal').val() +"&flag=0" 
+							+"&"+ csrfId;
 
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
@@ -1182,14 +1220,17 @@
 
 		/************DELETE CONFIRMATION*****************/
 
-		function processDeleteOTPCourseRegistration(courseId) 
+		function processDeleteOTPCourseRegistration(courseId, event) 
 		{
+			var csrfId = event.getAttribute('data-csrfname') + "=" + event.getAttribute('data-csrfvalue');
+			var params = "courseId=" + courseId +"&"+ csrfId;
+				
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
 			$.ajax({
 				url : "processDeleteCourseRegistrationOTP",
 				type : "POST",
-				data : "courseId=" + courseId,
+				data : params,
 				success : function(response) 
 				{
 					$('#page-wrapper').html(response);
@@ -1198,7 +1239,7 @@
 			});
 		}
 		
-		function processDeleteConfirmationCourseRegistration(courseId) 
+		function processDeleteConfirmationCourseRegistration(courseId, event) 
 		{
 			d = document.DeleteConfirmation;
 			var checkFlag = 2;
@@ -1218,14 +1259,18 @@
 			if (parseInt(checkFlag) == 1)
 			{
 				var mailOTP = $("#mailOTP").val();
-				var param = "courseId=" + courseId +"&mailOTP="+ mailOTP;
+				//var params = "courseId=" + courseId +"&mailOTP="+ mailOTP;
+				
+				var csrfId = event.getAttribute('data-csrfname') +"="+ event.getAttribute('data-csrfvalue');
+				var params = "courseId="+ courseId +"&mailOTP="+ mailOTP 
+								+"&"+ csrfId;
 			
 				$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 				
 				$.ajax({
 					url : "processDeleteConfirmationCourseRegistration",
 					type : "POST",
-					data : param,
+					data : params,
 					success : function(response) 
 					{
 						$('#page-wrapper').html(response);
@@ -1235,13 +1280,17 @@
 			}
 		}
 
-		function processDeleteConfirmationCourseRegistrationRirect() 
+		function processDeleteConfirmationCourseRegistrationRirect(event) 
 		{
+			var csrfId = event.getAttribute('data-csrfname') + "=" + event.getAttribute('data-csrfvalue');
+			var params = csrfId;
+			
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
 			$.ajax({
 				url : "processDeleteConfirmationCourseRegistrationRirect",
 				type : "POST",
+				data : params,
 				success : function(response) 
 				{
 					$('#page-wrapper').html(response);
@@ -1253,14 +1302,17 @@
 		/************DELETE CONFIRMATION*****************/
 
 		/************DELETE CONFIRMATION WAITING*****************/
-		function processDeleteConfirmationCourseRegistrationWaiting(courseId) 
+		function processDeleteConfirmationCourseRegistrationWaiting(courseId, event) 
 		{
+			var csrfId = event.getAttribute('data-csrfname') + "=" + event.getAttribute('data-csrfvalue');
+			var params = "courseId=" + courseId +"&"+ csrfId;
+			
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
 			$.ajax({
 				url : "processDeleteConfirmationCourseRegistrationWaiting",
 				type : "POST",
-				data : "courseId=" + courseId,
+				data : params,
 				success : function(response) 
 				{
 					$('#page-wrapper').html(response);
@@ -1269,13 +1321,17 @@
 			});
 		}
 
-		function processDeleteConfirmationCourseRegistrationWaitingRirect() 
+		function processDeleteConfirmationCourseRegistrationWaitingRirect(event) 
 		{
+			var csrfId = event.getAttribute('data-csrfname') + "=" + event.getAttribute('data-csrfvalue');
+			var params = csrfId;
+			
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
 			$.ajax({
 				url : "processDeleteConfirmationCourseRegistrationWaitingRirect",
 				type : "POST",
+				data : params,
 				success : function(response) 
 				{
 					$('#page-wrapper').html(response);
@@ -1287,14 +1343,17 @@
 		/************DELETE CONFIRMATION WAITING*****************/
 
 		/************DELETE COURSE*****************/
-		function processDeleteCourseRegistration(courseId) 
+		function processDeleteCourseRegistration(courseId, event) 
 		{
+			var csrfId = event.getAttribute('data-csrfname') + "=" + event.getAttribute('data-csrfvalue');
+			var params = "courseId=" + courseId +"&"+ csrfId;
+				
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
 			$.ajax({
 				url : "processDeleteCourseRegistration",
 				type : "POST",
-				data : "courseId=" + courseId,
+				data : params,
 				success : function(response) 
 				{
 					$('#page-wrapper').html(response);
@@ -1303,14 +1362,17 @@
 			});
 		}
 
-		function processDeleteCourseRegistrationWaiting(courseId) 
+		function processDeleteCourseRegistrationWaiting(courseId, event) 
 		{
+			var csrfId = event.getAttribute('data-csrfname') + "=" + event.getAttribute('data-csrfvalue');
+			var params = "courseId=" + courseId +"&"+ csrfId;
+			
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
 			$.ajax({
 				url : "processDeleteCourseRegistrationWaiting",
 				type : "POST",
-				data : "courseId=" + courseId,
+				data : params,
 				success : function(response) 
 				{
 					$('#page-wrapper').html(response);
@@ -1322,7 +1384,7 @@
 		/************DELETE COURSE*****************/
 
 		/************MODIFY EDIT*****************/
-		function UpdateSlots(oldClassId) 
+		function UpdateSlots(oldClassId, event) 
 		{
 			var chkflg = 1;
 			var courseOption1 = "";
@@ -1367,8 +1429,13 @@
 			if (parseInt(chkflg) == 1) 
 			{
 				var mailOTP = $("#mailOTP").val();
+				//var dataParameter = "newCourseDetail="+ $('input:radio[name=courseOption]:checked').val() 
+				//						+"&oldClassId=" + oldClassId +"&mailOTP="+ mailOTP;
+				
+				var csrfId = event.getAttribute('data-csrfname') + "=" + event.getAttribute('data-csrfvalue');
 				var dataParameter = "newCourseDetail="+ $('input:radio[name=courseOption]:checked').val() 
-										+"&oldClassId=" + oldClassId +"&mailOTP="+ mailOTP;
+										+"&oldClassId=" + oldClassId +"&mailOTP="+ mailOTP 
+										+"&"+ csrfId;
 				
 				$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 				
@@ -1387,11 +1454,18 @@
 
 		function goModifyPage() 
 		{
+			var bindData = new FormData(document.getElementById("mainPageForm"));
+			//var bindData = new FormData(document.getElementById("ModifySlot"));
+			
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
 			$.ajax({
 				url : "modifySlots",
-				type : "POST",																
+				type : "POST",
+				data : bindData,
+				cache : false,
+				processData : false,
+				contentType : false,
 				success : function(response) 
 				{					
 					$('#page-wrapper').html(response);
@@ -1439,10 +1513,15 @@
 			});
 		}
 		
-		function viewCorrespondingCourse(courseId, erpId, genericCourseType, classId, page) 
+		function viewCorrespondingCourse(courseId, erpId, genericCourseType, classId, page, event) 
 		{
-			var param = "courseId="+ courseId +"&erpId="+ erpId +"&genericCourseType="+ 
-							genericCourseType +"&classId="+ classId +"&page="+ page;
+			//var param = "courseId="+ courseId +"&erpId="+ erpId +"&genericCourseType="+ 
+			//				genericCourseType +"&classId="+ classId +"&page="+ page;
+			
+			var csrfId = event.getAttribute('data-csrfname') +"="+ event.getAttribute('data-csrfvalue');
+			var param = "courseId="+ courseId +"&erpId="+ erpId 
+							+"&genericCourseType="+ genericCourseType +"&classId="+ classId 
+							+"&page="+ page +"&"+ csrfId;
 			
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
@@ -1458,34 +1537,43 @@
 			});
 		}
 		
-		function callViewSlots(courseId, page, searchType, searchVal)
+		//function callViewSlots(courseId, page, searchType, searchVal)
+		function callViewSlots(courseId, page, searchType, searchVal, event)
 		{
 			page = $("#pageNo").val();
-			var param = "courseId="+ courseId +"&page="+ page +"&searchType="+ searchType 
-								+"&searchVal="+ searchVal;
+			
+			//var params = "courseId="+ courseId +"&page="+ page 
+			//				+"&searchType="+ searchType +"&searchVal="+ searchVal;
+			
+			var csrfId = event.getAttribute('data-csrfname') + "=" + event.getAttribute('data-csrfvalue');
+			var params = "courseId="+ courseId +"&page="+ page 
+							+"&searchType="+ searchType +"&searchVal="+ searchVal 
+							+"&"+ csrfId;
 						
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
 			$.ajax({
 				url : "processViewSlots",
 				type : "POST",
-				data : param,
+				data : params,
 				success : function(response) 
 				{		
 					$('#page-wrapper').html(response);
 					$.unblockUI();
-				}	
-				
+				}
 			});
 		}
 		
 		function modifySlots() 
 		{
+			var bindData = new FormData(document.getElementById("mainPageForm"));
+			
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
 			$.ajax({
 				url : "modifySlots",
 				type : "POST",
+				data : bindData,
 				cache : false,
 				processData : false,
 				contentType : false,													
@@ -1497,14 +1585,17 @@
 			});
 		}
 		
-		function editRegisteredSlots(courseId) 
+		function editRegisteredSlots(courseId, event) 
 		{
+			var csrfId = event.getAttribute('data-csrfname') + "=" + event.getAttribute('data-csrfvalue');
+			var params = "courseId=" + courseId +"&"+ csrfId;
+			
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			
 			$.ajax({
 				url : "editRegisteredSlots",
 				type : "POST",
-				data : "courseId=" + courseId,
+				data : params,
 				success : function(response) 
 				{
 					$('#page-wrapper').html(response);

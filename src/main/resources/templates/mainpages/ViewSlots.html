@@ -159,15 +159,19 @@
 									th:data-parameter2="${page}" 
 									th:data-parameter3="${srhType}" 
 									th:data-parameter4="${srhVal}" 
-									th:onclick="javascript: callCourseRegistration(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'),
-										this.getAttribute('data-parameter3'),this.getAttribute('data-parameter4'))"
-									>Check Eligibility</button>
+									th:data-csrfname="${_csrf?.parameterName}" 
+									th:data-csrfvalue="${_csrf?.token}"
+									th:onclick="javascript: callCourseRegistration(this.getAttribute('data-parameter1'), 
+										this.getAttribute('data-parameter2'), this.getAttribute('data-parameter3'), 
+										this.getAttribute('data-parameter4'), this)">Check Eligibility</button>
 								&nbsp;&nbsp;&nbsp;
 							</th:block>
 							
 					  		<button type="button" style="width: auto; margin: 20px 0px;" 
 					  			class="btn-warning w3-btn w3-btn-blue w3-round-large"
-					  			onclick="goBack();">Go Back</button>
+					  			th:data-csrfname="${_csrf?.parameterName}" 
+								th:data-csrfvalue="${_csrf?.token}"
+					  			onclick="goBack(this);">Go Back</button>
 				    	</div>
 					</div>
 				

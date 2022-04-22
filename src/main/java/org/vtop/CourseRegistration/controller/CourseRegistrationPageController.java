@@ -17,6 +17,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.vtop.CourseRegistration.NetAssist;
 import org.vtop.CourseRegistration.model.EmployeeProfile;
 import org.vtop.CourseRegistration.model.PatternTimeMasterModel;
@@ -65,12 +68,14 @@ public class CourseRegistrationPageController
 						throws ServletException, IOException 
 	{
 		String page = "";		
-		Cookie[] cookies = request.getCookies();		
+		Cookie[] cookies = request.getCookies();
+		//logger.trace("\n registerNumber: "+ registerNumber);
 		
 		if (cookies!=null)
 		{
 			for (Cookie cookie : cookies) 
 			{
+				//logger.trace("\n cookie: "+ cookie);
 				if(cookie.getName().equals(registerNumber))
 				{
 					if (registrationLogService.isExist(registerNumber)) 
@@ -166,6 +171,44 @@ public class CourseRegistrationPageController
 		
 		return "StudentLogin";
 	}
+		
+	@RequestMapping("/login/error")
+	public String loginError(Model model, HttpServletRequest request, HttpServletResponse response,
+						@RequestParam(value = "error", required = false) String error)
+	{
+	    String file = "StudentLogin";
+	    HttpSession session = request.getSession(false);
+	    String errMsg = "";
+	    
+	    try
+	    {
+	    	AuthenticationException exp = (AuthenticationException) session.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+
+	    	if (exp != null)
+	    	{
+	    		errMsg = exp.getMessage();
+		        /*
+		         * if(exp.getClass().isAssignableFrom(BadCredentialsException.class)){
+		         * errMsg="Invalid username or password."; model.addAttribute("error", true);
+		         * }else if(exp.getClass().isAssignableFrom(AccountLocked.class)) {
+		         * errMsg="Account Locked "; model.addAttribute("error", true); }
+		         */ 
+	    	}
+	    	
+	    	 courseRegCommonFn.callCaptcha(request, response, session, model);
+	    }
+	    catch (Exception x)
+	    {
+	    	logger.trace(x);
+	    	errMsg = x.getMessage();
+	    }
+	    
+	    //model.addAttribute("errMsg", errMsg);
+		model.addAttribute("CurrentDateTime", new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a").format(new Date()));
+	    model.addAttribute("info", errMsg);
+
+	    return file;
+	}
 	
 	@PostMapping("viewStudentLogin1")
 	public String viewStudentLogin1(Model model, HttpServletRequest request, HttpSession session, 
@@ -223,6 +266,7 @@ public class CourseRegistrationPageController
 		model.addAttribute("message", " V TOP ");
 		model.addAttribute("error", " Thank you For Using V TOP Course Registration Portal .");
 		request.getSession().invalidate();	
+		
 		return "CustomErrorPage";
 	}
 	
@@ -231,6 +275,7 @@ public class CourseRegistrationPageController
 	{
 		model.addAttribute("message", "JavaScript Error");
 		model.addAttribute("error", "Kindly Enable JavaScript in Your Browser to Access V-TOP.");
+		
 		return "ErrorPage";
 	}
 
@@ -254,13 +299,15 @@ public class CourseRegistrationPageController
 		String IpAddress=(String) session.getAttribute("IpAddress");
 		Float curriculumVersion = (Float) session.getAttribute("curriculumVersion");
 		List<String> ncCourseList = new ArrayList<String>();
-		pageAuthKey = (String) session.getAttribute("pageAuthKey");
-		pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
 		Integer PEUEAllowStatus = (Integer) session.getAttribute("PEUEAllowStatus");
+		
+		//pageAuthKey = (String) session.getAttribute("pageAuthKey");
+		//pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
 		
 		try 
 		{
-			if ((registerNumber!=null) && (registrationLogService.isExist(registerNumber) && (pageAuthStatus == 1)))
+			//if ((registerNumber!=null) && (registrationLogService.isExist(registerNumber) && (pageAuthStatus == 1)))
+			if ((registerNumber != null) && (registrationLogService.isExist(registerNumber)))
 			{
 				info = (String) session.getAttribute("info");
 				
@@ -298,6 +345,7 @@ public class CourseRegistrationPageController
 					courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 					model.addAttribute("flag", 4);			
 					page = "redirectpage";
+					//page = "redirect:/logout";
 				}
 				else
 				{
@@ -324,6 +372,7 @@ public class CourseRegistrationPageController
 			cookie.setMaxAge(0);
 			response.addCookie(cookie);
 			request.getSession().invalidate();
+			
 			return page;
 		} 
 		catch (Exception ex) 
@@ -336,7 +385,9 @@ public class CourseRegistrationPageController
 			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			courseRegCommonFn.callCaptcha(request,response,session,model);
 			session.setAttribute("CAPTCHA",session.getAttribute("CAPTCHA"));
-			page = "StudentLogin";
+			
+			//page = "StudentLogin";
+			page = "redirectpage";
 			
 			return page;
 		}	

@@ -52,14 +52,17 @@ public class CourseRegistrationEditController
 		String pageAuthKey = "";
 		int allowStatus = 0, updateStatus = 1;
 		String urlPage = "", msg = null, infoMsg = "";
-		pageAuthKey = (String) session.getAttribute("pageAuthKey");
-		pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
+		
+		//pageAuthKey = (String) session.getAttribute("pageAuthKey");
+		//pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
 		
 		try
 		{
-			if ((registerNumber!=null) && (pageAuthStatus == 1))
+			//if ((registerNumber!=null) && (pageAuthStatus == 1))
+			if (registerNumber != null)
 			{
-				session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+				//session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+				
 				String semesterSubId = (String) session.getAttribute("SemesterSubId");
 				String[] classGroupId = session.getAttribute("classGroupId").toString().split("/");
 				Integer programSpecId = (Integer) session.getAttribute("ProgramSpecId");
@@ -115,6 +118,7 @@ public class CourseRegistrationEditController
 					"modifySlots", registerNumber, IpAddress);
 			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			urlPage = "redirectpage";
+			
 			return urlPage;
 		}
 		return urlPage;
@@ -134,14 +138,15 @@ public class CourseRegistrationEditController
 		String[] cId = new String[]{};
 		String[] validateStatusArr = new String[]{};
 		
-		pageAuthKey = (String) session.getAttribute("pageAuthKey");
-		pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
+		//pageAuthKey = (String) session.getAttribute("pageAuthKey");
+		//pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
 		
 		try
 		{
-			if ((registerNumber != null) && (pageAuthStatus == 1))
+			//if ((registerNumber != null) && (pageAuthStatus == 1))
+			if (registerNumber != null)
 			{	
-				session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+				//session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
 				
 				String semesterSubId = (String) session.getAttribute("SemesterSubId");
 				String semesterDesc = (String) session.getAttribute("SemesterDesc");
@@ -404,6 +409,7 @@ public class CourseRegistrationEditController
 					"editRegisteredSlots", registerNumber, IpAddress);
 			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			urlPage = "redirectpage";
+			
 			return urlPage;
 		}
 		return urlPage;
@@ -437,15 +443,15 @@ public class CourseRegistrationEditController
 		List<CourseAllocationModel> camList = new ArrayList<CourseAllocationModel>();
 		CourseCatalogModel courseCatalogModel =  new CourseCatalogModel();
 		
-		pageAuthKey = (String) session.getAttribute("pageAuthKey");
-		pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
+		//pageAuthKey = (String) session.getAttribute("pageAuthKey");
+		//pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
 				
 		try
 		{
-			logger.trace("\n registerNumber: "+ registerNumber +" | pageAuthStatus: "+ pageAuthStatus);
-			if ((registerNumber != null) && (pageAuthStatus == 1))
+			//if ((registerNumber != null) && (pageAuthStatus == 1))
+			if (registerNumber != null)
 			{								
-				session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+				//session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
 				
 				String semesterSubId = (String) session.getAttribute("SemesterSubId");
 				String semesterDesc = (String) session.getAttribute("SemesterDesc");
@@ -734,6 +740,7 @@ public class CourseRegistrationEditController
 					"UpdateRegisteredSlots", registerNumber, IpAddress);
 			courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
 			urlPage = "redirectpage";
+						
 			return urlPage;
 		}
 		return urlPage;

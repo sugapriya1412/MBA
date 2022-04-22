@@ -150,7 +150,7 @@
 						
 						<form role="form" name="DeleteConfirmation" id="DeleteConfirmation" 
 								method="post" autocomplete="off">
-								
+															
 							<input type="hidden" name="courseId" id="courseId" th:value="${courseId}" />
 							<input type="hidden" class="form-control" name="deleteAllowStatus" id="deleteAllowStatus" 
 									th:value="${tlDeleteAllowStatus}" />
@@ -163,12 +163,17 @@
 									<h3 style="color:red;margin-bottom:10px;">Do you want to delete above mentioned course ?</h3>
 									<button type="button" class="btn-warning w3-btn w3-btn-green w3-round-large" 
 										th:data-parameter1="${courseId}" 
-										th:onclick="javascript: processDeleteConfirmationCourseRegistration(this.getAttribute('data-parameter1'))" >
+										th:data-csrfname="${_csrf?.parameterName}" 
+										th:data-csrfvalue="${_csrf?.token}"
+										th:onclick="javascript: processDeleteConfirmationCourseRegistration(
+											this.getAttribute('data-parameter1'), this)" >
 								    		<i class="fa fa-check"></i>Yes
 									</button>
 									&nbsp;&nbsp;
 									<button type="button" class="btn-success w3-btn w3-btn-red w3-round-large" 
-										th:onclick="'javascript: processDeleteConfirmationCourseRegistrationRirect();'" >
+										th:data-csrfname="${_csrf?.parameterName}" 
+										th:data-csrfvalue="${_csrf?.token}"
+										th:onclick="'javascript: processDeleteConfirmationCourseRegistrationRirect(this);'" >
 									    	<i class="fa fa-close"></i>No
 									</button>
 								</th:block>

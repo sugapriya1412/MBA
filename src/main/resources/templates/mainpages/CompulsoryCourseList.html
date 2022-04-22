@@ -67,7 +67,7 @@
 						
 						<form role="form" method="post" autocomplete="off" 
     							id="compulsoryCourseListForm" name="compulsoryCourseListForm">
-    					
+    					    					
     					<input type="hidden" name="selectedPageSize" id="selectedPageSize" th:value="${selectedPageSize}" />
     					<input type="hidden" name="pageNo" id="pageNo" th:value="${page}" />
     					<input type="hidden" name="srhType" id="srhType" th:value="${srhType}" />
@@ -170,9 +170,11 @@
 											th:data-parameter2="${page}" 
 											th:data-parameter3="${srhType}" 
 											th:data-parameter4="${srhVal}" 
+											th:data-csrfname="${_csrf?.parameterName}" 
+											th:data-csrfvalue="${_csrf?.token}"
 											th:onclick="javascript: callViewSlots(this.getAttribute('data-parameter1'), 
-												this.getAttribute('data-parameter2'),this.getAttribute('data-parameter3'),
-												this.getAttribute('data-parameter4'),this.getAttribute('data-parameter5'))">View/ Register</button>
+												this.getAttribute('data-parameter2'), this.getAttribute('data-parameter3'),
+												this.getAttribute('data-parameter4'), this)">View/ Register</button>
 									</td>
 									
 								</tr>

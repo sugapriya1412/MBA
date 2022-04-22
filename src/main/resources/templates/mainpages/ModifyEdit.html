@@ -40,7 +40,7 @@
 										    	}, 0);		    			    	
 										    }
 										});													
-									} /**/
+									}
 									
 									var info = [[${info}]];
 									var infoMessage = [[${infoMessage}]];																		
@@ -116,6 +116,9 @@
 						
 						<form role="form" name="ModifySlot" id="ModifySlot" 
 								method="post" autocomplete="off">
+								
+							<input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
+						
 							<div class="table-responsive">
 
 								<table class="w3-table-all w3-card-4 w3-hoverable"
@@ -199,8 +202,11 @@
 											<button type="button"
 												th:if="${courseAllocationList.size() > 1}"
 												class="btn-success w3-btn w3-btn-green w3-round-large"
-												th:data-parameter1="${oldClassId}"												
-												th:onclick="javascript: UpdateSlots(this.getAttribute('data-parameter1'))">Update</button>
+												th:data-parameter1="${oldClassId}"	
+												th:data-csrfname="${_csrf?.parameterName}" 
+												th:data-csrfvalue="${_csrf?.token}"											
+												th:onclick="javascript: UpdateSlots(this.getAttribute('data-parameter1'), 
+													this)">Update</button>
 											&nbsp;&nbsp;&nbsp;
 											<button type="button"
 												class="btn-warning w3-btn w3-btn-blue w3-round-large"

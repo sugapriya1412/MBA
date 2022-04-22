@@ -13,7 +13,7 @@
 					<div class="container" >
 
 						<form id="regForm">
-						
+												
 						<div class="table-responsive">
 							<table class="w3-table-all w3-card-4 w3-hoverable"
 								style="background-color: #e0f8f8;">
@@ -145,9 +145,15 @@
 							</div>
 							
 							<div style="float: left;width: 100%;margin: 20px auto;">
-								<button type="button" class="btn-success w3-btn w3-btn-green w3-round-large" onclick="RegisterProjectCourse('processRegisterProjectCourse');">Register</button>							
+								<button type="button" class="btn-success w3-btn w3-btn-green w3-round-large" 
+									th:data-csrfname="${_csrf?.parameterName}" 
+									th:data-csrfvalue="${_csrf?.token}"
+									onclick="RegisterProjectCourse('processRegisterProjectCourse', this);">Register</button>							
 								&nbsp;&nbsp;
-								<button type="button" class="btn-warning w3-btn w3-btn-blue w3-round-large" onclick="goBack();">Go Back</button>
+								<button type="button" class="btn-warning w3-btn w3-btn-blue w3-round-large" 
+									th:data-csrfname="${_csrf?.parameterName}" 
+									th:data-csrfvalue="${_csrf?.token}"
+									onclick="goBack(this);">Go Back</button>
 							</div>
 						</div>
 						</div>

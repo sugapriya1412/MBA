@@ -57,8 +57,8 @@ public class CourseRegistrationDeleteController
 		List<Object[]> courseRegistrationModel2 = new ArrayList<Object[]>();
 		List<Object[]> courseRegistrationWaitingModel2 = new ArrayList<Object[]>();
 		
-		pageAuthKey = (String) session.getAttribute("pageAuthKey");
-		pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
+		//pageAuthKey = (String) session.getAttribute("pageAuthKey");
+		//pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
 		
 		String[] regStatusArr = new String[5];
 		int crCourseStatus = 2;
@@ -67,9 +67,11 @@ public class CourseRegistrationDeleteController
 		
 		try
 		{	
-			if ((registerNumber != null) && (pageAuthStatus == 1))
+			//if ((registerNumber != null) && (pageAuthStatus == 1))
+			if (registerNumber != null)
 			{	
-				session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+				//session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+				
 				String semesterSubId = (String) session.getAttribute("SemesterSubId");
 				String[] classGroupId = session.getAttribute("classGroupId").toString().split("/");
 				int studyStartYear = (int) session.getAttribute("StudyStartYear");
@@ -249,15 +251,16 @@ public class CourseRegistrationDeleteController
 		List<Object[]> courseRegistrationModel2 = new ArrayList<Object[]>();
 		List<Object[]> courseRegistrationWaitingModel2 = new ArrayList<Object[]>();
 		
-		pageAuthKey = (String) session.getAttribute("pageAuthKey");
-		pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
+		//pageAuthKey = (String) session.getAttribute("pageAuthKey");
+		//pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
 		
 		
 		try
 		{	
-			if ((registerNumber != null) && (pageAuthStatus == 1))
+			//if ((registerNumber != null) && (pageAuthStatus == 1))
+			if (registerNumber != null)
 			{	
-				session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+				//session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
 				
 				String semesterSubId = (String) session.getAttribute("SemesterSubId");
 				String semesterDesc = (String) session.getAttribute("SemesterDesc");
@@ -404,12 +407,13 @@ public class CourseRegistrationDeleteController
 		String oldCourseId = "", pDelStatus = "", mailOTP = "", courseCode = "";
 		String[] validateStatusArr = new String[]{};
 		
-		pageAuthKey = (String) session.getAttribute("pageAuthKey");
-		pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
+		//pageAuthKey = (String) session.getAttribute("pageAuthKey");
+		//pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
 		
 		try
 		{	
-			if ((registerNumber != null) && (pageAuthStatus == 1))
+			//if ((registerNumber != null) && (pageAuthStatus == 1))
+			if (registerNumber != null)
 			{
 				String semesterSubId = (String) session.getAttribute("SemesterSubId");
 				String semesterDesc = (String) session.getAttribute("SemesterDesc");
@@ -617,14 +621,16 @@ public class CourseRegistrationDeleteController
 		int pageAuthStatus = 2;
 		String pageAuthKey = "";
 		
-		pageAuthKey = (String) session.getAttribute("pageAuthKey");
-		pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
+		//pageAuthKey = (String) session.getAttribute("pageAuthKey");
+		//pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
 					
 		try
 		{	
-			if ((registerNumber != null) && (pageAuthStatus == 1))
+			//if ((registerNumber != null) && (pageAuthStatus == 1))
+			if (registerNumber != null)
 			{
-				session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+				//session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+				
 				String semesterSubId = (String) session.getAttribute("SemesterSubId");
 				String[] classGroupId = session.getAttribute("classGroupId").toString().split("/");
 				Integer programSpecId = (Integer) session.getAttribute("ProgramSpecId");
@@ -705,13 +711,17 @@ public class CourseRegistrationDeleteController
 		Integer updateStatus = 1;
 		int pageAuthStatus = 2;
 		String pageAuthKey = "";
-		pageAuthKey = (String) session.getAttribute("pageAuthKey");
-		pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
+		
+		//pageAuthKey = (String) session.getAttribute("pageAuthKey");
+		//pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
+		
 		try
 		{	
-			if ((registerNumber != null) && (pageAuthStatus == 1))
+			//if ((registerNumber != null) && (pageAuthStatus == 1))
+			if (registerNumber != null)
 			{
-				session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+				//session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+				
 				String[] classGroupId = session.getAttribute("classGroupId").toString().split("/");
 				String semesterSubId = (String) session.getAttribute("SemesterSubId");
 				Integer programSpecId = (Integer) session.getAttribute("ProgramSpecId");
@@ -792,14 +802,16 @@ public class CourseRegistrationDeleteController
 		int pageAuthStatus = 2;
 		String pageAuthKey = "";
 		
-		pageAuthKey = (String) session.getAttribute("pageAuthKey");
-		pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
+		//pageAuthKey = (String) session.getAttribute("pageAuthKey");
+		//pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
 		
 		try
 		{	
-			if ((registerNumber != null) && (pageAuthStatus == 1))
+			//if ((registerNumber != null) && (pageAuthStatus == 1))
+			if (registerNumber != null)
 			{
-				session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+				//session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+				
 				String semesterSubId = (String) session.getAttribute("SemesterSubId");
 				String[] classGroupId = session.getAttribute("classGroupId").toString().split("/");
 				Integer programSpecId = (Integer) session.getAttribute("ProgramSpecId");
@@ -902,16 +914,19 @@ public class CourseRegistrationDeleteController
 		int pageAuthStatus = 2;
 		int delStatusFlag=2;
 		String pageAuthKey = "",deleteMessage="",courseAuthStatus="";
-		pageAuthKey = (String) session.getAttribute("pageAuthKey");
-		pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
+		
+		//pageAuthKey = (String) session.getAttribute("pageAuthKey");
+		//pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
 		
 		String[] regStatusArr = new String[5];
 		
 		try
 		{	
-			if ((registerNumber != null) && (pageAuthStatus == 1))
+			//if ((registerNumber != null) && (pageAuthStatus == 1))
+			if (registerNumber != null)
 			{
-				session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+				//session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+				
 				String semesterSubId = (String) session.getAttribute("SemesterSubId");
 				String[] classGroupId = session.getAttribute("classGroupId").toString().split("/");
 				int studyStartYear = (int) session.getAttribute("StudyStartYear");
@@ -1025,12 +1040,14 @@ public class CourseRegistrationDeleteController
 		Integer updateStatus = 1;
 		int pageAuthStatus = 2;
 		String pageAuthKey = "";
-		pageAuthKey = (String) session.getAttribute("pageAuthKey");
-		pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
+		
+		//pageAuthKey = (String) session.getAttribute("pageAuthKey");
+		//pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 2);
 		
 		try
 		{	
-			if ((registerNumber != null) && (pageAuthStatus == 1))
+			//if ((registerNumber != null) && (pageAuthStatus == 1))
+			if (registerNumber != null)
 			{
 				String semesterSubId = (String) session.getAttribute("SemesterSubId");				
 				String[] classGroupId = session.getAttribute("classGroupId").toString().split("/");

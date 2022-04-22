@@ -51,7 +51,6 @@ public class CourseRegistrationStartController
 		
 		try
 		{
-			String pageAuthKey = (String) session.getAttribute("pageAuthKey");
 			Date startDate = (Date) session.getAttribute("startDate");
 			Date endDate = (Date) session.getAttribute("endDate");
 			String startTime = (String) session.getAttribute("startTime");
@@ -74,9 +73,11 @@ public class CourseRegistrationStartController
 			@SuppressWarnings("unchecked")
 			List<String> registerNumberList = (List<String>) session.getAttribute("registerNumberList");
 			
-						
-			pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 1);
-			if ((registerNumber != null) && (pageAuthStatus == 1))
+			//String pageAuthKey = (String) session.getAttribute("pageAuthKey");			
+			//pageAuthStatus = courseRegCommonFn.validatePageAuthKey(pageAuthKey, registerNumber, 1);
+			
+			//if ((registerNumber != null) && (pageAuthStatus == 1))
+			if (registerNumber != null)
 			{
 				returnVal = courseRegistrationReadWriteService.AddorDropDateTimeCheck(startDate, endDate, startTime, endTime, 
 								registerNumber, updateStatus, IpAddress);
@@ -166,13 +167,13 @@ public class CourseRegistrationStartController
 					
 					session.setAttribute("studentCgpaData", studentCgpaData);
 					session.setAttribute("compulsoryCourseList", compulsoryCourseList);
-					session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
+					//session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 2));
 					
 					urlPage = "mainpages/MainPage";
 				}
 				else
 				{
-					session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 1));
+					//session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNumber, 1));
 					urlPage = "RegistrationStart";
 				}
 			}

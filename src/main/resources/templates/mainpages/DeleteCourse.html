@@ -149,8 +149,11 @@
 										th:if="${#lists.contains(blockedCourse, RegisteredList[0]) == false}">
 									<button class="btn-warning w3-btn w3-btn-red w3-round-large" type="button"
 										th:if="${#lists.contains(blockedCourse, RegisteredList[0]) == false}"  
-										 th:data-parameter1="${RegisteredList[0]}" 
-  				 						th:onclick="javascript:processDeleteCourseRegistration(this.getAttribute('data-parameter1'))">Delete</button>
+										th:data-parameter1="${RegisteredList[0]}"
+										th:data-csrfname="${_csrf?.parameterName}" 
+										th:data-csrfvalue="${_csrf?.token}" 
+  				 						th:onclick="javascript:processDeleteCourseRegistration(
+  				 							this.getAttribute('data-parameter1'), this)">Delete</button>
 								</td>
 								 
 								<td style="border:1px solid #3c8dbc; text-align: center; font-weight: bold;" 
@@ -240,13 +243,12 @@
 									<td style="border:1px solid #3c8dbc; text-align: center;" 
 										th:text="${RegisteredWaitingList[18]}"></td>
 									<td style="border:1px solid #3c8dbc; text-align: center;">
-									<!--<button class="btn-warning w3-btn w3-btn-red w3-round-large" type="button"  
-										th:onclick="'javascript:processDeleteCourseRegistrationWaiting(\''+ 
-											${RegisteredWaitingList[1]} +'\');'">Delete</button> -->
-											
 										<button class="btn-warning w3-btn w3-btn-red w3-round-large" type="button"
-										   th:data-parameter1="${RegisteredWaitingList[1]}" 
-										th:onclick="javascript:processDeleteCourseRegistrationWaiting(this.getAttribute('data-parameter1'))">Delete</button>
+											th:data-parameter1="${RegisteredWaitingList[1]}" 
+											th:data-csrfname="${_csrf?.parameterName}" 
+											th:data-csrfvalue="${_csrf?.token}"
+											th:onclick="javascript: processDeleteCourseRegistrationWaiting(
+												this.getAttribute('data-parameter1'), this)">Delete</button>
 									</td>
 								</tr>
 							</table>

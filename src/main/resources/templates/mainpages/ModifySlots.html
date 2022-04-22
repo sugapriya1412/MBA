@@ -131,8 +131,11 @@
 				                  			
                   	<button class="btn-success w3-btn w3-btn-red w3-round-large" type="button"  
                   		style="border:1px solid #3c8dbc;"                   		
-                  		 th:data-parameter1="${RegisteredList[14] +'/'+ RegisteredList[0] +'/'+ RegisteredList[6]}"  				  		  
-                  		th:onclick="javascript: editRegisteredSlots(this.getAttribute('data-parameter1'))">Modify</button>
+                  		th:data-parameter1="${RegisteredList[14] +'/'+ RegisteredList[0] +'/'+ RegisteredList[6]}"
+                  		th:data-csrfname="${_csrf?.parameterName}" 
+						th:data-csrfvalue="${_csrf?.token}"  				  		  
+                  		th:onclick="javascript: editRegisteredSlots(this.getAttribute('data-parameter1'), 
+                  			this)">Modify</button>
                   
                   </td>               			
                   <td style="border:1px solid #3c8dbc; text-align: center; font-weight: bold;" 

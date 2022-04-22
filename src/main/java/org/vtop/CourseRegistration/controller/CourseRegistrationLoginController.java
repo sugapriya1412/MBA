@@ -16,14 +16,9 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.vtop.CourseRegistration.service.CourseRegistrationCommonFunction;
 import org.vtop.CourseRegistration.service.CourseRegistrationReadWriteService;
 import org.vtop.CourseRegistration.service.ProgrammeSpecializationCurriculumCreditService;
@@ -48,120 +43,94 @@ public class CourseRegistrationLoginController
 	private static final String RegErrorMethod = "WS2122AD";
 	
 	
-	@RequestMapping("/login/error")
-	  public String loginError(Model model, HttpServletRequest request, HttpServletResponse response,
-	      @RequestParam(value = "error", required = false) String error) {
-
-	    String file = "StudentLogin";
-	    HttpSession session = request.getSession(false);
-	    String errMsg = "";
-	    try {
-	      AuthenticationException exp = (AuthenticationException) session
-	          .getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
-
-	      if (exp != null) {
-	        errMsg = exp.getMessage();
-	        /*
-	         * if(exp.getClass().isAssignableFrom(BadCredentialsException.class)){
-	         * errMsg="Invalid username or password."; model.addAttribute("error", true);
-	         * }else if(exp.getClass().isAssignableFrom(AccountLocked.class)) {
-	         * errMsg="Account Locked "; model.addAttribute("error", true); }
-	         */ }
-	    } catch (Exception x) {
-	      x.printStackTrace();
-	      errMsg=x.getMessage();
-	    }
-
-
-	        model.addAttribute("errMsg",errMsg);
-
-	    return file;
-	  }
 	@RequestMapping("/login/success")
-	  public String loginError(Model model, HttpServletRequest request,HttpSession session, HttpServletResponse response) 
-		{
-			String registerNumber ="";
-			 registerNumber = (String) session.getAttribute("RegisterNumber");
-			String IpAddress = (String) session.getAttribute("IpAddress");
-	
-			System.out.println("login success calling");
-			System.out.println("registerNumber"+registerNumber);
-			System.out.println("IpAddress"+IpAddress);
-			
-			return "RegistrationStart";
-		}
-
-	
-	
-	
-	
-	@PostMapping("processStudentLogin")
-	public String processStudentLogin(String userName, String password, String captchaString, 
-						Model model, HttpSession session, HttpServletRequest request, 
-						HttpServletResponse response) throws ServletException, IOException, 
-						ParseException 
+	public String loginSuccess(Model model, HttpServletRequest request, HttpSession session, HttpServletResponse response) 
+						throws ServletException, IOException, ParseException
 	{	
-		int testStatus = 2; //Login with Password & Captcha-> 1: Enable/ 2: Disable
-		int regSlotCheckStatus = 2; //If Permitted Schedule-> 1: Date & Time / 2: Only Date
-		int regTimeCheckStatus = 1; //Time-> 1: Open Hours/ 2: Permitted Schedule
-		int wishListCheckStatus = 2; //1: Enable/ 2: Disable
-		int historyCallStatus = 2; //Student History-> 1: Procedure/ 2: Table
-		int cgpaStatus = 1; //Student CGPA & Credit Detail-> 1: Dynamic/ 2: Static
+		String registerNo = (String) session.getAttribute("RegisterNumber");
 		
-		int PEUEAllowStatus = 1; //PE & UE Category Allow Status-> 1: Enable/ 2: Disable
-		int approvalStatus = 1; //Registration Status Approval-> 1: Enable/ 2: Disable
-		int waitingListStatus = 2; //Waiting List Allow Status-> 1: Enable/ 2: Disable
-		int OptionNAStatus = 1; //Option Not Allowed Status-> 1: Enable/ 2: Disable
-		int compulsoryCourseStatus = 1; //Compulsory Course Allow Status-> 1: Enable/ 2: Disable
-		int otpStatus = 2; //OTP Send Status-> 1: Enable/ 2: Disable
-		
-		int maxCredit = 27, minCredit = 16, studyStartYear = 0;	
-		int studentGraduateYear = 0, academicYear = 0, academicGraduateYear = 0, cclTotalCredit = 0;				
-		int lockStatus = 2, validateLogin = 2, activeStatus = 2, allowStatus = 2;
-		int checkFlag = 2, checkFlag2 = 2, checkFlag3 = 2, checkFlag4 = 2, checkFlag5 = 2, checkFlag6 = 2;
-		int checkFlag7 = 2, checkFlag8 = 2, checkFlag9 = 2, checkFlag10 = 2;
-		Integer updateStatus = 0, exemptionStatus = 0, regularFlag = 2,reRegFlag = 2,schStatus = 0, wsltCount = 0;
-		Integer programDuration = 0, groupId = 0, specId = 0, feeId = 0, graduationStatus = 0, costCenterId = 0;
-		float cclVersion = 0;
-				
-		String registerNo = "", urlPage = "", semesterSubId = "", semesterShortDesc = "", semesterDesc = "", msg = "", 
-					sessioncaptchaString = "", registrationMethod = "GEN", classGroupId = "";
+		//Assigning IP address
 		String ipAddress = request.getRemoteAddr();
-		String programGroupCode = "", programGroupMode= "", costCentreCode = "", dbPassWord = "";	
-		String eduStatus = "", studentName = "", specCode ="", specDesc = "", studentStudySystem = "", 
-					studentCategory = "NONE", eduStatusExpn = "";
-		String courseEligible = "", CGPAEligible = "", oldRegNo = "", studEMailId = "";
-		String currentDateTimeStr = "", returnVal = "", checkCourseSystem = "";
-				
-		SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy");		
-		Date startDate = format.parse("29-MAR-2022");
-		Date endDate = format.parse("01-MAY-2022");
-		String startTime = "10:00:00", endTime = "23:59:59", allowStartTime = "10:00:00";
-		
-		String[] statusMsg = new String[]{};
-		String[] egbProgram = {};
-		String[] courseSystem = new String[2];
-		String[] registerNumberArray = new String[2];
-		List<Integer> egbProgramInt = new ArrayList<Integer>();
-		List<String> registerNumberList = new ArrayList<String>();
-				
-		Integer semesterId = 0,  wlCount = 0, regCount = 0;
-		Integer regCredit = 0, wlCredit= 0;
-		Date currentDateTime = new Date();		
-		List<Object[]> lcObjList = new ArrayList<Object[]>();
-						
-		//Assigning IP address 
 		if (request != null) {
 			ipAddress = request.getHeader("X-FORWARDED-FOR");
             if (ipAddress == null || "".equals(ipAddress)) {
             	  ipAddress = request.getRemoteAddr();
             }
         }
-		logger.trace("\n userName: "+ userName +" | password: "+ password 
-					+" | captchaString: "+ captchaString +" | ipAddress: "+ ipAddress);
+		logger.trace("\n ipAddress: "+ ipAddress);
+		
+		String urlPage = "", msg = "", currentDateTimeStr = "";
+		Date currentDateTime = new Date();
 		
 		try
-		{						
+		{
+			int testStatus = (Integer) session.getAttribute("testStatus");
+			
+			String studentName = (String) session.getAttribute("studentName");
+			int specId = (Integer) session.getAttribute("ProgramSpecId");
+			String specCode = (String) session.getAttribute("ProgramSpecCode");
+			String specDesc = (String) session.getAttribute("ProgramSpecDesc");
+			int groupId = (Integer) session.getAttribute("ProgramGroupId");
+			String programGroupCode = (String) session.getAttribute("ProgramGroupCode");				
+			int studyStartYear = (Integer) session.getAttribute("StudyStartYear");
+			int studentGraduateYear = (Integer) session.getAttribute("StudentGraduateYear");
+			String studentStudySystem = (String) session.getAttribute("studentStudySystem");				
+			String programGroupMode = (String) session.getAttribute("programGroupMode");
+			String studEMailId = (String) session.getAttribute("studentEMailId");
+			String costCentreCode = (String) session.getAttribute("costCentreCode");
+			int costCenterId = (Integer) session.getAttribute("costCenterId");
+			int feeId = (Integer) session.getAttribute("feeId");
+			
+			logger.trace("\n registerNo: "+ registerNo +" | specId: "+ specId +" | specCode: "+ specCode 
+					+" | groupId: "+ groupId +" | programGroupCode: "+ programGroupCode 
+					+" | programGroupMode: "+ programGroupMode +" | costCentreCode: "+ costCentreCode 
+					+" | studyStartYear: "+ studyStartYear +" | studentStudySystem: "+ studentStudySystem
+					+" | studentGraduateYear: "+ studentGraduateYear +" | studEMailId: "+ studEMailId);
+			
+			int regSlotCheckStatus = 2; //If Permitted Schedule-> 1: Date & Time / 2: Only Date
+			int regTimeCheckStatus = 1; //Time-> 1: Open Hours/ 2: Permitted Schedule
+			int wishListCheckStatus = 2; //1: Enable/ 2: Disable
+			int historyCallStatus = 2; //Student History-> 1: Procedure/ 2: Table
+			int cgpaStatus = 1; //Student CGPA & Credit Detail-> 1: Dynamic/ 2: Static
+			
+			int PEUEAllowStatus = 1; //PE & UE Category Allow Status-> 1: Enable/ 2: Disable
+			int approvalStatus = 1; //Registration Status Approval-> 1: Enable/ 2: Disable
+			int waitingListStatus = 2; //Waiting List Allow Status-> 1: Enable/ 2: Disable
+			int OptionNAStatus = 1; //Option Not Allowed Status-> 1: Enable/ 2: Disable
+			int compulsoryCourseStatus = 1; //Compulsory Course Allow Status-> 1: Enable/ 2: Disable
+			int otpStatus = 2; //OTP Send Status-> 1: Enable/ 2: Disable
+			
+			int maxCredit = 27, minCredit = 16, academicYear = 0, academicGraduateYear = 0, cclTotalCredit = 0, 
+					activeStatus = 2, allowStatus = 2;
+			int checkFlag = 2, checkFlag2 = 2, checkFlag3 = 2, checkFlag4 = 2, checkFlag5 = 2, checkFlag6 = 2, 
+					checkFlag7 = 2;
+			Integer updateStatus = 0, exemptionStatus = 0, regularFlag = 2, reRegFlag = 2, schStatus = 0, 
+						wsltCount = 0, graduationStatus = 0;
+			float cclVersion = 0;
+			
+			
+			String semesterSubId = "", semesterShortDesc = "", semesterDesc = "", sessioncaptchaString = "", 
+						registrationMethod = "GEN", classGroupId = "";
+			String courseEligible = "", CGPAEligible = "", oldRegNo = "", studentCategory = "", returnVal = "", 
+						checkCourseSystem = "";
+					
+			SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy");		
+			Date startDate = format.parse("29-MAR-2022");
+			Date endDate = format.parse("01-MAY-2022");
+			String startTime = "10:00:00", endTime = "23:59:59", allowStartTime = "10:00:00";
+			
+			String[] statusMsg = new String[]{};
+			String[] egbProgram = {};
+			String[] courseSystem = new String[2];
+			String[] registerNumberArray = new String[2];
+			List<Integer> egbProgramInt = new ArrayList<Integer>();
+			List<String> registerNumberList = new ArrayList<String>();
+					
+			Integer semesterId = 0,  wlCount = 0, regCount = 0;
+			Integer regCredit = 0, wlCredit= 0;
+					
+			List<Object[]> lcObjList = new ArrayList<Object[]>();
+						
 			//For getting captcha from session attribute					
 			sessioncaptchaString = (String) session.getAttribute("CAPTCHA");
 			logger.trace("\n sessioncaptchaString: "+ sessioncaptchaString);
@@ -178,7 +147,7 @@ public class CourseRegistrationLoginController
 			else
 			{
 				returnVal = courseRegistrationReadWriteService.AddorDropDateTimeCheck(startDate, endDate, allowStartTime, endTime, 
-								userName, updateStatus, ipAddress);
+								registerNo, updateStatus, ipAddress);
 				statusMsg = returnVal.split("/");
 				allowStatus = Integer.parseInt(statusMsg[0]);
 				msg = statusMsg[1];
@@ -194,238 +163,103 @@ public class CourseRegistrationLoginController
 					msg = msg.replace(allowStartTime, startTime);
 				}
 			}
-												
-			//Validate the Input of Register No., Password and Captcha.
+																		
+			//Checking whether the Register No. is existed or not
 			if (checkFlag == 1)
 			{
-				if ((userName == null) || (userName.equals("")) || (password == null) || (password.equals(""))) 
+				//Semester Sub Id Assignment
+				if (programGroupCode.equals("MBA") || programGroupCode.equals("MBA5")) 
 				{
-					msg = "Enter Username or Password.";
+					semesterSubId = "NONE";
 				}
-				else if ((captchaString == null) || (captchaString.equals("")) || (captchaString.length() != 6))
+				else if (programGroupCode.equals("RP") && costCentreCode.equals("VITBS"))
 				{
-					msg = "Enter Captcha.";
-				}
-				else if ((sessioncaptchaString == null) || (sessioncaptchaString.equals("")))
-				{
-					msg = "Enter Captcha.";
+					semesterSubId = "NONE";
 				}
 				else
 				{
-					userName = userName.trim().toUpperCase();
-					captchaString = captchaString.trim().toUpperCase();
-					sessioncaptchaString = sessioncaptchaString.trim();
-					
-					if (testStatus == 2)
-					{
-						checkFlag2 = 1;
-					}
-					else if (captchaString.equals(sessioncaptchaString))
-					{
-						checkFlag2 = 1;
-					}
-					else
-					{
-						msg = "Invalid Captcha.";
-					}
+					semesterSubId = "VL20212205";						
 				}
-			}
-						
-			//Checking whether the Register No. is existed or not
-			if (checkFlag2 == 1)
-			{
-				if (testStatus == 2)
+				logger.trace("\n semesterSubId: "+ semesterSubId);
+
+				//Semester Sub Id Details
+				lcObjList.clear();
+				lcObjList = semesterMasterService.getSemesterDetailBySemesterSubId2(semesterSubId);
+				if(!lcObjList.isEmpty())
 				{
-					lcObjList = semesterMasterService.getStudentLoginDetailByRegisterNumber2(userName);
-				}
-				else
-				{
-					lcObjList = semesterMasterService.getStudentLoginDetailByUserName(userName);
-				}
-				if (!lcObjList.isEmpty())
-				{	
-					for (Object[] e: lcObjList)
+					for (Object[] e : lcObjList)
 					{
-						registerNo = e[0].toString();
-						studentName = e[2].toString();
-						specId = Integer.parseInt(e[4].toString());
-						specCode = e[5].toString();
-						specDesc = e[6].toString();
-						groupId = Integer.parseInt(e[7].toString());
-						programGroupCode = e[8].toString();
-						programGroupMode = e[10].toString();
-						programDuration = Integer.parseInt(e[11].toString());
-						costCenterId = Integer.parseInt(e[13].toString());
-						costCentreCode = e[14].toString();
-						studyStartYear = Integer.parseInt(e[16].toString());
-						studentStudySystem = e[17].toString();
-						dbPassWord = e[18].toString();
-						eduStatus = e[19].toString();
-						lockStatus = Integer.parseInt(e[20].toString());
-						feeId = (e[21] != null) ? Integer.parseInt(e[21].toString()) : 0;
-						studentGraduateYear = studyStartYear + programDuration;
-						eduStatusExpn = e[22].toString();
-												
-						if (testStatus == 2)
-						{
-							studEMailId = "NONE";	//Testing Purpose
-						}
-						else
-						{
-							studEMailId = (e[23] != null) ? e[23].toString() : "NONE";
-						}
-						
+						semesterId = Integer.parseInt(e[0].toString());
+						academicYear = Integer.parseInt(e[5].toString());
+						academicGraduateYear = Integer.parseInt(e[6].toString());
+						semesterDesc = e[1].toString();
+						semesterShortDesc = e[2].toString();
 						break;
 					}
-					logger.trace("\n registerNo: "+ registerNo +" | studentName: "+ studentName 
-							+" | specId: "+ specId +" | specCode: "+ specCode +" | specDesc: "+ specDesc 
-							+" | groupId: "+ groupId +" | programGroupCode: "+ programGroupCode 
-							+" | programGroupMode: "+ programGroupMode +" | programDuration: "+ programDuration 
-							+" | costCentreCode: "+ costCentreCode +" | studyStartYear: "+ studyStartYear 
-							+" | studentStudySystem: "+ studentStudySystem +" | feeId: "+ feeId 
-							+" | studentGraduateYear: "+ studentGraduateYear +" | studEMailId: "+ studEMailId);
-																				
-					//Semester Sub Id Assignment
-					if (programGroupCode.equals("MBA") || programGroupCode.equals("MBA5")) 
-					{
-						semesterSubId = "NONE";
-					}
-					else if (programGroupCode.equals("RP") && costCentreCode.equals("VITBS"))
-					{
-						semesterSubId = "NONE";
-					}
-					else
-					{
-						semesterSubId = "VL20212205";						
-					}
-					logger.trace("\n semesterSubId: "+ semesterSubId);
-
-					//Semester Sub Id Details
-					lcObjList.clear();
-					lcObjList = semesterMasterService.getSemesterDetailBySemesterSubId2(semesterSubId);
-					if(!lcObjList.isEmpty())
-					{
-						for (Object[] e : lcObjList)
-						{
-							semesterId = Integer.parseInt(e[0].toString());
-							academicYear = Integer.parseInt(e[5].toString());
-							academicGraduateYear = Integer.parseInt(e[6].toString());
-							semesterDesc = e[1].toString();
-							semesterShortDesc = e[2].toString();
-							break;
-						}
-						classGroupId = "ALL03";
-					}
-					logger.trace("\n semesterId: "+ semesterId +" | academicYear: "+ academicYear 
-							+" | academicGraduateYear: "+ academicGraduateYear +" | classGroupId: "+ classGroupId);
+					classGroupId = "ALL03";
+				}
+				logger.trace("\n semesterId: "+ semesterId +" | academicYear: "+ academicYear 
+						+" | academicGraduateYear: "+ academicGraduateYear +" | classGroupId: "+ classGroupId);
 					
-					//Student Credit Transfer Detail
-					oldRegNo = semesterMasterService.getStudentCreditTransferOldRegisterNumberByRegisterNumber(registerNo);					
-					if ((oldRegNo != null) && (!oldRegNo.equals("")))
-					{
-						registerNumberList.add(registerNo);
-						registerNumberList.add(oldRegNo);
-						
-						registerNumberArray[0] = registerNo;
-						registerNumberArray[1] = oldRegNo;
-					}
-					else
-					{
-						registerNumberList.add(registerNo);
-						
-						registerNumberArray[0] = registerNo;
-						registerNumberArray[1] = "";
-					}
-					logger.trace("\n registerNumberList: "+ registerNumberList +" | registerNumberArray: "+ registerNumberArray.toString());
+				//Student Credit Transfer Detail
+				oldRegNo = semesterMasterService.getStudentCreditTransferOldRegisterNumberByRegisterNumber(registerNo);					
+				if ((oldRegNo != null) && (!oldRegNo.equals("")))
+				{
+					registerNumberList.add(registerNo);
+					registerNumberList.add(oldRegNo);
 					
-					//Get the ExemptionStatus
-					exemptionStatus = registrationLogService.getRegistrationExemptionReasonTypeBySemesterSubIdAndRegisterNumber(
-											semesterSubId, registerNo);
-					
-					//Student Graduation status
-					graduationStatus = studentHistoryService.getGraduationValue(registerNumberList);
-					
-					//Student study system (i.e. FFCS or CAL or General)
-					if (programGroupMode.equals("Twinning (1 Year)") || programGroupMode.equals("Twinning (2 Year)") 
-							|| programGroupMode.equals("Twinning (3 Year)"))
-					{
-						programGroupMode = "Twinning";
-					}
-										
-					//Regular Flag Assignment
-					regularFlag = courseRegCommonFn.getCourseStatusOrCount(1, programGroupCode, specCode, studentGraduateYear, 
-									academicGraduateYear, semesterId, semesterSubId, studyStartYear);
-					reRegFlag = courseRegCommonFn.getCourseStatusOrCount(2, programGroupCode, specCode, studentGraduateYear, 
-									academicGraduateYear, semesterId, semesterSubId, studyStartYear);
-										
-					logger.trace("\n exemptionStatus: "+ exemptionStatus +" | programGroupMode: "+ programGroupMode
-							+" | registrationMethod: "+ registrationMethod +" | studentStudySystem: "+ studentStudySystem 
-							+" | regularFlag: "+ regularFlag +" | reRegFlag: "+ reRegFlag);
-					
-					checkFlag3 = 1;
+					registerNumberArray[0] = registerNo;
+					registerNumberArray[1] = oldRegNo;
 				}
 				else
 				{
-					msg = "Invalid Username or Password.";
+					registerNumberList.add(registerNo);
+					
+					registerNumberArray[0] = registerNo;
+					registerNumberArray[1] = "";
 				}
-			}
-						
-			//Checking whether the password is valid or not
-			if (checkFlag3 == 1)
-			{
-				validateLogin = semesterMasterService.getUserLoginValidation(registerNo, password, dbPassWord, testStatus);
-				if (validateLogin == 1)
+				logger.trace("\n registerNumberList: "+ registerNumberList +" | registerNumberArray: "+ registerNumberArray.toString());
+				
+				//Get the ExemptionStatus
+				exemptionStatus = registrationLogService.getRegistrationExemptionReasonTypeBySemesterSubIdAndRegisterNumber(
+										semesterSubId, registerNo);
+					
+				//Student Graduation status
+				graduationStatus = studentHistoryService.getGraduationValue(registerNumberList);
+					
+				//Student study system (i.e. FFCS or CAL or General)
+				if (programGroupMode.equals("Twinning (1 Year)") || programGroupMode.equals("Twinning (2 Year)") 
+						|| programGroupMode.equals("Twinning (3 Year)"))
 				{
-					checkFlag4 = 1;
+					programGroupMode = "Twinning";
 				}
-				else
+										
+				//Regular Flag Assignment
+				regularFlag = courseRegCommonFn.getCourseStatusOrCount(1, programGroupCode, specCode, studentGraduateYear, 
+									academicGraduateYear, semesterId, semesterSubId, studyStartYear);
+				reRegFlag = courseRegCommonFn.getCourseStatusOrCount(2, programGroupCode, specCode, studentGraduateYear, 
+								academicGraduateYear, semesterId, semesterSubId, studyStartYear);
+										
+				logger.trace("\n exemptionStatus: "+ exemptionStatus +" | programGroupMode: "+ programGroupMode
+						+" | registrationMethod: "+ registrationMethod +" | studentStudySystem: "+ studentStudySystem 
+						+" | regularFlag: "+ regularFlag +" | reRegFlag: "+ reRegFlag);
+					
+				if (graduationStatus == 0) 
 				{
-					msg = "Invalid Username or Password.";
+					checkFlag2 = 1;
 				}
-			}
-									
-			//Checking Register No. Account status
-			if (checkFlag4 == 1)
-			{
-				if ((lockStatus == 0) && (graduationStatus == 0)) 
-				{
-					checkFlag5 = 1;
-				}
-				else if ((lockStatus == 0) && (graduationStatus > 0)) 
+				else if (graduationStatus > 0) 
 				{
 					msg = "Your are eligible for graduation.  Not allowed for Add or Drop.";
 				}
-				else
+								
+				if (checkFlag2 == 1)
 				{
-					if ((exemptionStatus == 1) || (exemptionStatus == 2))
-					{
-						checkFlag5 = 1;
-					}
-					else
-					{
-						msg = "Your account is locked [Reason: "+ eduStatusExpn +"].";
-					}
-				}
-				
-				if (checkFlag5 == 1)
-				{
-					checkFlag5 = 2;
-					if ((!eduStatus.equals("DO")) && (!eduStatus.equals("GT"))) 
-					{
-						checkFlag5 = 1;
-					}
-					else
-					{
-						msg = "Your are not eligible for Add or Drop.";
-					}
-				}
-				
-				if (checkFlag5 == 1)
-				{
-					checkFlag5 = 2;
+					checkFlag2 = 2;
+					
 					if (programGroupMode.equals("Regular") || programGroupMode.equals("Twinning"))
 					{
-						checkFlag5 = 1;
+						checkFlag2 = 1;
 					}
 					else
 					{
@@ -435,7 +269,7 @@ public class CourseRegistrationLoginController
 			}
 						
 			//Checking the Allowed Admission Year/ Programme Group/ Programme Specialization
-			if (checkFlag5 == 1)
+			if (checkFlag2 == 1)
 			{
 				if (studyStartYear == academicYear)
 				{
@@ -452,7 +286,7 @@ public class CourseRegistrationLoginController
 					}
 					else
 					{
-						checkFlag6 = 1;
+						checkFlag3 = 1;
 					}
 				}
 				else
@@ -469,7 +303,7 @@ public class CourseRegistrationLoginController
 			}
 			
 			//Checking the Registration is based on Open Hours or Scheduled Date/Time
-			if (checkFlag6 == 1)
+			if (checkFlag3 == 1)
 			{	
 				if (regTimeCheckStatus == 2)
 				{
@@ -495,28 +329,28 @@ public class CourseRegistrationLoginController
 
 						if (schStatus == 0)
 						{
-							checkFlag7 = 1;
+							checkFlag4 = 1;
 						}
 						else
 						{
-							checkFlag7 = 2;
+							checkFlag4 = 2;
 							msg = "Your are not allowed for Course Registration.";
 						}
 					}
 					else
 					{
-						checkFlag7 = 2;
+						checkFlag4 = 2;
 						msg = "Your dont have Registration Schedule.";
 					}
 				}
 				else
 				{
-					checkFlag7 = 1;
+					checkFlag4 = 1;
 				}
 				
-				if (checkFlag7 == 1)
+				if (checkFlag4 == 1)
 				{
-					checkFlag7 = 2;
+					checkFlag4 = 2;
 					returnVal = courseRegistrationReadWriteService.AddorDropDateTimeCheck(startDate, endDate, allowStartTime, endTime, 
 									registerNo, updateStatus, ipAddress);
 					statusMsg = returnVal.split("/");
@@ -526,7 +360,7 @@ public class CourseRegistrationLoginController
 	
 					if (allowStatus == 1)
 					{
-						checkFlag7 = 1;
+						checkFlag4 = 1;
 						msg = "";
 					}
 					else
@@ -537,7 +371,7 @@ public class CourseRegistrationLoginController
 			}
 								
 			//Checking the Student Eligibility Criteria
-			if (checkFlag7 == 1)
+			if (checkFlag4 == 1)
 			{
 				lcObjList.clear();
 				lcObjList = semesterMasterService.getCourseEligibleProgramByProgGroupId(groupId);
@@ -549,7 +383,7 @@ public class CourseRegistrationLoginController
 						CGPAEligible = (e[1] != null)?e[1].toString():"";
 						break;
 					}
-					checkFlag8 = 1;
+					checkFlag5 = 1;
 				}
 				else
 				{
@@ -558,18 +392,18 @@ public class CourseRegistrationLoginController
 			}
 						
 			//Checking whether the Student is already login or not. 
-			if (checkFlag8 == 1)
+			if (checkFlag5 == 1)
 			{									
 				if (testStatus == 2)
 				{
-					checkFlag9 = 1;
+					checkFlag6 = 1;
 				}
 				else
 				{
 					activeStatus = courseRegCommonFn.ActivePresentDateTimeCheck(registerNo);
 					if (activeStatus == 1) 
 					{
-						checkFlag9 = 1;
+						checkFlag6 = 1;
 					}
 					else
 					{
@@ -579,17 +413,17 @@ public class CourseRegistrationLoginController
 			}
 					
 			//Checking the Wishlist Registration
-			if (checkFlag9 == 1)
+			if (checkFlag6 == 1)
 			{
 				if (wishListCheckStatus == 1)
 				{
 					if (programGroupCode.equals("RP") || (studentGraduateYear <= academicGraduateYear))
 					{
-						checkFlag10 = 1;
+						checkFlag7 = 1;
 					}
 					else if ((exemptionStatus == 1) || (exemptionStatus == 3))
 					{
-						checkFlag10 = 1;
+						checkFlag7 = 1;
 					}
 					else
 					{
@@ -597,7 +431,7 @@ public class CourseRegistrationLoginController
 										new String[]{Arrays.toString(classGroupId.split("/"))}, registerNo);
 						if (wsltCount >= 1)
 						{
-							checkFlag10 = 1;
+							checkFlag7 = 1;
 						}
 						else
 						{
@@ -607,17 +441,15 @@ public class CourseRegistrationLoginController
 				}
 				else
 				{
-					checkFlag10 = 1;
+					checkFlag7 = 1;
 				}
 			}			
 			logger.trace("\n checkFlag: "+ checkFlag +" | checkFlag2: "+ checkFlag2 +" | checkFlag3: "+ checkFlag3 
 					+" | checkFlag4: "+ checkFlag4 +" | checkFlag5: "+ checkFlag5 +" | checkFlag6: "+ checkFlag6 
-					+" | checkFlag7: "+ checkFlag7 +" | checkFlag8: "+ checkFlag8 +" | checkFlag9: "+ checkFlag9 
-					+" | checkFlag10: "+ checkFlag10);
+					+" | checkFlag7: "+ checkFlag7);
 			
 			if ((checkFlag == 1) && (checkFlag2 == 1) && (checkFlag3 == 1) && (checkFlag4 == 1) 
-					&& (checkFlag5 == 1) && (checkFlag6 == 1) && (checkFlag7 == 1) && (checkFlag8 == 1) 
-					&& (checkFlag9 == 1) && (checkFlag10 == 1))
+					&& (checkFlag5 == 1) && (checkFlag6 == 1) && (checkFlag7 == 1))
 			{				
 				String studentDetails = registerNo +" - "+ studentName +" - "+ specCode +" - "+ specDesc +" - "+ programGroupCode;
 				
@@ -762,7 +594,6 @@ public class CourseRegistrationLoginController
 				session.setAttribute("studentEMailId", studEMailId);
 				session.setAttribute("acadGraduateYear", academicGraduateYear);
 				
-				session.setAttribute("studentDetails", studentDetails);
 				session.setAttribute("costCentreCode", costCentreCode);
 				session.setAttribute("costCenterId", costCenterId);
 				session.setAttribute("startDate", startDate);
@@ -782,7 +613,7 @@ public class CourseRegistrationLoginController
 				session.setAttribute("historyCallStatus", historyCallStatus);
 				session.setAttribute("cgpaStatus", cgpaStatus);
 								
-				session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNo, 1));
+				//session.setAttribute("pageAuthKey", courseRegCommonFn.generatePageAuthKey(registerNo, 1));
 				session.setAttribute("corAuthStatus", "NONE");
 				session.setAttribute("authStatus", "NONE");
 								

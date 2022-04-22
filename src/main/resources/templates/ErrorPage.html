@@ -43,14 +43,12 @@
 
 		<header class="main-header">
 			<nav class="navbar navbar-static-top">
-				<!-- <div class="clearfix content-heading  media" > -->
 				<div class="container">
 					<h4 class="pull-right" style="color: #fff; ">V-TOP Message</h4> 
 				</div>
-				<!-- /.container-fluid -->
 			</nav>
 		</header>
-		<!-- Content Wrapper. Contains page content -->
+		
 		<div class="content-wrapper">
 			<!-- Content Header (Page header) -->
 			<section class="content-header">
@@ -61,7 +59,6 @@
 				</ol>
 			</section>
 
-			<!-- Main content -->
 			<section class="content">
 				<div class="col-sm-12 col-md-6 col-md-offset-3"
 					style="margin-top: 50px;">
@@ -73,18 +70,15 @@
 								<i class="fa fa-warning text-red" th:text="${error}"></i> 								
 							</h4>
 							<div th:if="${errno==0}" >
-									<a th:href="@{processLogout}" class="btn btn-warning pull-right">Logout</a>
+								<a th:href="@{/logout}" class="btn btn-warning pull-right">Logout</a>
 							</div>
 						</div>
-						<!-- /.info-box-content -->
+						
 					</div>
 				</div>
 			</section>
-			<!-- /.content -->
-		</div>
-		
-</div>
-	
-	
+			
+		</div>	
+	</div>
 </body>
 </html>

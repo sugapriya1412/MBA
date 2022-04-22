@@ -11,7 +11,7 @@
 				<div class="margin-homepage">
 					<div class="container">					
 						<form id="regForm">	
-						<!-- <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" /> -->
+											
 						<div class="table-responsive">	
 						<table class="w3-table-all w3-card-4 w3-hoverable" 
 									style="	background: #000e36;  /* fallback for old browsers */
@@ -176,15 +176,19 @@
 									<th:block th:if="${(courseCatalogModel.getGenericCourseType() == 'ETL') or (courseCatalogModel.getGenericCourseType() == 'ETLP') 
 													or ((crCourseStatus == 1) and (courseCatalogModel.getGenericCourseType() == 'TH'))}">
 										<td style="text-align: center; border:1px solid #095988;">
-											<input type="radio" name="classnbr1" id="classnbr1"  th:value="${'GEN/'+courseAllocationModells.getClassId()}"
+											<input type="radio" name="classnbr1" id="classnbr1" 
+												th:value="${'GEN/'+courseAllocationModells.getClassId()}"
 												th:checked="${courseAllocationModells.getClassId() == tlClassId}"
 												th:data-parameter1="${courseAllocationModells.getCourseCatalogModel().getCourseId()}" 
 												th:data-parameter2="${courseAllocationModells.getErpId()}" 
 												th:data-parameter3="${courseAllocationModells.getCourseCatalogModel().getGenericCourseType()}" 
 												th:data-parameter4="${courseAllocationModells.getClassId()}" 
-												th:data-parameter5="${page}" 											   
-											  	th:onclick="javascript:viewCorrespondingCourse(this.getAttribute('data-parameter1'), this.getAttribute('data-parameter2'),
-											   			this.getAttribute('data-parameter3'), this.getAttribute('data-parameter4'), this.getAttribute('data-parameter5'))" 								  
+												th:data-parameter5="${page}" 
+												th:data-csrfname="${_csrf?.parameterName}" 
+												th:data-csrfvalue="${_csrf?.token}"
+											  	th:onclick="javascript: viewCorrespondingCourse(this.getAttribute('data-parameter1'), 
+											  		this.getAttribute('data-parameter2'), this.getAttribute('data-parameter3'), 
+											  		this.getAttribute('data-parameter4'), this.getAttribute('data-parameter5'), this)" 								  
 											    th:if="${courseAllocationModells.getAvailableSeats() &gt;0}" />
 											<span th:text="${courseAllocationModells.getAvailableSeats() &gt;0}?${courseAllocationModells.getAvailableSeats()}:'Full'"></span>																												
 										</td>
@@ -200,10 +204,11 @@
 												  	th:data-parameter3="${courseAllocationModells.getCourseCatalogModel().getGenericCourseType()}" 
 												  	th:data-parameter4="${courseAllocationModells.getClassId()}" 
 												  	th:data-parameter5="${page}" 						
-														
-													th:onclick="javascript:viewCorrespondingCourse(this.getAttribute('data-parameter1'),
+													th:data-csrfname="${_csrf?.parameterName}" 
+													th:data-csrfvalue="${_csrf?.token}"	
+													th:onclick="javascript: viewCorrespondingCourse(this.getAttribute('data-parameter1'),
 														this.getAttribute('data-parameter2'),this.getAttribute('data-parameter3'),
-														this.getAttribute('data-parameter4'),this.getAttribute('data-parameter5'))"																	
+														this.getAttribute('data-parameter4'),this.getAttribute('data-parameter5'), this)"																	
 																														 
 													th:if="${(courseAllocationModells.getAvailableSeats() le 0) and 
 														(courseAllocationModells.getAvailableWaitingSeats() ge 1) and 
@@ -483,17 +488,24 @@
 											class="btn-success w3-btn w3-btn-green w3-round-large" 
 											th:if="${(regAllowFlag == 1)}" 
 											th:data-parameter1="processRegisterCourse"
-											th:onclick="javascript:registerCourse(this.getAttribute('data-parameter1'))">Register</button>
+											th:data-csrfname="${_csrf?.parameterName}" 
+											th:data-csrfvalue="${_csrf?.token}"
+											th:onclick="javascript: registerCourse(this.getAttribute('data-parameter1'), this)">Register</button>
 										&nbsp;&nbsp;
 										<button type="button" style="font-weight: bold;" 
 											class="btn-warning w3-btn w3-btn-red w3-round-large" 
 											th:if="${((wlAllowFlag == 1) and (WaitingListStatus== 1) 
 												and (!(courseCatalogModel.getGenericCourseType() == 'SS') or (courseCatalogModel.getGenericCourseType() == 'ECA')))}"
 									 		th:data-parameter1="processWaitingCourse"
-									 		th:onclick="javascript:registerCourse(this.getAttribute('data-parameter1'))" >Waiting</button>
+									 		th:data-csrfname="${_csrf?.parameterName}" 
+											th:data-csrfvalue="${_csrf?.token}"
+									 		th:onclick="javascript: registerCourse(this.getAttribute('data-parameter1'), this)" >Waiting</button>
 										&nbsp;&nbsp;
-										<button type="button" style="font-weight: bold;" class="btn-warning w3-btn w3-btn-blue w3-round-large" 
-											onclick="goBack();">Go Back</button>
+										<button type="button" style="font-weight: bold;" 
+											class="btn-warning w3-btn w3-btn-blue w3-round-large" 
+											th:data-csrfname="${_csrf?.parameterName}" 
+											th:data-csrfvalue="${_csrf?.token}"
+											onclick="goBack(this);">Go Back</button>
 				   					</div>					   				
 								</td>
 							</tr>

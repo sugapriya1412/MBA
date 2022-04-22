@@ -1,40 +1,38 @@
 package org.vtop.CourseRegistration.service;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.vtop.CourseRegistration.repository.SemesterMasterRepository;
-
 
 
 @Service
-@Transactional
-public class CustomUserDetailService implements UserDetailsService {
-
-	@Autowired
-	private SemesterMasterRepository semesterMasterRepository;
-	
+public class CustomUserDetailService implements UserDetailsService
+{	
+	private static final Logger logger = LogManager.getLogger(CustomUserDetailService.class);
+			
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-		//List<GrantedAuthority> authorities= new ArrayList<>();
-		//authorities.add(new SimpleGrantedAuthority("USER"));
-		
-		List<Object[]> user=semesterMasterRepository.findStudentDetailByRegisterNumber2(username);
-		
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
+	{	
+		String[] userDetail = new String[] {};
 		UserBuilder builder = null;
-	    if (!user.isEmpty()) {
-	    	 builder = org.springframework.security.core.userdetails.User.withUsername(String.valueOf(user.get(0)[0]));
-	         builder.password(String.valueOf(user.get(0)[18]));
-	         builder.accountExpired(((Integer.parseInt(String.valueOf(user.get(0)[20])) == 0) ? false : true));
-	         builder.authorities(AuthorityUtils.NO_AUTHORITIES);  //AuthorityUtils.NO_AUTHORITIES
+		
+		if ((username != null) && (!username.equals("")))
+		{
+			userDetail = username.split("\\|");
+		}
+		logger.trace("\n userDetail: "+ userDetail);
+		
+	    if (userDetail.length > 0)
+	    {
+	    	 builder = org.springframework.security.core.userdetails.User.withUsername(userDetail[0]);
+	         builder.password(userDetail[1]);
+	         builder.accountExpired(((Integer.parseInt(userDetail[2]) == 0) ? false : true));
+	         builder.authorities(AuthorityUtils.NO_AUTHORITIES);
 	         builder.roles("Student");
 	    }
 	    else
