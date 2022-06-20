@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<base th:href="@{${session.baseURL}}" /> 
+</head>
+<body class="hold-transition skin-blue-light sidebar-mini fixed">
+	<div class="wrapper">
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper" id="page-wrapper">
+			<div class="" th:fragment="section">
+
+				<div class="margin-homepage">
+					<div class="container">
+					
+					
+					<input type="hidden" id="page" name="page" th:value="${page}"/>
+					<input type="hidden" id="searchType" name="searchType" th:value="${srhType}"/>
+					<input type="hidden" id="searchVal" name="searchVal" th:value="${srhVal}"/>
+					<div style="text-align: center; text-decoration: underline;">
+							<h3>VIEW/ REGISTER</h3>
+						</div>
+					
+					  	
+						<table class="w3-table-all w3-card-4 w3-hoverable" style="background-color: #e0f8f8;">
+							 
+							<thead>
+								<tr class="w3-blue">
+									<th style="text-align: center;border: 1px solid #3c8dbc;">Course Detail</th>
+									<th style="text-align: center;border: 1px solid #3c8dbc;">L T P J C</th>
+									<th style="text-align: center;border: 1px solid #3c8dbc;">Pre-Requisite</th>
+									<th style="text-align: center;border: 1px solid #3c8dbc;">Co-Requisite</th>
+									<th style="text-align: center;border: 1px solid #3c8dbc;">Anti-Requisite</th>
+								</tr>
+							</thead>
+								<tr>
+									<td style="white-space: nowrap; border:1px solid #3c8dbc;">
+										<span th:text="${CourseDetails.getCode() 
+												+' - '+ CourseDetails.getTitle() 
+												+' - '+ CourseDetails.getCourseTypeComponentModel()?.getDescription()}"></span><br/>
+										<span th:if="${CourseDetails2 != null}" 
+												th:text="${CourseDetails2.getCode() +' - '+ CourseDetails2.getTitle() 
+													+' - '+ CourseDetails2.getCourseTypeComponentModel()?.getDescription()}"></span>
+									</td>
+									
+									<td style="white-space: nowrap; border:1px solid #3c8dbc; 
+										text-align: center;">
+										 <span th:text="${CourseDetails.getLectureHours() 
+											+' '+ CourseDetails.getTutorialHours()
+										 	+' '+ CourseDetails.getPracticalHours() 
+										 	+' '+ CourseDetails.getProjectHours() 
+										 	+' '+ CourseDetails.getCredits()}"></span><br/>
+										 <span th:if="${CourseDetails2 != null}" 
+										 	th:text="${CourseDetails2.getLectureHours() 
+												+' '+ CourseDetails2.getTutorialHours()
+											 	+' '+ CourseDetails2.getPracticalHours() 
+											 	+' '+ CourseDetails2.getProjectHours() 
+											 	+' '+ CourseDetails2.getCredits()}"></span>
+									</td>
+									
+									<td style="white-space: nowrap; border:1px solid #3c8dbc;">
+										<span th:text="${CourseDetails.getPrerequisite()}"></span><br/>
+										<span th:if="${CourseDetails2 != null}" th:text="${CourseDetails2.getPrerequisite()}"></span>
+									</td>
+									
+									<td style="white-space: nowrap; border:1px solid #3c8dbc;">
+										<span th:text="${CourseDetails.getCorequisite()}"></span><br/>
+										<span th:if="${CourseDetails2 != null}" th:text="${CourseDetails2.getCorequisite()}"></span>
+									</td>
+									
+									<td style="white-space: nowrap; border:1px solid #3c8dbc;">
+										<span th:text="${CourseDetails.getAntirequisite()}"></span><br/>
+										<span th:if="${CourseDetails2 != null}" th:text="${CourseDetails2.getAntirequisite()}"></span>
+									</td>
+								</tr>
+						</table>
+						<br/>
+					<table  class="w3-table-all w3-card-4 w3-hoverable" style="background-color: #e0f8f8; ">
+							<thead>
+								<tr class="w3-blue" valign="middle">
+								
+									<th style="border: 1px solid #3c8dbc; text-align: center;">Slot</th>
+									<th style="border: 1px solid #3c8dbc; text-align: center;">Venue</th>
+									<th style="border: 1px solid #3c8dbc; text-align: center;">Faculty</th>
+									<th style="border: 1px solid #3c8dbc; text-align: center;">Notification<br/>(i.e. with Registered Course)</th>
+									<th style="border: 1px solid #3c8dbc; text-align: center;">Total Seats</th>
+									<th style="border: 1px solid #3c8dbc; text-align: center;">Alloted Seats</th>
+									<th style="border: 1px solid #3c8dbc; text-align: center;">Available Seats</th>									
+									<th:block>
+										<th style="border: 1px solid #3c8dbc; text-align: center;" 
+												th:if="${genericCourseType != 'SS'} and ${WaitingListStatus == 1}
+													and ${#lists.contains(tlCompCourseList, CourseDetails.getCode()) == false}"
+												>Available Waiting Seats</th>
+									</th:block>
+									
+								</tr>
+								
+								<th:block th:each="crtp : ${courseTypeList}">
+								
+									<th:block th:if="${CourseSlotDetails.containsKey(crtp)}" 
+										th:each="courseSlotdetails, iter : ${CourseSlotDetails.get(crtp)}">
+									
+									<tr th:if="${iter.index == 0}" 
+										 style="background: #000e36;  /* fallback for old browsers */
+											background: -webkit-linear-gradient(to right, #000e36, #004e92, #004e92, #000e36);  /* Chrome 10-25, Safari 5.1-6 */
+											background: linear-gradient(to right, #000e36, #004e92, #004e92, #000e36); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+											color: #fff;">
+										<td style="border: 1px solid #3c8dbc; text-align: center;" 
+											th:colspan="(${genericCourseType != 'SS'} and ${WaitingListStatus == 1}
+													and ${#lists.contains(tlCompCourseList, CourseDetails.getCode()) == false}) 
+													? 8 : 7" 
+											th:text="${courseSlotdetails.getCourseTypeComponentModel().getDescription()}"></td>
+									</tr>
+								
+									<tr>
+										<td style="border: 1px solid #3c8dbc; text-align: center;">
+											<span th:if="${(courseSlotdetails.getCourseTypeComponentModel().getCourseType() == 'EPJ') 
+														or (courseSlotdetails.getCourseTypeComponentModel().getCourseType() == 'PJT')}" 
+													th:text="${'NIL'}"></span>
+											<span th:if="${(courseSlotdetails.getCourseTypeComponentModel().getCourseType() != 'EPJ') 
+														and (courseSlotdetails.getCourseTypeComponentModel().getCourseType() != 'PJT')}" 
+													th:text="${courseSlotdetails.getTimeTableModel().getSlotName()}"></span>	
+										</td>
+										<td style="border: 1px solid #3c8dbc; text-align: center;" 
+												th:text="${courseSlotdetails.getRoomMasterRoomNumber()}"></td>									
+										<td style="border: 1px solid #3c8dbc;" 
+												th:text="${courseSlotdetails.getEmployeeProfile().getFirstName()}"></td>
+																			
+										<td style="border: 1px solid #3c8dbc; text-align: left;">
+											<span th:if="${tlInfoMapList.containsKey(courseSlotdetails.getClassId()) == true}" 
+													th:text="${tlInfoMapList.get(courseSlotdetails.getClassId())[0]}" 
+													th:style="${'color: '+ tlInfoMapList.get(courseSlotdetails.getClassId())[1] +';'}">
+											</span>
+										</td>
+																														
+										<td style="border: 1px solid #3c8dbc; text-align: center;" 
+												th:text="${courseSlotdetails.getTotalSeats()}"></td>
+										<td style="border: 1px solid #3c8dbc; text-align: center;" 
+												th:text="${courseSlotdetails.getRegisteredSeats()}"></td>
+										<td style="border: 1px solid #3c8dbc; text-align: center;" 
+												th:text="${courseSlotdetails.getAvailableSeats()}" ></td>									
+										<td style="border: 1px solid #3c8dbc; text-align: center;" 
+												th:if="${genericCourseType != 'SS'} and ${WaitingListStatus == 1}
+													and ${#lists.contains(tlCompCourseList, CourseDetails.getCode()) == false}" 
+												th:text="${courseSlotdetails.getAvailableWaitingSeats()}"></td>	
+																				
+									</tr>
+									
+									</th:block>
+								</th:block>
+								
+							</thead>
+						</table>
+						 <div class="login-reset-btn" style="margin-bottom: 20px;">
+						 	<th:block th:if="${checkEligibleStatus == 1}">
+								<button th:if="${checkEligibleStatus == 1}" 
+							 		class="btn-warning w3-btn w3-btn-red w3-round-large" 
+							 		type="button" style="font-weight: bold;" 
+							 		th:data-parameter1="${CourseDetails.getCourseId()}" 									
+									th:data-parameter2="${page}" 
+									th:data-parameter3="${srhType}" 
+									th:data-parameter4="${srhVal}" 
+									th:data-csrfname="${_csrf?.parameterName}" 
+									th:data-csrfvalue="${_csrf?.token}"
+									th:onclick="javascript: callCourseRegistration(this.getAttribute('data-parameter1'), 
+										this.getAttribute('data-parameter2'), this.getAttribute('data-parameter3'), 
+										this.getAttribute('data-parameter4'), this)">Check Eligibility</button>
+								&nbsp;&nbsp;&nbsp;
+							</th:block>
+							
+					  		<button type="button" style="width: auto; margin: 20px 0px;" 
+					  			class="btn-warning w3-btn w3-btn-blue w3-round-large"
+					  			th:data-csrfname="${_csrf?.parameterName}" 
+								th:data-csrfvalue="${_csrf?.token}"
+					  			onclick="goBack(this);">Go Back</button>
+				    	</div>
+					</div>
+				
+
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+	<!-- /.content-wrapper -->
+</body>
+</html>

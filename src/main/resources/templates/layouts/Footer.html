@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body class="hold-transition skin-blue-light sidebar-mini fixed">
+  <footer class="main-footer" th:fragment="footer">
+  <div>
+   	<div style="padding:10px 0;">
+		Copyright &copy; 2022 Software Development Cell (VIT)
+	</div>
+  </div>
+
+    <script src="assets/js/jquery-2.2.3.min.js"></script>
+    <script src="assets/js/jquery-ui.min.js"></script>
+    <script src="assets/js/sweetalert.min.js"></script>
+    <script src="assets/js/jquery.hotkeys.js"></script>
+    <script src="assets/js/jquery.blockUI.js"></script> 
+    <script src="assets/js/vit-custom.js"></script>
+
+      <script>
+      /*<![CDATA[*/
+    	  	var currenttime = $('#currentDateTime').val();// '6/28/2017 6:27:21 PM';
+			var montharray = new Array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
+			var serverdate = new Date(currenttime);
+		
+			function padlength(what)
+			{
+				var output = (what.toString().length==1)? "0"+what : what;
+				return output;
+			}
+				
+			function displaytime()
+			{
+				serverdate.setSeconds(serverdate.getSeconds()+1);
+				var datestring = padlength(serverdate.getDate()) +"-"+ montharray[serverdate.getMonth()] +"-"+ serverdate.getFullYear();
+				var timestring = padlength(serverdate.getHours())+":"+padlength(serverdate.getMinutes())+":"+padlength(serverdate.getSeconds());
+				document.getElementById("servertime").innerHTML = datestring+" "+timestring;
+			} 
+			
+		    $(document).bind('keydown', 'alt+right', function(e) {
+		        e.preventDefault();
+		    });
+		
+		    $(document).bind('keydown', 'alt+left', function(e) {
+		       e.preventDefault();
+		    }); 
+      
+      	history.pushState(null, null, document.URL);
+      	window.addEventListener('popstate', function() {
+        history.pushState(null, null, document.URL);
+      });
+     /*]]>*/	
+    </script>
+  </footer>
+
+</body>
+</html>
