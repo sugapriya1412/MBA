@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<base th:href="@{${session.baseURL}}" /> 
+</head>
+<body class="hold-transition skin-blue-light sidebar-mini fixed">
+	<div class="wrapper">
+	
+		<div class="content-wrapper" id="page-wrapper">
+			<div class="" th:fragment="section">
+					<div class="margin-homepage">
+					<div class="container">
+					<div style="text-align:center;margin-bottom:15px; text-decoration:underline;">
+							<h3 > Delete Waiting List Course(s)</h3>
+					</div>
+					<div align="center" style="color: Red; font-weight: bold;" th:if="${courseRegistrationWaitingModel.size()==0}" th:text="${'No Records Found'}"></div>
+						
+						<div class="table-responsive">
+						<table class="w3-table-all w3-card-4 w3-hoverable" style="background-color: #e0f8f8;" th:if="${not #lists.isEmpty(courseRegistrationWaitingModel)}">
+							<thead>
+								<tr class="w3-blue">
+									<th style="white-space: nowrap; border:1px solid #3c8dbc; 
+										text-align: center; width: 10%;">Course Code</th>
+									<th style="white-space: nowrap; border:1px solid #3c8dbc; 
+										text-align: center;">Course Title</th>
+									<th style="white-space: nowrap; border:1px solid #3c8dbc; 
+										text-align: center; width: 10%;">Course Type</th>
+									<th style="white-space: nowrap; border:1px solid #3c8dbc; 
+										text-align: center; width: 5%;">L T P J</th>
+									<th style="white-space: nowrap; border:1px solid #3c8dbc; 
+										text-align: center; width: 5%;">Credit</th>
+									<th style="white-space: nowrap; border:1px solid #3c8dbc; 
+										text-align: center; width: 10%;">Course Option</th>
+									<th style="white-space: nowrap; border:1px solid #3c8dbc; 
+										text-align: center; width: 8%;">Class No.</th>
+									<th style="white-space: nowrap; border:1px solid #3c8dbc; 
+										text-align: center; width: 8%;">Slot</th>
+									<th style="white-space: nowrap; border:1px solid #3c8dbc; 
+										text-align: center; width: 5%;">Venue</th>
+									<th style="white-space: nowrap; border:1px solid #3c8dbc; 
+										text-align: center; width: 10%;">Faculty</th>																	
+								</tr>
+							</thead>
+								<tr th:each="RegisteredList, n :${courseRegistrationWaitingModel}">
+									<td style="border:1px solid #3c8dbc; text-align: center;" 
+										th:text="${RegisteredList.getCourseAllocationModel().getCourseCatalogModel().getCode()}"></td>
+									<td style="border:1px solid #3c8dbc;" 
+										th:text="${RegisteredList.getCourseAllocationModel().getCourseCatalogModel().getTitle()}"></td>
+									<td style="border:1px solid #3c8dbc;" 
+										th:text="${RegisteredList.getCourseAllocationModel().getCourseTypeComponentModel().getDescription()}"></td>
+									<td style="border:1px solid #3c8dbc; text-align: center;">
+										<span th:text="${RegisteredList.getCourseCatalogModel().getLectureHours() 
+											+' '+ RegisteredList.getCourseCatalogModel().getTutorialHours() 
+											+' '+ RegisteredList.getCourseCatalogModel().getPracticalHours() 
+											+' '+ RegisteredList.getCourseCatalogModel().getProjectHours()}"></span></td>
+									<td style="border:1px solid #3c8dbc; text-align: center;">
+										<span th:text="${RegisteredList.getCourseCatalogModel().getCredits()}"></span></td>
+									<td style="border:1px solid #3c8dbc;" 
+										th:text="${RegisteredList.getCourseOptionModel().getDescription()}"></td>
+									<td style="border:1px solid #3c8dbc; text-align: center;" 
+										th:text="${RegisteredList.getClassId()}"></td>
+									<td style="border:1px solid #3c8dbc; text-align: center;" 
+										th:text="${RegisteredList.getCourseAllocationModel().getTimeTableModel().getSlotName()}"></td>
+									<td style="border:1px solid #3c8dbc; text-align: center;" 
+										th:text="${RegisteredList.getCourseAllocationModel().getRoomMasterRoomNumber()}"></td>
+									<td style="border:1px solid #3c8dbc;" 
+										th:text="${RegisteredList.getCourseAllocationModel().getEmployeeProfile().getFirstName()}"></td>															
+								</tr>							
+						</table>
+						</div> 
+						
+						<input type="hidden" name="courseId" id="courseId" th:value="${courseId}" />
+						<div style="text-align:center; margin-top:10px;">
+							<h3 style="color:red;margin-bottom:10px;">Do you want to delete above mentioned course ? </h3>
+													
+							<button type="button" class="btn-warning w3-btn w3-btn-green w3-round-large"	
+								th:data-parameter1="${courseId}" 
+								th:data-csrfname="${_csrf?.parameterName}" 
+								th:data-csrfvalue="${_csrf?.token}"						         
+							    th:onclick="javascript: processDeleteConfirmationCourseRegistrationWaiting(
+							    	this.getAttribute('data-parameter1'), this)">
+							    <i class="fa fa-check"></i>Yes
+							</button>
+							&nbsp;&nbsp;
+							<button type="button" class="btn-success w3-btn w3-btn-red w3-round-large" 
+								th:data-csrfname="${_csrf?.parameterName}" 
+								th:data-csrfvalue="${_csrf?.token}"	
+								th:onclick="'javascript: processDeleteConfirmationCourseRegistrationWaitingRirect(this);'">
+							    <i class="fa fa-close"></i>No
+							</button>
+						</div>	 											
+							
+						<br/><br/>													
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

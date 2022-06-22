@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<!--
+  Author: Sivaraman C & Kishore B
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<base th:href="@{${session.baseURL}}" />
+		<meta http-equiv="cache-control" content="max-age=0" />
+		<meta http-equiv="cache-control" content="no-cache" />
+		<meta http-equiv="expires" content="0" />
+		<link rel="stylesheet" href="assets/css/lightweight.css"/>
+	<style>
+			* {
+		        margin: 0;
+		        padding: 4px;
+		        border: 0;
+		        outline: 0;
+		        font-size: 100%;
+		        vertical-align: baseline;
+		        background: transparent;
+		    }
+			
+
+			div.logout {
+			    width: 100%;
+			    box-sizing: border-box;
+			    border-radius: 9px;
+			    text-align: center;
+			    
+			}
+
+			.buttonClass {
+				border-radius: 3px;
+				cursor:pointer;
+			}
+			
+	</style>
+	
+</head>
+<header style="margin: 0px;" class="main-header" th:include="layouts/Header::Header"></header>
+<body style="padding:0px;margin:0px;background-color:#ECF0F5">
+
+	<div style="left-margin:auto;right-margin:auto; padding:20px;">
+	
+		<form th:action="@{/logout}" method="post">
+			
+			<input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
+			
+			<div class="logout" style="margin:auto auto 20px auto;padding:20px">
+			<h1 style="text-align: center; 	color: Red; font-size: 35px;" th:text="${message}"></h1>
+			<br/><br/>
+				<span style="visibility: hidden;">___INTERNAL___RESPONSE___ </span>
+				
+				<h4 style="color: green; font-size: 30px; font-weight: bolder;" 
+						th:utext="${error}"></h4>
+								
+				<div>
+					<input type="submit" class="buttonClass" style="padding:10px 20px 10px 20px;margin:10px;background-color:#EB984E;color:white" value="Login"/>
+				</div>
+			</div>
+		</form>
+	
+	</div>
+		<footer>
+   			<div style="padding:10px 10px 10px 30px; padding-right: 10px;">
+    				Copyright 2022 &copy; Software Development Cell (VIT)
+			</div>
+   		</footer>
+</body>
+</html>

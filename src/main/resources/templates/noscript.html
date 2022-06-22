@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<base th:href="@{${session.baseURL}}" />
+	<link href="assets/img/favicon1.png" rel="icon" type="image/x-icon" /> 
+	<meta charset="utf-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<title>
+		VIT University - VTOP
+	</title>
+	<!-- Tell the browser to be responsive to screen width -->
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"	name="viewport"/>
+	<!-- Bootstrap 3.3.6 -->
+	<link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="/assets/css/font-awesome.min.css">
+	<!-- Theme style -->
+	<link rel="stylesheet" href="/assets/css/AdminLTE.min.css">
+	<link rel="stylesheet" href="/assets/css/login_style.css">
+	<!-- AdminLTE Skins. Choose a skin from the css/skins folder instead of downloading all of them to reduce the load. -->
+	<link rel="stylesheet" href="/assets/css/skins/skin-blue-light.css">
+</head>
+<!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
+<body class="hold-transition skin-blue-light layout-top-nav">
+	<div class="wrapper">
+		<header class="main-header">
+			<nav class="navbar navbar-static-top">
+				<!-- <div class="clearfix content-heading  media" > -->
+				<div class="container">
+					<img src="/assets/img/logo.png" class="img-responsive pull-left"
+						alt="User Image" width="200" height="100">
+					<h3 class="pull-right" style="color: #fff; font-size: 34px;">V-TOP</h3>
+				</div>
+				<!-- /.container-fluid -->
+			</nav>
+		</header>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>500 Error Page</h1>
+				<ol class="breadcrumb">
+					<li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+					<li class="active">500 error</li>
+				</ol>
+			</section>
+
+			<!-- Main content -->
+			<section class="content">
+				<div class="col-sm-12 col-md-6 col-md-offset-3"
+					style="margin-top: 20px">
+					<div class="small-box bg-red">
+						<div class="inner">
+							<h3>Error Code: 500</h3>
+							<p>Oops! Something went wrong.</p>
+							<p>Response: Enable JavaScript to Access V-TOP</p>
+						</div>
+						<div class="icon">
+							<i class="fa  fa-close"></i>
+						</div>
+						<a href="/" target="_parent" class="small-box-footer"><span style=" font-size: 2em; color: white;">Go to Home Page <i
+							class="fa fa-arrow-circle-right"></i></span>
+						</a>
+					</div>					
+				</div>
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<footer class="main-footer">
+			<div class="container">
+				<div class="pull-right hidden-xs">
+					
+				</div>
+				<strong>Copyright 2022 &copy; Software Development Cell (VIT)</strong>
+			</div>
+			<!-- /.container -->
+		</footer>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- jQuery 2.2.3 -->
+	<script src="/assets/js/jquery-2.2.3.min.js"></script>
+	<!-- Bootstrap 3.3.6 -->
+	<script src="/assets/js/bootstrap.min.js"></script>
+	<!-- AdminLTE App -->
+	<script src="/assets/js/app.min.js"></script>
+	<!-- AdminLTE for demo purposes -->
+	<script>
+		history.pushState(null, null, document.URL);
+		window.addEventListener('popstate', function () {
+		    history.pushState(null, null, document.URL);
+		});
+	</script>
+</body>
+</html>
