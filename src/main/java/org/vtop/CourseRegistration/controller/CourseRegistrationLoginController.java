@@ -19,26 +19,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.vtop.CourseRegistration.mongo.model.CourseEligible;
+import org.vtop.CourseRegistration.mongo.model.ProgramSpecializationCurriculumCredit;
+import org.vtop.CourseRegistration.mongo.model.RegistrationSchedule;
+import org.vtop.CourseRegistration.mongo.model.SemesterDetail;
+import org.vtop.CourseRegistration.mongo.model.StudentDetailOthers;
+import org.vtop.CourseRegistration.mongo.service.CourseRegistrationCommonMongoService;
 import org.vtop.CourseRegistration.service.CourseRegistrationCommonFunction;
 import org.vtop.CourseRegistration.service.CourseRegistrationReadWriteService;
-import org.vtop.CourseRegistration.service.ProgrammeSpecializationCurriculumCreditService;
 import org.vtop.CourseRegistration.service.RegistrationLogService;
-import org.vtop.CourseRegistration.service.SemesterMasterService;
-import org.vtop.CourseRegistration.service.WishlistRegistrationService;
 
 
 @Controller
 public class CourseRegistrationLoginController 
 {	
 	@Autowired private CourseRegistrationCommonFunction courseRegCommonFn;
-	@Autowired private ProgrammeSpecializationCurriculumCreditService programmeSpecializationCurriculumCreditService;
+	//@Autowired private ProgrammeSpecializationCurriculumCreditService programmeSpecializationCurriculumCreditService;
 	@Autowired private RegistrationLogService registrationLogService;
-	@Autowired private WishlistRegistrationService wishlistRegistrationService;
-	@Autowired private SemesterMasterService semesterMasterService;
+	//@Autowired private WishlistRegistrationService wishlistRegistrationService;
+	//@Autowired private SemesterMasterService semesterMasterService;
 	@Autowired private CourseRegistrationReadWriteService courseRegistrationReadWriteService;
 	
+	@Autowired private CourseRegistrationCommonMongoService courseRegistrationCommonMongoService;
+	
 	private static final Logger logger = LogManager.getLogger(CourseRegistrationLoginController.class);
-	private static final String RegErrorMethod = "SS2122REG-T5";
+	private static final String RegErrorMethod = "FS2223REG";
 	
 	
 	@RequestMapping("/login/success")
@@ -52,7 +57,8 @@ public class CourseRegistrationLoginController
 		
 		String urlPage = "", msg = "", currentDateTimeStr = "";
 		Date currentDateTime = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+		//SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		
 		try
 		{
@@ -88,27 +94,27 @@ public class CourseRegistrationLoginController
 					+" | studentGraduateYear: "+ studentGraduateYear +" | studEMailId: "+ studEMailId);
 			
 			int regSlotCheckStatus = 2; //If Permitted Schedule-> 1: Date & Time / 2: Only Date
-			int historyCallStatus = 1; //Student History-> 1: Procedure/ 2: Table
-			int cgpaStatus = 1; //Student CGPA & Credit Detail-> 1: Dynamic/ 2: Static
+			int historyCallStatus = 2; //Student History-> 1: Procedure/ 2: Table
+			int cgpaStatus = 2; //Student CGPA & Credit Detail-> 1: Dynamic/ 2: Static
 			int wishListCheckStatus = 2; //Wish list Check Status-> 1: Enable/ 2: Disable
 			int PEUEAllowStatus = 1; //PE & UE Category Allow Status-> 1: Enable/ 2: Disable
-			int approvalStatus = 1; //Registration Status Approval-> 1: Enable/ 2: Disable
+			int approvalStatus = 2; //Registration Status Approval-> 1: Enable/ 2: Disable
 			int waitingListStatus = 2; //Waiting List Allow Status-> 1: Enable/ 2: Disable
 			int OptionNAStatus = 1; //Option Not Allowed Status-> 1: Enable/ 2: Disable
 			int compulsoryCourseStatus = 2; //Compulsory Course Allow Status-> 1: Enable/ 2: Disable
-			int otpStatus = 1; //OTP Send Status-> 1: Enable/ 2: Disable
+			int otpStatus = 2; //OTP Send Status-> 1: Enable/ 2: Disable
 			
 			int maxCredit = 27, minCredit = 16, academicYear = 0, academicGraduateYear = 0, cclTotalCredit = 0, 
 					activeStatus = 2, allowStatus = 2;
 			int checkFlag = 2, checkFlag2 = 2, checkFlag3 = 2, checkFlag4 = 2, checkFlag5 = 2, checkFlag6 = 2;
-			Integer exemptionStatus = 0, regularFlag = 2, reRegFlag = 2, schStatus = 0, wsltCount = 0, 
-						graduationStatus = 0;
+			Integer exemptionStatus = 0, regularFlag = 2, reRegFlag = 2, schStatus = 0, graduationStatus = 0, 
+						studentWishListStatus = 2;
 			Integer semesterId = 0,  wlCount = 0, regCount = 0;
 			Integer regCredit = 0, wlCredit= 0;
 			float cclVersion = 0;
 						
 			String semesterSubId = "", semesterShortDesc = "", semesterDesc = "", sessioncaptchaString = "", 
-						registrationMethod = "GEN", classGroupId = "";
+						registrationMethod = "GEN", classGroupId = "", studentCgpaData = "0|0|0";
 			String courseEligible = "", CGPAEligible = "", oldRegNo = "", returnVal = "", checkCourseSystem = "";
 			
 			String[] statusMsg = new String[]{};
@@ -118,6 +124,13 @@ public class CourseRegistrationLoginController
 			List<Integer> egbProgramInt = new ArrayList<Integer>();
 			List<String> registerNumberList = new ArrayList<String>();
 			List<Object[]> objectList = new ArrayList<Object[]>();
+			List<String> compulsoryCourseList = new ArrayList<String>();
+			
+			SemesterDetail semesterDetail = null;
+			StudentDetailOthers studentDetailOthers = null;
+			CourseEligible courseEligible2 = null;
+			ProgramSpecializationCurriculumCredit programSpecializationCurriculumCredit = null;
+			RegistrationSchedule registrationSchedule = null;
 						
 			//For getting captcha from session attribute					
 			sessioncaptchaString = (String) session.getAttribute("CAPTCHA");
@@ -127,20 +140,20 @@ public class CourseRegistrationLoginController
 			//Semester Sub Id Assignment & Student Graduation Status
 			if (programGroupCode.equals("MBA") || programGroupCode.equals("MBA5")) 
 			{
-				semesterSubId = "VL20212207";
+				semesterSubId = "NONE";
 			}
 			else if (programGroupCode.equals("RP") && costCentreCode.equals("VITBS"))
 			{
-				semesterSubId = "VL20212207";
+				semesterSubId = "NONE";
 			}
 			else
 			{
-				semesterSubId = "VL20212207";						
+				semesterSubId = "VL20222301";						
 			}
 			logger.trace("\n semesterSubId: "+ semesterSubId);
 
 			//Semester Sub Id Details
-			objectList.clear();
+			/*objectList.clear();
 			objectList = semesterMasterService.getSemesterDetailBySemesterSubId2(semesterSubId);
 			if (!objectList.isEmpty())
 			{				
@@ -150,44 +163,28 @@ public class CourseRegistrationLoginController
 				semesterDesc = objectList.get(0)[1].toString();
 				semesterShortDesc = objectList.get(0)[2].toString();
 				
-				//Term - II
-				//classGroupId = "ST002";
+				classGroupId = "ALL";
+			}*/
+			
+			semesterDetail = courseRegistrationCommonMongoService.getSemesterDetailBySemesterSubId(semesterSubId);
+			if (semesterDetail != null)
+			{
+				semesterId = semesterDetail.getSemesterId();
+				academicYear = semesterDetail.getAcademicYear();
+				academicGraduateYear = semesterDetail.getGraduateYear();
+				semesterDesc = semesterDetail.getDescription();
+				semesterShortDesc = semesterDetail.getDescriptionShort();
 				
-				//Term - III/IV
-				/*if (programGroupCode.equals("MTECH") || programGroupCode.equals("MCA") 
-						|| (programGroupCode.equals("RP") && (!costCentreCode.equals("VITBS"))))
-				{
-					classGroupId = "ST003";
-				}
-				else if (programGroupCode.equals("MBA") || programGroupCode.equals("MBA5") 
-							|| (programGroupCode.equals("RP") && costCentreCode.equals("VITBS"))) 
-				{
-					classGroupId = "MBA";
-				}
-				else
-				{
-					classGroupId = "ST004";
-				}*/
-				
-				//Term - V
-				classGroupId = "ST005";
+				classGroupId = "ALL";
 			}
+			
 			logger.trace("\n semesterId: "+ semesterId +" | academicYear: "+ academicYear 
 					+" | academicGraduateYear: "+ academicGraduateYear +" | semesterDesc: "+ semesterDesc 
 					 +" | semesterShortDesc: "+ semesterShortDesc +" | classGroupId: "+ classGroupId);
 					
-			//Student Credit Transfer Detail
-			//oldRegNo = semesterMasterService.getStudentCreditTransferOldRegisterNumberByRegisterNumber(registerNo);					
-						
-			//Get the ExemptionStatus
-			//exemptionStatus = registrationLogService.getRegistrationExemptionReasonTypeBySemesterSubIdAndRegisterNumber(
-			//						semesterSubId, registerNo);
-				
-			//Student Graduation status
-			//graduationStatus = studentHistoryService.getGraduationValue(registerNumberList);
 			
-			//Student Credit Transfer Detail/ Exemption Status/ Graduation status
-			objectList.clear();
+			//Student Credit Transfer Detail/ Registration Exemption Status/ Graduation status
+			/*objectList.clear();
 			objectList = semesterMasterService.getStudentDetailOthersByRegisterNumberAndSemesterSubId(registerNo, semesterSubId);
 			if (!objectList.isEmpty())
 			{
@@ -196,6 +193,26 @@ public class CourseRegistrationLoginController
 				oldRegNo = (objectList.get(0)[1] == null) ? "" : objectList.get(0)[1].toString();
 				graduationStatus = Integer.parseInt(objectList.get(0)[2].toString());
 				exemptionStatus = Integer.parseInt(objectList.get(0)[3].toString());
+			}*/
+			
+			studentDetailOthers = courseRegistrationCommonMongoService.getStudentDetailOthersByRegisterNumber(registerNo);
+			logger.trace("\n studentDetailOthers: "+ studentDetailOthers.toString());
+			if (studentDetailOthers != null)
+			{
+				oldRegNo = studentDetailOthers.getOldRegisterNumber();
+				exemptionStatus = studentDetailOthers.getRegistrationExcemptionStatus();
+				graduationStatus = studentDetailOthers.getExamGraduationStatus();
+				studentCgpaData = studentDetailOthers.getTotalCreditRegistered() +"|"+ studentDetailOthers.getTotalCreditEarned() 
+										+"|"+ studentDetailOthers.getCumulativeGradePointAverage();
+				
+				studentWishListStatus = (studentDetailOthers.getWishlistStatus() == null) 
+											? 2 : studentDetailOthers.getWishlistStatus();
+				
+				if ((compulsoryCourseStatus == 1) && (studentDetailOthers.getCompulsoryCourse() != null) 
+						&& (!studentDetailOthers.getCompulsoryCourse().equals("")))
+				{
+					compulsoryCourseList.addAll(Arrays.asList(studentDetailOthers.getCompulsoryCourse().split("\\|")));
+				}
 			}
 			logger.trace("\n oldRegNo: "+ oldRegNo +" | graduationStatus: "+ graduationStatus 
 						+" | exemptionStatus: "+ exemptionStatus);
@@ -265,85 +282,27 @@ public class CourseRegistrationLoginController
 			//Checking the Allowed Admission Year/ Programme Group/ Programme Specialization
 			if (checkFlag == 1)
 			{
-				//Term - II
-				/*if (studyStartYear == academicYear)
+				if ((studyStartYear > 0) && (academicYear > 0) && (studyStartYear < academicYear))
+				{	
+					if (programGroupCode.equals("BSC4") || programGroupCode.equals("BDES") 
+							|| programGroupCode.equals("BARCH") || programGroupCode.equals("BVOC") 
+							|| programGroupCode.equals("MBA") || programGroupCode.equals("MBA5") 
+							|| programGroupCode.equals("MDES")
+							|| (programGroupCode.equals("RP") && costCentreCode.equals("VITBS"))
+							|| (programGroupCode.equals("BTECH") && specCode.equals("BBS"))
+							|| (programGroupCode.equals("BSC") && (specCode.equals("BAM") 
+									|| specCode.equals("BHM") || specCode.equals("BVC"))))
+					{
+						msg = programGroupCode +" - "+ specDesc +" students are not allowed for Registration.";
+					}
+					else
+					{
+						checkFlag2 = 1;
+					}
+				}
+				else
 				{
 					msg = "Not allowed for Registration.";
-				}
-				else if (studyStartYear < academicYear)
-				{					
-					if (programGroupCode.equals("MBA") || programGroupCode.equals("MBA5") 
-							|| (programGroupCode.equals("RP") && costCentreCode.equals("VITBS")))
-					{
-						msg = "MBA and Research Scholars of VITBS are not allowed for Registration.";
-					}
-					else if (programGroupCode.equals("MTECH") || programGroupCode.equals("MCA") 
-								|| programGroupCode.equals("RP"))
-					{
-						msg = "M.Tech. (2 Years)/ M.C.A./ Research Scholars are not allowed for Registration.";
-					}
-					else
-					{
-						checkFlag2 = 1;
-					}
-				}*/
-				
-				//Term - III/IV
-				/*if (studyStartYear == academicYear)
-				{
-					checkFlag2 = 1;
-				}
-				else if (studyStartYear < academicYear)
-				{					
-					if (programGroupCode.equals("MBA") || programGroupCode.equals("MBA5") 
-							|| (programGroupCode.equals("RP") && costCentreCode.equals("VITBS")))
-					{
-						checkFlag2 = 1;
-					}
-					else if (programGroupCode.equals("MTECH") || programGroupCode.equals("MCA") 
-								|| programGroupCode.equals("RP"))
-					{
-						checkFlag2 = 1;
-					}
-					else
-					{
-						msg = programGroupCode +" - "+ studyStartYear +" students are not allowed for Registration.";
-					}
-				}
-				else
-				{
-					if (academicYear == 0)
-					{
-						msg = "You are not eligible for Registration.";
-					}
-					else
-					{
-						msg = studyStartYear +" students are not allowed for Registration.";
-					}
-				}*/
-				
-				//Term - V
-				if (studyStartYear == 2019)
-				{
-					if (programGroupCode.equals("BTECH"))
-					{
-						checkFlag2 = 1;
-					}
-					else
-					{
-						msg = "Only B.Tech. 2019 batch students are allowed for Registration.";
-					}
-				}
-				else
-				{
-					if (academicYear == 0)
-					{
-						msg = "You are not eligible for Registration.";
-					}
-					else
-					{
-						msg = studyStartYear +" students are not allowed for Registration.";
-					}
 				}
 			}
 			
@@ -352,7 +311,7 @@ public class CourseRegistrationLoginController
 			{	
 				if (regTimeCheckStatus == 2)
 				{
-					objectList.clear();
+					/*objectList.clear();
 					objectList = semesterMasterService.getRegistrationScheduleByRegisterNumber(registerNo);
 					if (!objectList.isEmpty())
 					{						
@@ -365,6 +324,36 @@ public class CourseRegistrationLoginController
 							startTime = objectList.get(0)[1].toString();
 							endTime = objectList.get(0)[2].toString();
 							allowStartTime = objectList.get(0)[3].toString();
+						}
+
+						if (schStatus == 0)
+						{
+							checkFlag3 = 1;
+						}
+						else
+						{
+							checkFlag3 = 2;
+							msg = "Your are not allowed for Course Registration.";
+						}
+					}
+					else
+					{
+						checkFlag3 = 2;
+						msg = "Your dont have Registration Schedule.";
+					}*/
+					
+					registrationSchedule = courseRegistrationCommonMongoService.getRegistrationScheduleByRegisterNumber(registerNo);
+					if (registrationSchedule != null)
+					{						
+						startDate = sdf.parse(registrationSchedule.getRegisterDate());
+						endDate = startDate;
+						schStatus = registrationSchedule.getStatus();
+						
+						if (regSlotCheckStatus == 1)
+						{
+							startTime = registrationSchedule.getFromTime();
+							endTime = registrationSchedule.getToTime();
+							allowStartTime = startTime;
 						}
 
 						if (schStatus == 0)
@@ -413,12 +402,24 @@ public class CourseRegistrationLoginController
 			//Checking the Student Eligibility Criteria
 			if (checkFlag3 == 1)
 			{
-				objectList.clear();
+				/*objectList.clear();
 				objectList = semesterMasterService.getCourseEligibleProgramByProgGroupId(groupId);
 				if (!objectList.isEmpty())
 				{					
 					courseEligible = objectList.get(0)[0].toString();
 					CGPAEligible = (objectList.get(0)[1] != null) ? objectList.get(0)[1].toString() : "";
+					checkFlag4 = 1;
+				}
+				else
+				{
+					msg = "Your are not eligible for registration.";	
+				}*/
+				
+				courseEligible2 = courseRegistrationCommonMongoService.getCourseEligibleByProgGroupId(groupId);
+				if (courseEligible2 != null)
+				{
+					courseEligible = courseEligible2.getProgEligible();
+					CGPAEligible = (courseEligible2.getProgCGPA() != null) ? courseEligible2.getProgCGPA() : "";
 					checkFlag4 = 1;
 				}
 				else
@@ -463,9 +464,18 @@ public class CourseRegistrationLoginController
 					}
 					else
 					{
-						wsltCount = wishlistRegistrationService.getRegisterNumberTCCount2(semesterSubId, 
+						/*wsltCount = wishlistRegistrationService.getRegisterNumberTCCount2(semesterSubId, 
 										new String[]{Arrays.toString(classGroupId.split("/"))}, registerNo);
 						if (wsltCount >= 1)
+						{
+							checkFlag6 = 1;
+						}
+						else
+						{
+							msg = "You did not register any course in Wishlist.  So you are not eligible for Course Registration.";
+						}*/
+						
+						if (studentWishListStatus == 1)
 						{
 							checkFlag6 = 1;
 						}
@@ -507,13 +517,22 @@ public class CourseRegistrationLoginController
 				currentDateTimeStr = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a").format(currentDateTime);	
 
 				//Getting Curriculum Detail
-				objectList.clear();
+				/*objectList.clear();
 				objectList = programmeSpecializationCurriculumCreditService.getMaxVerDetailBySpecIdAndAdmYear2(specId, studyStartYear);
 				if (!objectList.isEmpty())
 				{						
 					cclVersion = Float.parseFloat(objectList.get(0)[0].toString());
 					cclTotalCredit = Integer.parseInt(objectList.get(0)[5].toString());
 					checkCourseSystem = objectList.get(0)[8].toString();
+				}*/
+				
+				programSpecializationCurriculumCredit = courseRegistrationCommonMongoService.getPrgSpecCurriculumCreditBySpecIdAndAdmissionYear
+															(specId, studyStartYear);
+				if (programSpecializationCurriculumCredit != null)
+				{
+					cclVersion = programSpecializationCurriculumCredit.getCurriculumVersion();
+					cclTotalCredit = programSpecializationCurriculumCredit.getTotalCredits();
+					checkCourseSystem = programSpecializationCurriculumCredit.getCourseSystem();
 				}
 				logger.trace("\n curriculumVersion: "+ cclVersion +" | cclTotalCredit: "+ cclTotalCredit 
 						+" | checkCourseSystem: "+ checkCourseSystem);
@@ -607,6 +626,8 @@ public class CourseRegistrationLoginController
 				session.setAttribute("historyCallStatus", historyCallStatus);
 				session.setAttribute("cgpaStatus", cgpaStatus);
 				
+				session.setAttribute("studentCgpaData", studentCgpaData);
+				session.setAttribute("compulsoryCourseList", compulsoryCourseList);
 				session.setAttribute("corAuthStatus", "NONE");
 				session.setAttribute("authStatus", "NONE");
 				session.setAttribute("CAPTCHA", "");
@@ -618,10 +639,10 @@ public class CourseRegistrationLoginController
 				model.addAttribute("wlCount", wlCount);
 				model.addAttribute("maxCredit", maxCredit);
 				model.addAttribute("wlCredit", wlCredit);
-				
 				model.addAttribute("regularFlag", regularFlag);
 				model.addAttribute("CurrentDateTime", currentDateTimeStr);	
 				model.addAttribute("studentDetails", studentDetails);
+				
 				model.addAttribute("startDate", new SimpleDateFormat("dd-MMM-yyyy").format(startDate));
 				model.addAttribute("startTime", startTime);
 				model.addAttribute("endTime", endTime);

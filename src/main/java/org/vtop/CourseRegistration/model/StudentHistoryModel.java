@@ -20,22 +20,14 @@ public class StudentHistoryModel implements Serializable {
 	
 	@EmbeddedId
     private StudentHistoryPKModel studentHistoryPKId;
-		
-	/*@ManyToOne
-	@JoinColumn(name="COURSE_CATALOG_COURSE_ID", insertable = false, updatable = false)
-	private CourseCatalogModel courseCatalogModel;*/
-		
+			
 	@ManyToOne
 	@JoinColumn(name="CRSTYPCMPNTMASTER_COURSE_TYPE", insertable = false, updatable = false)
 	private CourseTypeComponentModel courseTypeComponentModel;
 	
 	@Column(name="COURSE_OPTION_MASTER_CODE")
 	private String courseOptionCode;
-	
-	/*@ManyToOne
-	@JoinColumn(name="COURSE_OPTION_MASTER_CODE", insertable = false, updatable = false)
-	private CourseOptionModel courseOptionModel;*/
-		
+			
 	@Column(name="GRADE")
 	private String grade;
 	
@@ -46,8 +38,18 @@ public class StudentHistoryModel implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date resultDate;
 	
+	@Column(name="EXAM_MONTH")
+	@Temporal(TemporalType.DATE)
+	private Date examMonth;
+	
 	@Column(name="COURSE_CODE")
 	private String courseCode;
+	
+	@Column(name="COURSE_TITLE")
+	private String courseTitle;
+	
+	@Column(name="LOG_TIMESTAMP")
+	private Date logTimeStamp;
 	
 	public StudentHistoryPKModel getStudentHistoryPKId() {
 		return studentHistoryPKId;
@@ -56,15 +58,7 @@ public class StudentHistoryModel implements Serializable {
 	public void setStudentHistoryPKId(StudentHistoryPKModel studentHistoryPKId) {
 		this.studentHistoryPKId = studentHistoryPKId;
 	}
-
-	/*public CourseCatalogModel getCourseCatalogModel() {
-		return courseCatalogModel;
-	}
-
-	public void setCourseCatalogModel(CourseCatalogModel courseCatalogModel) {
-		this.courseCatalogModel = courseCatalogModel;
-	}*/
-
+	
 	public CourseTypeComponentModel getCourseTypeComponentModel() {
 		return courseTypeComponentModel;
 	}
@@ -80,15 +74,7 @@ public class StudentHistoryModel implements Serializable {
 	public void setCourseOptionCode(String courseOptionCode) {
 		this.courseOptionCode = courseOptionCode;
 	}
-
-	/*public CourseOptionModel getCourseOptionModel() {
-		return courseOptionModel;
-	}
-
-	public void setCourseOptionModel(CourseOptionModel courseOptionModel) {
-		this.courseOptionModel = courseOptionModel;
-	}*/
-
+	
 	public String getGrade() {
 		return grade;
 	}
@@ -113,12 +99,36 @@ public class StudentHistoryModel implements Serializable {
 		this.resultDate = resultDate;
 	}
 		
+	public Date getExamMonth() {
+		return examMonth;
+	}
+
+	public void setExamMonth(Date examMonth) {
+		this.examMonth = examMonth;
+	}
+
 	public String getCourseCode() {
 		return courseCode;
 	}
 
 	public void setCourseCode(String courseCode) {
 		this.courseCode = courseCode;
+	}
+	
+	public String getCourseTitle() {
+		return courseTitle;
+	}
+
+	public void setCourseTitle(String courseTitle) {
+		this.courseTitle = courseTitle;
+	}
+
+	public Date getLogTimeStamp() {
+		return logTimeStamp;
+	}
+
+	public void setLogTimeStamp(Date logTimeStamp) {
+		this.logTimeStamp = logTimeStamp;
 	}
 
 	@Override
@@ -150,6 +160,7 @@ public class StudentHistoryModel implements Serializable {
 	public String toString() {
 		return "StudentHistoryModel [studentHistoryPKId=" + studentHistoryPKId + ", courseTypeComponentModel="
 				+ courseTypeComponentModel + ", courseOptionCode=" + courseOptionCode + ", grade=" + grade + ", credit="
-				+ credit + ", resultDate=" + resultDate + ", courseCode=" + courseCode + "]";
-	}		
+				+ credit + ", resultDate=" + resultDate + ", examMonth=" + examMonth + ", courseCode=" + courseCode
+				+ ", courseTitle=" + courseTitle + ", logTimeStamp=" + logTimeStamp + "]";
+	}	
 }

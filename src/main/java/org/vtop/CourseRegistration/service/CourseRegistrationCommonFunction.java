@@ -630,13 +630,13 @@ public class CourseRegistrationCommonFunction
 					{						
 						if (giAllowStatus == 1)
 						{
-							//if (pStudentGraduateYear <= academicGraduateYear)
-							//{
-							//	courseOption = (courseMehtodType == 2) ? "GICE" : "GI";
-							//	flag3 = 1;
-							//}
-							//else
-							//{
+							if (pStudentGraduateYear <= academicGraduateYear)
+							{
+								courseOption = (courseMehtodType == 2) ? "GICE" : "GI";
+								flag3 = 1;
+							}
+							else
+							{
 								giCount = courseRegistrationService.getGICourseCountByRegisterNumberCourseOptionAndClassGroup(
 												pSemesterSubId, pRegisterNumber, classGroupId);
 								if (giCount == 0)
@@ -649,7 +649,7 @@ public class CourseRegistrationCommonFunction
 									flag3 = 2;
 									msg = "Only one grade improvement course is allowed.";
 								}
-							//}
+							}
 						}
 						else
 						{
@@ -1330,7 +1330,8 @@ public class CourseRegistrationCommonFunction
 						if (((pSemesterId == 1) || (pSemesterId == 2) || (pSemesterId == 3))
 								&& (pProgramGroupCode.equals("MTECH") || pProgramGroupCode.equals("MCA") 
 										|| (pProgramGroupCode.equals("MTECH5") && pProgramSpecCode.equals("MIS"))
-										|| (pProgramGroupCode.equals("MSC5") && pProgramSpecCode.equals("MSI"))))
+										|| (pProgramGroupCode.equals("MSC5") && pProgramSpecCode.equals("MSI"))
+										|| pProgramGroupCode.equals("BTECH")))
 						{
 							cspeFlag = 1;
 						}
@@ -1340,7 +1341,8 @@ public class CourseRegistrationCommonFunction
 						}
 						else
 						{
-							msg = "Only M.Tech., MCA and M.Tech. Integrated (MIS) students are allowed to register the cap stone project course.";
+							msg = "Only M.Tech., MCA, M.Tech. Integrated (MIS), M.Sc. Integrated (MSI) and B.Tech. "
+									+"students are allowed to register the cap stone project course.";
 						}
 					}
 					else
@@ -1521,7 +1523,7 @@ public class CourseRegistrationCommonFunction
 							psRegList.clear();
 							psRegList = studentHistoryService.getStudentHistoryCS2(registerNumber2, courseCode, 
 											studStudySystem, pProgramSpecId, pStudentStartYear, pCurriculumVersion, 
-											pSemesterSubId, courseCategory, courseOption, ccCourseId);
+											pSemesterSubId, courseCategory, courseOption, ccCourseId, 1);
 							if (!psRegList.isEmpty())
 							{
 								csAllowFlag = 1;
@@ -1647,7 +1649,7 @@ public class CourseRegistrationCommonFunction
 										psRegList.clear();
 										psRegList = studentHistoryService.getStudentHistoryCS2(registerNumber2, courseCode, 
 														studStudySystem, pProgramSpecId, pStudentStartYear, pCurriculumVersion, 
-														pSemesterSubId, courseCategory, courseOption, ccCourseId);
+														pSemesterSubId, courseCategory, courseOption, ccCourseId, 1);
 										if (!psRegList.isEmpty())
 										{
 											csAllowFlag = 1;
@@ -1726,7 +1728,7 @@ public class CourseRegistrationCommonFunction
 									psRegList.clear();
 									psRegList = studentHistoryService.getStudentHistoryCS2(registerNumber2, courseCode, 
 													studStudySystem, pProgramSpecId, pStudentStartYear, pCurriculumVersion, 
-													pSemesterSubId, courseCategory, courseOption, ccCourseId);
+													pSemesterSubId, courseCategory, courseOption, ccCourseId, 1);
 									if (!psRegList.isEmpty())
 									{
 										csAllowFlag = 1;
@@ -1775,7 +1777,7 @@ public class CourseRegistrationCommonFunction
 									psRegList.clear();
 									psRegList = studentHistoryService.getStudentHistoryCS2(registerNumber2, courseCode, 
 													studStudySystem, pProgramSpecId, pStudentStartYear, pCurriculumVersion, 
-													pSemesterSubId, courseCategory, courseOption, ccCourseId);
+													pSemesterSubId, courseCategory, courseOption, ccCourseId, 1);
 									if (!psRegList.isEmpty())
 									{
 										csAllowFlag = 1;

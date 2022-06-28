@@ -38,8 +38,8 @@ public class CourseRegistrationEditController
 	@Autowired private CourseRegistrationReadWriteService courseRegistrationReadWriteService;
 	
 	
-	private static final String[] classType = { "BFS" };
-	private static final String RegErrorMethod = "SS2122REG-T5";
+	private static final String[] classType = { "EFS" };
+	private static final String RegErrorMethod = "FS2223REG";
 	private static final Logger logger = LogManager.getLogger(CourseRegistrationEditController.class);
 	
 

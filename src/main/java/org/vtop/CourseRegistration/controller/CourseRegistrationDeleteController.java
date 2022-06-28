@@ -37,7 +37,7 @@ public class CourseRegistrationDeleteController
 	@Autowired private CourseRegistrationReadWriteService courseRegistrationReadWriteService;
 	
 	private static final Logger logger = LogManager.getLogger(CourseRegistrationDeleteController.class);
-	private static final String RegErrorMethod = "SS2122REG-T5";
+	private static final String RegErrorMethod = "FS2223REG";
 	private static final List<String> crCourseOption = new ArrayList<String>(Arrays.asList("RGR","RGCE", 
 																	"RGP","RGW","RPCE","RWCE","RR"));
 	

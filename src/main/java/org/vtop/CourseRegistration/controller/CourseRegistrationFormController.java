@@ -19,16 +19,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.vtop.CourseRegistration.model.CourseAllocationModel;
 import org.vtop.CourseRegistration.model.CourseCatalogModel;
-import org.vtop.CourseRegistration.model.ProjectRegistrationModel;
-import org.vtop.CourseRegistration.model.ProjectRegistrationPKModel;
 import org.vtop.CourseRegistration.model.SlotTimeMasterModel;
+import org.vtop.CourseRegistration.mongo.model.CourseCatalog;
+import org.vtop.CourseRegistration.mongo.service.CourseCatalogMongoService;
+import org.vtop.CourseRegistration.mongo.service.CourseRegistrationCommonMongoService;
 import org.vtop.CourseRegistration.service.CourseAllocationService;
 import org.vtop.CourseRegistration.service.CourseCatalogService;
 import org.vtop.CourseRegistration.service.CourseRegistrationCommonFunction;
 import org.vtop.CourseRegistration.service.CourseRegistrationReadWriteService;
 import org.vtop.CourseRegistration.service.CourseRegistrationService;
 import org.vtop.CourseRegistration.service.CourseRegistrationWaitingService;
-import org.vtop.CourseRegistration.service.ProjectRegistrationService;
 import org.vtop.CourseRegistration.service.SemesterMasterService;
 import org.vtop.CourseRegistration.service.StudentHistoryService;
 import org.apache.logging.log4j.LogManager;
@@ -44,13 +44,15 @@ public class CourseRegistrationFormController
 	@Autowired private StudentHistoryService studentHistoryService;
 	@Autowired private CourseRegistrationCommonFunction courseRegCommonFn;
 	@Autowired private CourseRegistrationWaitingService courseRegistrationWaitingService;
-	@Autowired private ProjectRegistrationService projectRegistrationService;
 	@Autowired private SemesterMasterService semesterMasterService;
 	@Autowired private CourseRegistrationReadWriteService courseRegistrationReadWriteService;
 	
+	@Autowired private CourseRegistrationCommonMongoService courseRegistrationCommonMongoService;
+	@Autowired private CourseCatalogMongoService courseCatalogMongoService;
+	
 	private static final Logger logger = LogManager.getLogger(CourseRegistrationFormController.class);	
-	private static final String[] classType = { "BFS" };
-	private static final String RegErrorMethod = "SS2122REG-T5";
+	private static final String[] classType = { "EFS" };
+	private static final String RegErrorMethod = "FS2223REG";
 	private static final List<String> crCourseOption = new ArrayList<String>(Arrays.asList("RGR","RGCE", 
 																"RGP","RGW","RPCE","RWCE","RR"));
 	
@@ -148,9 +150,14 @@ public class CourseRegistrationFormController
 						{
 							session.removeAttribute("registrationOption");
 							
-							model.addAttribute("regOptionList", courseRegCommonFn.getRegistrationOption(programGroupCode, 
-									registrationMethod, regularFlag, reRegFlag, PEUEAllowStatus, programSpecId, studyStartYear, 
-									curriculumVersion));
+							//model.addAttribute("regOptionList", courseRegCommonFn.getRegistrationOption(programGroupCode, 
+							//		registrationMethod, regularFlag, reRegFlag, PEUEAllowStatus, programSpecId, studyStartYear, 
+							//		curriculumVersion));
+							
+							model.addAttribute("regOptionList", courseRegistrationCommonMongoService.getRegistrationOption(
+									programGroupCode, registrationMethod, regularFlag, reRegFlag, PEUEAllowStatus, programSpecId, 
+									studyStartYear, curriculumVersion));
+							
 							model.addAttribute("studySystem", session.getAttribute("StudySystem"));
 							model.addAttribute("maxCredit", maxCredit);
 							model.addAttribute("showFlag", 0);
@@ -451,14 +458,23 @@ public class CourseRegistrationFormController
 				
 				int totalPage = 0, pageNumber = evalPage; 
 				String[] pagerArray = new String[]{};
-				List<CourseCatalogModel> courseCatalogModelPageList = new ArrayList<CourseCatalogModel>();
-							
-				courseCatalogModelPageList = courseCatalogService.getCourseListForRegistration(registrationOption, 
+				
+				//List<CourseCatalogModel> courseCatalogModelPageList = new ArrayList<CourseCatalogModel>();			
+				//courseCatalogModelPageList = courseCatalogService.getCourseListForRegistration(registrationOption, 
+				//								CAMPUSCODE, courseSystem, egbGroupId, programGroupId, semesterSubId, 
+				//								ProgramSpecId, classGroupId, classType, studYear, curriculumVersion, 
+				//								registerNo, srhType, srhVal, StudentGraduateYear, ProgramGroupCode, 
+				//								ProgramSpecCode, registrationMethod, registerNumber, PEUEAllowStatus, 
+				//								evalPage, evalPageSize, costCentreCode);
+				
+				List<CourseCatalog> courseCatalogModelPageList = new ArrayList<>();
+				courseCatalogModelPageList = courseCatalogMongoService.getCourseListForRegistration(registrationOption, 
 												CAMPUSCODE, courseSystem, egbGroupId, programGroupId, semesterSubId, 
 												ProgramSpecId, classGroupId, classType, studYear, curriculumVersion, 
 												registerNo, srhType, srhVal, StudentGraduateYear, ProgramGroupCode, 
 												ProgramSpecCode, registrationMethod, registerNumber, PEUEAllowStatus, 
-												evalPage, evalPageSize, costCentreCode);				
+												evalPage, evalPageSize, costCentreCode);
+				
 				logger.trace("\n CourseListSize: "+ courseCatalogModelPageList.size() 
 							+" | evalPageSize: "+ evalPageSize +" | pageNumber: "+ pageNumber);
 				
@@ -954,7 +970,7 @@ public class CourseRegistrationFormController
 										
 								model.addAttribute("shcssList", studentHistoryService.getStudentHistoryCS2(registerNumberList, 
 										courseCode, studentStudySystem, pProgramSpecId, StudyStartYear, curriculumVersion, 
-										semesterSubId, courseCategory, courseOption, ccCourseId));
+										semesterSubId, courseCategory, courseOption, ccCourseId, csAllowFlag));
 								model.addAttribute("minorList", semesterMasterService.getAdditionalLearningTitleByLearnTypeGroupIdSpecIdAndCourseCode(
 										minAllowFlag, "MIN", pProgramGroupId, pProgramSpecId, courseCode, studentStudySystem));
 								model.addAttribute("honorList", semesterMasterService.getAdditionalLearningTitleByLearnTypeGroupIdSpecIdAndCourseCode(
@@ -1126,7 +1142,7 @@ public class CourseRegistrationFormController
 				allowStatus = Integer.parseInt(statusMsg[0]);
 				infoMsg = statusMsg[1];
 				
-				int compulsoryStatus = 2;
+				int compulsoryStatus = 2, semSubIdCharCount = 0;
 				
 				ccm = courseCatalogService.getOne(courseId);
 				if (ccm != null)
@@ -1134,6 +1150,7 @@ public class CourseRegistrationFormController
 					genericCourseType = ccm.getGenericCourseType();
 					evaluationType = ccm.getEvaluationType();
 				}
+				//logger.trace("\n genericCourseType: "+ genericCourseType +" | evaluationType: "+ evaluationType);
 					
 				switch(allowStatus)
 				{
@@ -1190,14 +1207,27 @@ public class CourseRegistrationFormController
 									if((projectDuration != null) && (!projectDuration.equals("")) 
 											&& projectDuration.equals("12"))
 									{
-										RsemesterSubId = "VL20202105";
+										if (semesterId == 1)
+										{
+											//RsemesterSubId = "VL20202105";
+											semSubIdCharCount = semesterSubId.length();
+											
+											if (semSubIdCharCount >= 10)
+											{
+												RsemesterSubId = semesterSubId.substring(0, (semesterSubId.length()-2)) +"05";
+											}
+											else
+											{
+												RsemesterSubId = semesterSubId.substring(0, (semesterSubId.length()-1)) +"5";
+											}
+										}
 									}
 									
 									break;
 							}
-							logger.trace("\n "+ semesterSubId +" | "+ classId +" | "+ registerNumber +" | "+ courseId +" | "+ courseType 
-									+" | "+ courseOption +" | "+ regStatus +" | "+ registerNumber +" | "+ IpAddress +" | "+ subCourseOption 
-									+" | "+ gradeCategory);
+							//logger.trace("\n "+ semesterSubId +" | "+ classId +" | "+ registerNumber +" | "+ courseId +" | "+ courseType 
+							//		+" | "+ courseOption +" | "+ regStatus +" | "+ registerNumber +" | "+ IpAddress +" | "+ subCourseOption 
+							//		+" | "+ gradeCategory +" | "+ RsemesterSubId);
 							
 							pRegStatus = courseRegistrationReadWriteService.courseRegistrationAdd2(semesterSubId, classId, registerNumber, 
 												courseId, courseType, courseOption, regStatus, 0, registerNumber, IpAddress, 
@@ -1216,29 +1246,15 @@ public class CourseRegistrationFormController
 							else
 							{
 									message = pRegStatus;
-							}						
-								
+							}
+							
 							if ((projectStatus == 1) && (pRegStatus.equals("SUCCESS")))
 							{	
-								ProjectRegistrationPKModel projectRegistrationPKModel = new ProjectRegistrationPKModel();
-								ProjectRegistrationModel projectRegistrationModel= new ProjectRegistrationModel();
+								//Add Project Registration
+								courseRegistrationReadWriteService.saveProjectRegistration(semesterSubId, registerNumber, courseId, courseType, 
+										classId, projectTitle, guideErpId, Integer.parseInt(projectDuration), RsemesterSubId, projectOption);
 								
-								projectRegistrationPKModel.setClassId(classId);
-								projectRegistrationPKModel.setRegisterNumber(registerNumber);
-								projectRegistrationModel.setProjectRegistrationPKId(projectRegistrationPKModel);								
-								projectRegistrationModel.setSemesterSubId(semesterSubId);
-								projectRegistrationModel.setCourseId(courseId);
-								projectRegistrationModel.setSlotId(0);
-								projectRegistrationModel.setCourseType(courseType);
-								projectRegistrationModel.setProjectTitle(projectTitle);			
-								projectRegistrationModel.setGuideErpid(guideErpId);
-								projectRegistrationModel.setProjectDuration(Integer.parseInt(projectDuration));
-								projectRegistrationModel.setResultSemesterSubId(RsemesterSubId);
-								projectRegistrationModel.setInternalFoilcardNumber(0L);
-								projectRegistrationModel.setExternalFoilcardNumber(0L);
-								projectRegistrationModel.setProjectOption(projectOption);
-								projectRegistrationService.saveOne(projectRegistrationModel);
-								
+																
 								//Fixing the Minimum & Maximum credit
 								String[] creditLimitArr = courseRegCommonFn.getMinimumAndMaximumCreditLimit(semesterSubId, 
 																registerNumber, ProgramGroupCode, costCentreCode, 
@@ -2295,7 +2311,7 @@ public class CourseRegistrationFormController
 																			
 									model.addAttribute("shcssList", studentHistoryService.getStudentHistoryCS2(registerNumberList, 
 											courseCode, studentStudySystem, pProgramSpecId, StudyStartYear, curriculumVersion, 
-											semesterSubId, courseCategory, courseOption, ccCourseId));
+											semesterSubId, courseCategory, courseOption, ccCourseId, csAllowFlag));
 									model.addAttribute("minorList", semesterMasterService.getAdditionalLearningTitleByLearnTypeGroupIdSpecIdAndCourseCode(
 											minAllowFlag, "MIN", pProgramGroupId, pProgramSpecId, courseCode, studentStudySystem));
 									model.addAttribute("honorList", semesterMasterService.getAdditionalLearningTitleByLearnTypeGroupIdSpecIdAndCourseCode(

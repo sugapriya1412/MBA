@@ -59,7 +59,7 @@ public class CourseRegistrationPageController
 	@Autowired private CourseRegistrationReadWriteService courseRegistrationReadWriteService;
 	
 	private static final Logger logger = LogManager.getLogger(CourseRegistrationPageController.class);
-	private static final String RegErrorMethod = "SS2122REG-T5";
+	private static final String RegErrorMethod = "FS2223REG";
 	
 
 	@RequestMapping(value = "SessionTimedOut", method = { RequestMethod.POST, RequestMethod.GET })

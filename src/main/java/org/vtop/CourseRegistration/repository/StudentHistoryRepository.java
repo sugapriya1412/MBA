@@ -47,7 +47,7 @@ public interface StudentHistoryRepository extends JpaRepository<StudentHistoryMo
 					"(select distinct COURSE_CODE from academics.STUDENT_HISTORY where STDNTSLGNDTLS_REGISTER_NUMBER "+
 					"in (?1) and GRADE in ('S','A','B','C','D','E','U','P','Pass')) and COURSE_CODE not in "+
 					"(select EQUIVALENT_COURSE_CODE from academics.COURSE_EQUIVALANCES where COURSE_CODE in (?2)) "+
-					"and a.COURSE_CODE not in (select COURSE_CODE from academics.COURSE_EQUIVALANCES where "+ 
+					"and COURSE_CODE not in (select COURSE_CODE from academics.COURSE_EQUIVALANCES where "+ 
 					"EQUIVALENT_COURSE_CODE in (?2)) order by COURSE_CODE", nativeQuery=true)
 	List<Object[]> findStudentHistoryCS2(List<String> registerNumber, List<String> courseCode);
 	

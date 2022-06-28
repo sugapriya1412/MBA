@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.vtop.CourseRegistration.Common.service.MailUtility;
+import org.vtop.CourseRegistration.model.ProjectRegistrationModel;
+import org.vtop.CourseRegistration.model.ProjectRegistrationPKModel;
 import org.vtop.CourseRegistration.repository.CourseEquivalanceRegRepository;
 import org.vtop.CourseRegistration.repository.CourseRegistrationRepository;
 import org.vtop.CourseRegistration.repository.CourseRegistrationWaitingRepository;
@@ -129,7 +131,33 @@ public class CourseRegistrationReadWriteService
 	}
 	
 	
-	//Project Registration
+	//Project Registration - Add
+	public void saveProjectRegistration(String semesterSubId, String registerNumber, String courseId, String courseType, 
+					String classId, String projectTitle, String guideErpId, int projectDuration, String resultSemesterSubId, 
+					String projectOption)
+	{		 
+		 ProjectRegistrationPKModel projectRegistrationPKModel = new ProjectRegistrationPKModel();
+		 ProjectRegistrationModel projectRegistrationModel= new ProjectRegistrationModel();
+			
+		 projectRegistrationPKModel.setClassId(classId);
+		 projectRegistrationPKModel.setRegisterNumber(registerNumber);
+		 projectRegistrationModel.setProjectRegistrationPKId(projectRegistrationPKModel);								
+		 projectRegistrationModel.setSemesterSubId(semesterSubId);
+		 projectRegistrationModel.setCourseId(courseId);
+		 projectRegistrationModel.setSlotId(0);
+		 projectRegistrationModel.setCourseType(courseType);
+		 projectRegistrationModel.setProjectTitle(projectTitle);			
+		 projectRegistrationModel.setGuideErpid(guideErpId);
+		 projectRegistrationModel.setProjectDuration(projectDuration);
+		 projectRegistrationModel.setResultSemesterSubId(resultSemesterSubId);
+		 projectRegistrationModel.setInternalFoilcardNumber(0L);
+		 projectRegistrationModel.setExternalFoilcardNumber(0L);
+		 projectRegistrationModel.setProjectOption(projectOption);
+		 
+		 projectRegistrationRepository.save(projectRegistrationModel);
+	}
+	
+	//Project Registration - Delete
 	public void projectRegDeleteByRegisterNumberAndCourseId(String semesterSubId, String registerNumber, String courseId)
 	{		
 		projectRegistrationRepository.deleteByRegisterNumberCourseId(semesterSubId, registerNumber, courseId);

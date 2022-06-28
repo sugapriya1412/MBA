@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.vtop.CourseRegistration.mongo.service.CourseRegistrationCommonMongoService;
 import org.vtop.CourseRegistration.service.CompulsoryCourseConditionDetailService;
 import org.vtop.CourseRegistration.service.CourseRegistrationCommonFunction;
 import org.vtop.CourseRegistration.service.CourseRegistrationReadWriteService;
@@ -30,9 +31,10 @@ public class CourseRegistrationStartController
 	@Autowired private CompulsoryCourseConditionDetailService compulsoryCourseConditionDetailService;
 	@Autowired private CourseRegistrationReadWriteService courseRegistrationReadWriteService;
 	@Autowired private CourseRegistrationCommonFunction courseRegCommonFn;
+	@Autowired private CourseRegistrationCommonMongoService courseRegistrationCommonMongoService;
 
 	private static final Logger logger = LogManager.getLogger(CourseRegistrationStartController.class);
-	private static final String RegErrorMethod = "SS2122REG-T5";
+	private static final String RegErrorMethod = "FS2223REG";
 	
 		
 	@PostMapping("checkRegistration")
@@ -136,8 +138,7 @@ public class CourseRegistrationStartController
 						HttpServletResponse response) throws ServletException, IOException 
 	{
 		String studentHistoryStatus = "", studentCgpaData = "0|0|0";
-		List<String> compulsoryCourseList = new ArrayList<String>();
-		List<Object[]> objectList = new ArrayList<Object[]>();
+		List<String> compulsoryCourseList2 = new ArrayList<String>();
 		
 		String registerNumber = (String) session.getAttribute("RegisterNumber");
 		
@@ -154,9 +155,11 @@ public class CourseRegistrationStartController
 			Integer costCenterId = (Integer) session.getAttribute("costCenterId");
 			String studentStudySystem = (String) session.getAttribute("studentStudySystem");
 			String oldRegisterNumber = (String) session.getAttribute("OldRegNo");
-			
+						
 			@SuppressWarnings("unchecked")
 			List<String> registerNumberList = (List<String>) session.getAttribute("registerNumberList");
+			@SuppressWarnings("unchecked")
+			List<String> compulsoryCourseList = (List<String>) session.getAttribute("compulsoryCourseList");
 			
 			
 			//Processing the Student History
@@ -179,38 +182,26 @@ public class CourseRegistrationStartController
 				{
 					studentCgpaData = studentHistoryService.studentCGPA(oldRegisterNumber, programSpecId, studentStudySystem);
 				}
-			}
-			else
-			{
-				objectList.clear();
-				objectList = studentHistoryService.getStaticStudentCGPAFromTable(registerNumber, programSpecId);
-				if ((objectList.isEmpty()) && (registerNumberList.size() >= 2))
-		    	{
-					objectList.clear();
-					objectList = studentHistoryService.getStaticStudentCGPAFromTable(oldRegisterNumber, programSpecId);
-		    	}
 				
-				if (!objectList.isEmpty())
-		    	{
-					studentCgpaData = Float.parseFloat(objectList.get(0)[0].toString()) 
-											+"|"+ Float.parseFloat(objectList.get(0)[1].toString()) 
-											+"|"+ Float.parseFloat(objectList.get(0)[2].toString());
-		    	}
-		    }
-			logger.trace("\n studentCgpaData: "+ studentCgpaData);
-						
+				session.setAttribute("studentCgpaData", studentCgpaData);
+				logger.trace("\n studentCgpaData: "+ studentCgpaData);
+			}
+									
 			//Processing the Compulsory Courses
-			if (compulsoryCourseStatus == 1)
+			if ((compulsoryCourseStatus == 1) && (compulsoryCourseList.isEmpty()))
 			{
-				compulsoryCourseList = compulsoryCourseConditionDetailService.getEligibleCompulsoryCourseList(
+				//Get the Compulsory Course List
+				compulsoryCourseList2 = compulsoryCourseConditionDetailService.getEligibleCompulsoryCourseList(
 											semesterSubId, programGroupId, studyStartYear, programSpecId, 
 											registerNumberList, programSpecCode, costCenterId, 0);
+				
+				//Update Compulsory Course in Mongo Db
+				courseRegistrationCommonMongoService.updateCompulsoryCourseByRegisterNumber(registerNumber, compulsoryCourseList2);
+				
+				//Setting Compulsory Course session
+				session.setAttribute("compulsoryCourseList", compulsoryCourseList2);
+				logger.trace("\n compulsoryCourseList2: "+ compulsoryCourseList2);
 			}
-			logger.trace("\n compulsoryCourseList :"+ compulsoryCourseList);
-			
-
-			session.setAttribute("studentCgpaData", studentCgpaData);
-			session.setAttribute("compulsoryCourseList", compulsoryCourseList);
 		}
 		catch (Exception exception)
 		{

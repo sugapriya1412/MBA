@@ -71,8 +71,13 @@ public class CourseRegistrationModel implements Serializable
 	@Temporal(TemporalType.DATE)
 	private Date attendanceDate;
 	
+	//CG-Credit General | NCG-Non Credit General | NCPF-Non Credit Pass Fail
 	@Column(name="GRADE_CATEGORY")
 	private String gradeCategory;
+	
+	//0-None | 1-Published and History Not Updated | 2-Published and History Updated
+	@Column(name="RESULT_STATUS")
+	private Integer resultStatus;
 	
 	@Column(name="LOG_USERID")
 	private String logUserId;
@@ -212,6 +217,14 @@ public class CourseRegistrationModel implements Serializable
 		this.gradeCategory = gradeCategory;
 	}
 
+	public Integer getResultStatus() {
+		return resultStatus;
+	}
+
+	public void setResultStatus(Integer resultStatus) {
+		this.resultStatus = resultStatus;
+	}
+
 	public String getLogUserId() {
 		return logUserId;
 	}
@@ -271,7 +284,7 @@ public class CourseRegistrationModel implements Serializable
 				+ registrationStatusMasterModel + ", componentType=" + componentType + ", invoiceNumber="
 				+ invoiceNumber + ", internalFoilcardNumber=" + internalFoilcardNumber + ", externalFoilcardNumber="
 				+ externalFoilcardNumber + ", attendanceDate=" + attendanceDate + ", gradeCategory=" + gradeCategory
-				+ ", logUserId=" + logUserId + ", logTimestamp=" + logTimestamp + ", logIpaddress=" + logIpaddress
-				+ "]";
+				+ ", resultStatus=" + resultStatus + ", logUserId=" + logUserId + ", logTimestamp=" + logTimestamp
+				+ ", logIpaddress=" + logIpaddress + "]";
 	}
 }

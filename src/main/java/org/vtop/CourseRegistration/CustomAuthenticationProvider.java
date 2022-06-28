@@ -1,10 +1,8 @@
 package org.vtop.CourseRegistration;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -15,6 +13,8 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.vtop.CourseRegistration.mongo.model.StudentDetail;
+import org.vtop.CourseRegistration.mongo.service.CourseRegistrationCommonMongoService;
 import org.vtop.CourseRegistration.service.CourseRegistrationCommonFunction;
 import org.vtop.CourseRegistration.service.CourseRegistrationReadWriteService;
 import org.vtop.CourseRegistration.service.CustomUserDetailService;
@@ -30,6 +30,7 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 	@Autowired private CourseRegistrationCommonFunction courseRegCommonFn;
 	@Autowired private CourseRegistrationReadWriteService courseRegistrationReadWriteService;
 
+	@Autowired private CourseRegistrationCommonMongoService courseRegistrationCommonMongoService;
 	
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException
@@ -37,13 +38,13 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 		String userId = authentication.getName().toUpperCase().trim();
 		String passwordInput = authentication.getCredentials().toString().trim();
 		String captchaInput = request.getParameter("captchaString").trim();
-		List<Object[]> studentDetail = new ArrayList<>();
+		//List<Object[]> studentDetail = new ArrayList<>();
 		
 		//For getting captcha from session attribute					
 		String sessioncaptchaString = (String) session.getAttribute("CAPTCHA");
 		logger.trace("\n sessioncaptchaString: "+ sessioncaptchaString);
 		
-		int testStatus = 1; //Login with Password & Captcha-> 1: Enable/ 2: Disable
+		int testStatus = 2; //Login with Password & Captcha-> 1: Enable/ 2: Disable
 		int regTimeCheckStatus = 1; //Time-> 1: Open Hours/ 2: Permitted Schedule
 		
 		int validateDateTime = 2, validateCaptcha = 2, validateCredential = 2, validateAccount = 2;
@@ -53,13 +54,15 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 				programGroupCode = "", programGroupMode = "", costCentreCode = "", studentStudySystem = "", 
 				eduStatus = "", eduStatusExpn = "", studEMailId = "", userCredential = "", message = "", 
 				studentCategory = "";
+		
+		StudentDetail studentDetail2 = null;
 				
 		try
 		{
 			//Date & Time Setting
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");		
 			Date startDate = sdf.parse("22-JUN-2022");
-			Date endDate = sdf.parse("22-JUN-2022");
+			Date endDate = sdf.parse("05-JUL-2022");
 			String startTime = "10:00:00", endTime = "23:59:59", allowStartTime = "10:00:00";
 			
 			//Assigning IP address
@@ -129,7 +132,7 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 				}
 				else
 				{
-					if (testStatus == 2)
+					/*if (testStatus == 2)
 					{
 						studentDetail = semesterMasterService.getStudentLoginDetailByRegisterNumber2(userId);
 					}
@@ -168,6 +171,61 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 						else
 						{
 							studEMailId = (studentDetail.get(0)[23] != null) ? studentDetail.get(0)[23].toString() : "NONE";
+						}
+																	
+						if (semesterMasterService.getUserLoginValidation(userId, passwordInput, dbPassWord, testStatus) == 1)
+						{
+							validateCredential = 1;
+						}
+						else
+						{
+							message = "Invalid username / password";
+						}
+					}
+					else
+					{
+						message = "Invalid username / password";
+					}*/
+					
+					if (testStatus == 2)
+					{
+						studentDetail2 = courseRegistrationCommonMongoService.getStudentDetailByRegisterNumber(userId);
+					}
+					else
+					{
+						studentDetail2 = courseRegistrationCommonMongoService.getStudentDetailByNickName(userId);
+					}
+					if (studentDetail2 != null)
+					{						
+						registerNo = studentDetail2.getRegisterNumber();
+						studentName = studentDetail2.getStudentName();
+						specId = studentDetail2.getProgSpecializationId();
+						specCode = studentDetail2.getProgSpecializationCode();
+						specDesc = studentDetail2.getProgSpecializationDescription();
+						groupId = studentDetail2.getProgGroupId();
+						programGroupCode = studentDetail2.getProgGroupCode();
+						programGroupMode = studentDetail2.getProgGroupMode();
+						programDuration = studentDetail2.getProgGroupDuration();
+						costCenterId = studentDetail2.getCentreId();
+						costCentreCode = studentDetail2.getCentreCode();
+						studyStartYear = studentDetail2.getAdmissionYear();
+						studentStudySystem = studentDetail2.getStudySystem();
+						dbPassWord = studentDetail2.getPassword();
+						lockStatus = studentDetail2.getLockStatus();
+						eduStatus = studentDetail2.getEducationStatus();
+						eduStatusExpn = studentDetail2.getEducationStatusDescription();
+						feeId = studentDetail2.getFeeId();
+						studentCategory = studentDetail2.getFeeCategoryDescription();
+						
+						studentGraduateYear = studyStartYear + programDuration;
+												
+						if (testStatus == 2)
+						{
+							studEMailId = "NONE";	//Testing Purpose
+						}
+						else
+						{
+							studEMailId = (studentDetail2.getEmail() == null) ? "NONE" : studentDetail2.getEmail();
 						}
 																	
 						if (semesterMasterService.getUserLoginValidation(userId, passwordInput, dbPassWord, testStatus) == 1)

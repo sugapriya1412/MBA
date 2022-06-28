@@ -566,20 +566,15 @@
 			var searchType = $('#searchType').val();
 			var courseOption = $('#courseOption').val();
 			var projectOption = $("input[name='projectOption']:checked").val();
-			var subCourseOption = "";
-			var projectDuration = 0;
-			var vldFlg = 0;			
 			
-			if ((evaluationType == 'GUIDE') || (evaluationType == 'CAPSTONE'))
+			var projectDuration = $('#projectDuration').val();
+			if (typeof projectDuration === "undefined")
 			{
-				projectDuration = 6;
+				projectDuration = 0;
 			}
-							
-			if(programCode == 'MTECH' || programCode == 'MCA')
-			{
-					projectDuration = 12;
-			}		
-			
+						
+			var subCourseOption = "";
+			var vldFlg = 0;
 			var vldFlg = 1;
 			var vldFlg2 = 1;
 			
@@ -1171,10 +1166,11 @@
 			});
 		}
 		
-		function getSchoolWiseGuide() 
+		function getSchoolWiseGuide(event) 
 		{
-			var guideSchoolOpt = $('#guideSchoolWise :selected').val();			
-			var dataParameter = "guideSchoolOpt=" + guideSchoolOpt;
+			var guideSchoolOpt = $('#guideSchoolWise :selected').val();
+			var csrfId = event.getAttribute('data-csrfname') + "=" + event.getAttribute('data-csrfvalue');
+			var dataParameter = "guideSchoolOpt=" + guideSchoolOpt +"&"+ csrfId;
 			
 			$.blockUI({message : '<img src="assets/img/482.GIF"> loading... Just a moment...'});
 			

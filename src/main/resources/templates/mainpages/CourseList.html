@@ -171,14 +171,6 @@
 									<tr class="w3-blue">
 										<th style="white-space: nowrap; border:1px solid #3c8dbc; 
 												text-align: center; width: 10%;">Course Detail</th>
-										<!-- <th style="white-space: nowrap; border:1px solid #3c8dbc; 
-												text-align: center; width: 1%;">L</th>
-										<th style="white-space: nowrap; border:1px solid #3c8dbc; 
-												text-align: center; width: 1%;">T</th>
-										<th style="white-space: nowrap; border:1px solid #3c8dbc; 
-												text-align: center; width: 1%;">P</th>
-										<th style="white-space: nowrap; border:1px solid #3c8dbc; 
-												text-align: center; width: 1%;">J</th> -->
 										<th style="white-space: nowrap; text-align: center; 
 										        border: 1px solid #3c8dbc; width: 5%;">L T P J</th>
 										<th style="white-space: nowrap; border:1px solid #3c8dbc; 
@@ -201,8 +193,8 @@
 									th:if="${index} &lt; ${tlCourseCatalogModelList.size()}">
 								
 									<td style="white-space: nowrap; border:1px solid #3c8dbc; text-align: left;">
-										<span th:text="${tlCourseCatalogModelList[index].getCode()}"></span> -
-										<span th:text="${tlCourseCatalogModelList[index].getTitle()}"></span>-
+										<span th:text="${tlCourseCatalogModelList[index].getCourseCode()}"></span> -
+										<span th:text="${tlCourseCatalogModelList[index].getCourseTitle()}"></span>-
 										<span th:text="${tlCourseCatalogModelList[index].getGenericCourseType()}"></span>
 									</td>
 									
@@ -215,17 +207,17 @@
 									</td>
 									<td style="border:1px solid #3c8dbc;">
 										<span style="display: block; word-wrap: break-word;" 
-											th:utext="${tlCourseCatalogModelList[index].getPrerequisite() != null} 
-												? ${#strings.replace(#strings.replace(tlCourseCatalogModelList[index].getPrerequisite()
+											th:utext="${tlCourseCatalogModelList[index].getPreRequisite() != null} 
+												? ${#strings.replace(#strings.replace(tlCourseCatalogModelList[index].getPreRequisite()
 														,'/','/ '),',',', ')}: ''"></span>
 									</td>
 									<td style="border:1px solid #3c8dbc;" 
-											th:utext="${tlCourseCatalogModelList[index].getCorequisite() != null} 
-												? ${#strings.replace(#strings.replace(tlCourseCatalogModelList[index].getCorequisite()
+											th:utext="${tlCourseCatalogModelList[index].getCoRequisite() != null} 
+												? ${#strings.replace(#strings.replace(tlCourseCatalogModelList[index].getCoRequisite()
 														,'/','/ '),',',', ')}: ''"></td>
 									<td style="border:1px solid #3c8dbc;" 
-											th:utext="${tlCourseCatalogModelList[index].getAntirequisite() != null} 
-												? ${#strings.replace(#strings.replace(tlCourseCatalogModelList[index].getAntirequisite()
+											th:utext="${tlCourseCatalogModelList[index].getAntiRequisite() != null} 
+												? ${#strings.replace(#strings.replace(tlCourseCatalogModelList[index].getAntiRequisite()
 														,'/','/ '),',',', ')}: ''"></td>
 														
 									<td style="border:1px solid #3c8dbc; text-align: center;">

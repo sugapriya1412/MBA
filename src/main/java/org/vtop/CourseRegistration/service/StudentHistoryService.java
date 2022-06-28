@@ -153,16 +153,17 @@ public class StudentHistoryService
 	}*/
 	public List<Object[]> getStudentHistoryCS2(List<String> registerNumber, String courseCode, String studySystem, 
 								Integer specializationId, Integer studentYear, Float curriculumVersion, 
-								String semesterSubId, String courseCategory, String courseOption, String basketId)
+								String semesterSubId, String courseCategory, String courseOption, String basketId, 
+								int allowFlag)
 	{
 		List<Object[]> courseSubList = new ArrayList<Object[]>();
 		List<String> regCourseList = new ArrayList<String>();
 		List<String> tempCourseList = new ArrayList<String>();
 		
-		if (courseOption.equals("RGR") || courseOption.equals("RGCE") 
+		if ((allowFlag == 1) && (courseOption.equals("RGR") || courseOption.equals("RGCE") 
 				|| courseOption.equals("RGP") || courseOption.equals("RGW") 
 				|| courseOption.equals("RPCE") || courseOption.equals("RWCE") 
-				|| courseOption.equals("RGVC"))
+				|| courseOption.equals("RGVC")))
 		{
 			regCourseList.add(courseCode);
 			
@@ -171,11 +172,10 @@ public class StudentHistoryService
 			if (!tempCourseList.isEmpty())
 			{
 				regCourseList.addAll(tempCourseList.stream().distinct().collect(Collectors.toList()));
-			}
-			logger.trace("regCourseList: "+ regCourseList);			
+			}			
 			
 			if (studySystem.equals("CAL"))
-			{
+			{	
 				if (courseCategory.equals("UC"))
 				{
 					courseSubList = studentHistoryRepository.findCSCourseByCourseCategoryAndBasketId(registerNumber, 
@@ -193,11 +193,12 @@ public class StudentHistoryService
 										specializationId, studentYear, curriculumVersion);
 				}
 			}
-			else
+			else if (studySystem.equals("FFCS") || studySystem.equals("NONFFCS"))
 			{
 				courseSubList = studentHistoryRepository.findStudentHistoryCS2(registerNumber, regCourseList);
 			}
 		}
+		logger.trace("\n courseSubList: "+ courseSubList);
 		
 		return courseSubList;
 	}
