@@ -10,6 +10,7 @@
 				<div class="margin-homepage">
 					<div class="container">					
 						<div style="text-align: center; font-weight: bolder; text-decoration: underline; margin-bottom: 8px;" th:if="${registrationOption!=null}">
+							<!-- <label th:if="${registrationOption} == 'COMP'">Compulsory Course(s)</label>
 							<label th:if="${registrationOption} == 'PC'">Programme Core</label>
 							<label th:if="${registrationOption} == 'PE'">Programme Elective</label>
 							<label th:if="${registrationOption} == 'UC'">University Core</label>
@@ -20,7 +21,10 @@
 							<label th:if="${registrationOption} == 'MIN'">Minor Course(s)</label>
 							<label th:if="${registrationOption} == 'HON'">Honors Course(s)</label>
 							<label th:if="${registrationOption} == 'ExtraCur'">Co-Extra Curricular Activity Courses(s)</label>
-							<label th:if="${registrationOption} == 'FFCSCAL'">FFCS to CAL Course Equivalence</label><br/>
+							<label th:if="${registrationOption} == 'FFCSCAL'">FFCS to CAL Course Equivalence</label><br/> -->
+							
+							<label th:if="${(registrationOptionDesc != null) and (registrationOptionDesc != '')}" 
+									th:text="${registrationOptionDesc}"></label>
 						</div>
 						
 						<div>

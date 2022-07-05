@@ -134,7 +134,7 @@ public class ProgrammeSpecializationCurriculumDetailService
 			{
 				for (Object[] e : objectList)
 				{
-					logger.trace("\n "+ Arrays.deepToString(e));
+					//logger.trace("\n "+ Arrays.deepToString(e));
 					courseCode = e[4].toString();
 					if(!returnMapList.containsKey(courseCode))
 					{

@@ -1,6 +1,7 @@
 package org.vtop.CourseRegistration.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,6 +41,8 @@ public class CourseRegistrationEditController
 	
 	private static final String[] classType = { "EFS" };
 	private static final String RegErrorMethod = "FS2223REG";
+	private static final List<String> clashCheckSemesterList = new ArrayList<String>(Arrays.asList("VL20212207"));
+	private static final List<String> clashCheckNonClassGroupList = new ArrayList<String>(Arrays.asList("BVOC", "INT", "MBA", "ST002", "ST004"));
 	private static final Logger logger = LogManager.getLogger(CourseRegistrationEditController.class);
 	
 
@@ -576,7 +579,7 @@ public class CourseRegistrationEditController
 						if (checkflag == 1) 
 						{
 							regStatusArr = courseRegCommonFn.checkClash(patternId, clashslot, semesterSubId, registerNumber, "MODIFY", oldClassId, 
-												waitingListStatus).split("/");
+												waitingListStatus, clashCheckSemesterList, clashCheckNonClassGroupList).split("/");
 							regStatusFlag = Integer.parseInt(regStatusArr[0]);
 							message = regStatusArr[1];
 							if (regStatusFlag == 2)

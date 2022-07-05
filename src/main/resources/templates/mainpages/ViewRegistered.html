@@ -59,7 +59,7 @@
 									<td style="text-align: center; border: 1px solid #3c8dbc;">
 										-
 									</td>
-								</tr> -->
+								</tr>
 								
 								<tr>
 									<td style="text-align: left; border: 1px solid #3c8dbc; font-weight: bold;">
@@ -83,7 +83,21 @@
 									<td style="text-align: center; border: 1px solid #3c8dbc;" 
 										th:text="${(wlCount == null) ? '0' : wlCount}">
 									</td>
+								</tr> -->
+								
+								<tr th:each="e : ${regCreditList}">
+									<td style="text-align: left; border: 1px solid #3c8dbc; 
+										font-weight: bold;">
+										<span th:text="${e[0]}"></span>
+									</td>
+									<td style="text-align: center; border: 1px solid #3c8dbc;">
+										<span th:text="${e[1]}"></span>
+									</td>
+									<td style="text-align: center; border: 1px solid #3c8dbc;">
+										<span th:text="${e[2]}"></span>
+									</td>
 								</tr>
+								
 							</table>
 							
 						</div><br/>						

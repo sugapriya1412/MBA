@@ -143,6 +143,11 @@ public class CourseRegistrationService
 		return courseRegistrationRepository.findRegisteredSlotsByNotClassGroup(semesterSubId, registerNumber, classGroupId);
 	}
 	
+	public List<Object[]> getRegisteredSlotsBySemesterAndNotClassGroup(List<String> semesterSubId, String registerNumber, List<String> classGroupId)
+	{
+		return courseRegistrationRepository.findRegisteredSlotsBySemesterAndNotClassGroup(semesterSubId, registerNumber, classGroupId);
+	}
+	
 	
 	public List<Object[]> getRegisteredSlotsforUpdate2(String semesterSubId, String registerNumber, String oldClassId)
 	{
@@ -156,6 +161,14 @@ public class CourseRegistrationService
 					classGroupId);
 	}
 	
+	public List<Object[]> getRegisteredSlotsBySemesterAndNotClassGroupforUpdate(List<String> semesterSubId, String registerNumber, String oldClassId, 
+								List<String> classGroupId)
+	{
+		return courseRegistrationRepository.findRegisteredSlotsBySemesterAndNotClassGroupforUpdate(semesterSubId, registerNumber, oldClassId, 
+					classGroupId);
+	}	
+	
+	
 	
 	public List<Object[]> getRegistrationAndWaitingSlotDetail(String semesterSubId, String registerNumber)
 	{
@@ -167,6 +180,10 @@ public class CourseRegistrationService
 		return courseRegistrationRepository.findRegistrationAndWaitingByNotClassGroupSlotDetail(semesterSubId, registerNumber, classGroupId);
 	}	
 	
+	public List<Object[]> getegistrationAndWaitingSlotDetailByNotClassGroup(List<String> semesterSubId, String registerNumber, List<String> classGroupId)
+	{
+		return courseRegistrationRepository.findRegistrationAndWaitingSlotDetailByNotClassGroup(semesterSubId, registerNumber, classGroupId);
+	}	
 	
 	public List<String> getRegisteredCourseByClassGroup(String semesterSubId, String registerNumber, 
 							String[] classGroupId)
@@ -598,11 +615,22 @@ public class CourseRegistrationService
 	}
 	
 
-	public String getGradeCategory(int admissionYear, String courseCategory, String genericCourseType)
+	public String getGradeCategory(int admissionYear, String courseCategory, String genericCourseType, String programmeGroupCode)
 	{
 		String returnGradeCategory = "CG";
 		
-		if ((admissionYear >= 2019) && (courseCategory.equals("NC") || courseCategory.equals("BC")))
+		if ((admissionYear == 2018) && programmeGroupCode.equals("BSC4"))
+		{
+			if (courseCategory.equals("NC"))
+			{
+				returnGradeCategory = "NCPF";
+			}
+			else if (courseCategory.equals("BC"))
+			{
+				returnGradeCategory = "NCG";
+			}	
+		}
+		else if ((admissionYear >= 2019) && (courseCategory.equals("NC") || courseCategory.equals("BC")))
 		{
 			if (genericCourseType.equals("ECA"))
 			{
@@ -667,5 +695,27 @@ public class CourseRegistrationService
 		}
 		
 		return returnCredit;
+	}
+	
+	
+	//Compulsory Course Registration & Allocation Status
+	public List<Object[]> getCompulsoryCourseRegistrationAndAllocationStatus(String semesterSubId, String registerNumber, List<String> compCourseCode, 
+								String[] classGroupId, String[] classType, String progGroupCode, String progSpecCode, String costCentreCode, 
+								String[] courseSystem)
+	{
+		List<Object[]> returnObjectList = new ArrayList<>();
+		
+		if (progGroupCode.equals("RP"))
+		{
+			returnObjectList = courseRegistrationRepository.findCompulsoryCourseRegistrationAndAllocationForRP(semesterSubId, registerNumber, 
+									compCourseCode, classGroupId, classType, courseSystem);
+		}
+		else
+		{
+			returnObjectList = courseRegistrationRepository.findCompulsoryCourseRegistrationAndAllocation(semesterSubId, registerNumber, 
+									compCourseCode, classGroupId, classType, progGroupCode, progSpecCode, costCentreCode, courseSystem);
+		}
+		
+		return returnObjectList;
 	}
 }

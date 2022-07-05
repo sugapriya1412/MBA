@@ -27,10 +27,7 @@ import org.springframework.ui.Model;
 import org.vtop.CourseRegistration.Common.service.CaptchaManager;
 import org.vtop.CourseRegistration.model.CourseAllocationModel;
 import org.vtop.CourseRegistration.model.CourseCatalogModel;
-import org.vtop.CourseRegistration.model.CourseEligibleModel;
 import org.vtop.CourseRegistration.model.CourseEquivalancesModel;
-import org.vtop.CourseRegistration.model.CourseRegistrationModel;
-import org.vtop.CourseRegistration.model.CourseRegistrationWaitingModel;
 import org.vtop.CourseRegistration.model.ProgrammeSpecializationCurriculumCategoryCredit;
 import org.vtop.CourseRegistration.model.SlotTimeMasterModel;
 import org.vtop.CourseRegistration.model.StudentHistoryModel;
@@ -67,7 +64,8 @@ public class CourseRegistrationCommonFunction
 						Integer PEUEStatus, String programGroupMode, String[] classGroupId, 
 						String pStudentCgpaData, Integer waitingListStatus, Integer optionNAStatus, 
 						List<String> studCompulsoryCourse, Integer pSemesterId, String[] classType, 
-						String costCentreCode, int academicGraduateYear, int cclTotalCredit)
+						String costCentreCode, int academicGraduateYear, int cclTotalCredit, 
+						String cgpaProgGroupId)
 	{					
 		int historyflag = 2, regflag = 2, compCourseFlag = 1;
 		int regAllowFlag = 2, wlAllowFlag = 2, audAllowFlag = 2, rgrAllowFlag = 2, minAllowFlag = 2, 
@@ -78,17 +76,18 @@ public class CourseRegistrationCommonFunction
 		int courseMehtodType = 1, crTpCount = 0, subCrCount = 0;
 		int flag = 2, flag2 = 2, flag3 = 2, flag4 = 2, flag5 = 2;
 		int flag6 = 2, flag7 = 2, flag8 = 2, flag9 = 2, flag10 = 2;		
-		Integer courseProgId = 0, audCount = 0, adlCount = 0, giCount = 0;
+		Integer courseProgId = 0, audCount = 0, adlCount = 0, giCount = 0, wlCount = 0;
 		
 		float courseCredit = 0, obtCredit = 0, rmgCredit = 0, ueRmgCredit = 0, totCdtReg = 0, totCdtEarn = 0, 
-				ccCredit = 0, ctgCredit = 0, bskObtCredit = 0;
+				ccCredit = 0, ctgCredit = 0, bskObtCredit = 0, regCredit = 0, wlCredit = 0, totalRegCredit = 0, 
+				lectureCredit = 0, practicalCredit = 0, projectCredit = 0;
 		Float cgpa = 0F;
 				
 		String courseOption = "RGR", courseType = "NONE", subCourseOption = "NONE",	subCourseType = "NONE", 
 					subCourseDate = "NONE";
 		String courseCode = "", ccCourseSystem = "", ceCourseId = "NIL", compCourseStatus = "NONE";
 		String genericCoursetype = "", evaluationType = "", courseAltProgId = "", prerequisite = "NONE";
-		String grade = "", msg = "", subCrType = "", cgpaProgGroupId = "";
+		String grade = "", msg = "", subCrType = "";
 		String historyCourseId = "", historyGenericCourseType = "", historyExamMonth = "", 
 					historyCourseSystem = "", authKeyVal = "NONE";
 		String courseCategory = "NONE", ccCourseId = "NONE", catalogType = "NONE", basketCategory = "NONE";
@@ -96,7 +95,7 @@ public class CourseRegistrationCommonFunction
 		String[] antirequisite = {"NONE"};
 		CourseCatalogModel ccm = new CourseCatalogModel();
 		CourseCatalogModel historyCCM = new CourseCatalogModel();
-		CourseEligibleModel crsegbm = new CourseEligibleModel();
+		//CourseEligibleModel crsegbm = new CourseEligibleModel();
 				
 		List<CourseEquivalancesModel> cemList = new ArrayList<CourseEquivalancesModel>();
 		List<StudentHistoryModel> shmList = new ArrayList<StudentHistoryModel>();
@@ -109,6 +108,7 @@ public class CourseRegistrationCommonFunction
 		List<String> ceCourseList = new ArrayList<String>();
 		List<String> ceList = new ArrayList<String>();
 		List<String> spsRegList = new ArrayList<String>();
+		List<String> ncCourseList = new ArrayList<String>();
 				
 		List<Object[]> shmList2 = new ArrayList<Object[]>();
 		List<Object[]> psRegList = new ArrayList<Object[]>();
@@ -169,6 +169,9 @@ public class CourseRegistrationCommonFunction
 					ccCourseSystem = ccm.getCourseSystem();
 					evaluationType = ccm.getEvaluationType();
 					courseCredit = ccm.getCredits();
+					lectureCredit = ccm.getLectureCredits();
+					practicalCredit = ccm.getPracticalCredits();
+					projectCredit = ccm.getProjectCredits();
 					
 					if ((ccm.getPrerequisite() != null) && (!ccm.getPrerequisite().equals("")))
 					{
@@ -181,11 +184,11 @@ public class CourseRegistrationCommonFunction
 					}
 													
 					//To get the course eligible
-					crsegbm = semesterMasterService.getCourseEligibleByProgramGroupId(pProgramGroupId);
+					/*crsegbm = semesterMasterService.getCourseEligibleByProgramGroupId(pProgramGroupId);
 					if (crsegbm != null)
 			    	{
 						cgpaProgGroupId = crsegbm.getProgramCgpa();
-			    	}
+			    	}*/
 					
 					//To get the course equivalence
 					cemList = semesterMasterService.getCourseEquivalancesByCourseId(pCourseId);
@@ -237,15 +240,17 @@ public class CourseRegistrationCommonFunction
 				
 				if (flag == 1)
 				{					
-					if ((pProgramGroupCode.equals("RP")) || (pProgramGroupCode.equals("IEP")))
+					if (pProgramGroupCode.equals("RP") || pProgramGroupCode.equals("IEP"))
 					{
 						flag = 1;
 					}
-					else if ((!studStudySystem.equals("CAL")) && (!studStudySystem.equals("RCAL")))
+					else if ((!studStudySystem.equals("NONFFCS")) && (!studStudySystem.equals("FFCS")))
 					{
 						flag = 1;
 					}
-					else if (courseCategory.equals("PC") || courseCategory.equals("UC") || courseCategory.equals("NONE"))
+					else if (courseCategory.equals("PC") || courseCategory.equals("UC") 
+								|| courseCategory.equals("DC") || courseCategory.equals("DLES") 
+								|| courseCategory.equals("FC"))
 					{
 						flag = 1;
 					}
@@ -262,7 +267,7 @@ public class CourseRegistrationCommonFunction
 						else
 						{
 							flag = 2;
-							msg = "Only PC and UC category courses are allowed for registration.";
+							msg = "Only Core Category courses are allowed for registration.";
 						}
 					}
 				}
@@ -516,7 +521,7 @@ public class CourseRegistrationCommonFunction
 				historyflag = 2;
 				courseMehtodType = 1;
 				shmList2.clear();
-								
+												
 				shmList2 = studentHistoryService.getStudentHistoryGrade2(registerNumber2, courseCode);
 				if (!shmList2.isEmpty())
 				{
@@ -1035,6 +1040,18 @@ public class CourseRegistrationCommonFunction
 			// To check the credit limit
 			if (flag4 == 1)
 			{	
+				ncCourseList = programmeSpecializationCurriculumDetailService.getNCCourseByYearAndCCVersion(pProgramSpecId, 
+									pStudentStartYear, pCurriculumVersion);
+				regCredit = courseRegistrationService.getRegCreditByRegisterNumberAndNCCourseCode(pSemesterSubId, pRegisterNumber, 
+								ncCourseList);
+				if (waitingListStatus == 1)
+				{
+					wlCredit = courseRegistrationWaitingService.getRegCreditByRegisterNumberAndNCCourseCode(pSemesterSubId, 
+									pRegisterNumber, ncCourseList);
+					wlCount = courseRegistrationWaitingService.getRegisterNumberCRWCount(pSemesterSubId, pRegisterNumber);
+				}
+				totalRegCredit = regCredit + wlCredit;
+	
 				if (courseTypeList.size() > 0)
 				{
 					for (String courseType3 : courseTypeList)
@@ -1047,35 +1064,88 @@ public class CourseRegistrationCommonFunction
 						{
 							courseType = courseType +","+ courseType3;
 						}
+						
+						if (courseType3.equals("ETH"))
+						{
+							totalRegCredit = totalRegCredit + lectureCredit;
+						}
+						else if (courseType3.equals("ELA"))
+						{
+							totalRegCredit = totalRegCredit + practicalCredit;
+						}
+						else if (courseType3.equals("EPJ"))
+						{
+							totalRegCredit = totalRegCredit + projectCredit;
+						}
+						else
+						{
+							totalRegCredit = totalRegCredit + courseCredit;
+						}
 												
 						crTpCount++;
 					}
 				}
+				else
+				{
+					totalRegCredit = totalRegCredit + courseCredit;
+				}
 								
-				regAllowFlag = 1;
+				if ((pStudentGraduateYear <= academicGraduateYear) && (maxCredit == 30) && (totalRegCredit <= 32))
+				{
+					regAllowFlag = 1;
+				}
+				else if (totalRegCredit <= maxCredit)
+				{
+					regAllowFlag = 1;
+				}
 				
-				if (courseOption.equals("RGR") || courseOption.equals("RGP") || courseOption.equals("RGCE") 
-						|| courseOption.equals("RGA") || courseOption.equals("RPCE") || courseOption.equals("HON") 
-						|| courseOption.equals("MIN") || courseOption.equals("AUD") || courseOption.equals("RGW") 
-						|| courseOption.equals("RWCE") || courseOption.equals("RPEUE") || courseOption.equals("RUCUE") 
-						|| courseOption.equals("DM") || courseOption.equals("RWVC") || courseOption.equals("RUEPE") 
-						|| courseOption.equals("RGVC"))
-				{	
-					rgrOptionFlag = 1;
-					flag5 = 2;
-					
-					if (regularAllowStatus == 1)
-					{
-						flag5 = 1;
-					}
-					else
-					{
-						msg = "Regular course(s) are not allowed to register.";
-					}
+				if ((waitingListStatus == 1) && (!studCompulsoryCourse.contains(courseCode)) && (wlCount < 2))
+				{
+					wlAllowFlag = 1;
+				}
+				
+				if ((!pProgramGroupCode.equals("RP")) && (!pProgramGroupCode.equals("MBA")) 
+						&& (!pProgramGroupCode.equals("MBA5")) && (pStudentGraduateYear <= academicGraduateYear) 
+						&& (maxCredit == 30) && ((regCredit + wlCredit) < 30) && (totalRegCredit <= 32))
+				{
+					flag5 = 1;
+				}
+				else if (totalRegCredit <= maxCredit)
+				{
+					flag5 = 1;
 				}
 				else
 				{
-					flag5 = 1;
+					flag5 = 2;
+					msg = "You cannot register more than "+ maxCredit +" credits.";
+				}
+				
+				if (flag5 == 1)
+				{
+					flag5 = 2;
+					
+					if (courseOption.equals("RGR") || courseOption.equals("RGP") || courseOption.equals("RGCE") 
+							|| courseOption.equals("RGA") || courseOption.equals("RPCE") || courseOption.equals("HON") 
+							|| courseOption.equals("MIN") || courseOption.equals("AUD") || courseOption.equals("RGW") 
+							|| courseOption.equals("RWCE") || courseOption.equals("RPEUE") || courseOption.equals("RUCUE") 
+							|| courseOption.equals("DM") || courseOption.equals("RWVC") || courseOption.equals("RUEPE") 
+							|| courseOption.equals("RGVC"))
+					{	
+						rgrOptionFlag = 1;
+						
+						if (regularAllowStatus == 1)
+						{
+							flag5 = 1;
+						}
+						else
+						{
+							msg = "Regular course(s) are not allowed to register.";
+						}
+					}
+					else
+					{
+						flag5 = 1;
+					}
 				}
 								
 				if (flag5 == 1)
@@ -1088,7 +1158,7 @@ public class CourseRegistrationCommonFunction
 												pStudentGraduateYear, pSemesterId, pSemesterSubId, pRegisterNumber, 
 												classGroupId, classType, pProgramSpecCode, pProgramSpecId, 
 												pProgramGroupCode, pOldRegisterNumber, studCompulsoryCourse, 
-												costCentreCode, courseCode, pCourseSystem);
+												costCentreCode, courseCode, pCourseSystem, waitingListStatus);
 						if (compCourseStatus.equals("NONE") || compCourseStatus.equals("SUCCESS"))
 						{
 							flag5 = 1;
@@ -1961,7 +2031,8 @@ public class CourseRegistrationCommonFunction
 	
 	//Checking slot clash
 	public String checkClash(Integer patternId, List<String> clashSlotList, String pSemesterSubId, String pRegisterNumber, 
-						String pRegType, String pOldClassId, int waitingListStatus)
+						String pRegType, String pOldClassId, int waitingListStatus, List<String> clashSemesterList, 
+						List<String> clashNonClassGroupList)
 	{
 		int clashStatus = 2;
 		String message = "NONE", slot = "";
@@ -1971,6 +2042,8 @@ public class CourseRegistrationCommonFunction
 		List<Object[]> objectList = new ArrayList<Object[]>();
 		Map<String, List<SlotTimeMasterModel>> slotTimeMapList = new HashMap<String, List<SlotTimeMasterModel>>();
 		
+		clashSemesterList.add(pSemesterSubId);
+				
 		logger.trace("\n patternId: "+ patternId +" | clashSlotList: "+ clashSlotList 
 				+" | pSemesterSubId: "+ pSemesterSubId +" | pRegisterNumber: "+ pRegisterNumber 
 				+" | pRegType: "+ pRegType +" | pOldClassId: "+ pOldClassId);
@@ -1991,8 +2064,12 @@ public class CourseRegistrationCommonFunction
 				//objectList = courseRegistrationService.getRegisteredSlotsforUpdate2(pSemesterSubId, pRegisterNumber, pOldClassId);
 				
 				//Based on Non class Group
-				objectList = courseRegistrationService.getRegisteredSlotsByNotClassGroupforUpdate(pSemesterSubId, pRegisterNumber, pOldClassId, 
-									Arrays.asList("ST002"));
+				//objectList = courseRegistrationService.getRegisteredSlotsByNotClassGroupforUpdate(pSemesterSubId, pRegisterNumber, pOldClassId, 
+				//					Arrays.asList("ST002"));
+				
+				//Based on Current & Previous Semester with Non class Group
+				objectList = courseRegistrationService.getRegisteredSlotsBySemesterAndNotClassGroupforUpdate(clashSemesterList, 
+									pRegisterNumber, pOldClassId, clashNonClassGroupList);
 			}
 			else
 			{
@@ -2000,7 +2077,11 @@ public class CourseRegistrationCommonFunction
 				//objectList = courseRegistrationService.getRegisteredSlots2(pSemesterSubId, pRegisterNumber);
 				
 				//Based on Non class Group
-				objectList = courseRegistrationService.getRegisteredSlotsByNotClassGroup(pSemesterSubId, pRegisterNumber, Arrays.asList("ST002"));
+				//objectList = courseRegistrationService.getRegisteredSlotsByNotClassGroup(pSemesterSubId, pRegisterNumber, Arrays.asList("ST002"));
+				
+				//Based on Current & Previous Semester with Non class Group
+				objectList = courseRegistrationService.getRegisteredSlotsBySemesterAndNotClassGroup(clashSemesterList, pRegisterNumber, 
+								clashNonClassGroupList);
 			}
 			
 			//Checking the clash with Registered Slot
@@ -2132,14 +2213,15 @@ public class CourseRegistrationCommonFunction
 					Integer semesterId, String semesterSubId, String registerNumber, String[] classGroupId,
 					String[] classType, String progSpecCode, Integer progSpecId, String progGroupCode, 
 					String oldRegisterNumber, List<String> compulsoryCourse, String costCentreCode, 
-					String[] courseSystem)
+					String[] courseSystem, int waitingListStatus)
 	{
 		int returnStatus = 2;
 		String compCourseStatus = "NONE";
 		
 		compCourseStatus = compulsoryCoursePriorityCheck(progGroupId, studentBatch, studentGradYear, semesterId, 
 								semesterSubId, registerNumber, classGroupId, classType, progSpecCode, progSpecId, 
-								progGroupCode, oldRegisterNumber, compulsoryCourse, costCentreCode, "", courseSystem);
+								progGroupCode, oldRegisterNumber, compulsoryCourse, costCentreCode, "", courseSystem, 
+								waitingListStatus);
 		if (!compCourseStatus.equals("NONE"))
 		{
 			returnStatus = 1;
@@ -2149,12 +2231,12 @@ public class CourseRegistrationCommonFunction
 		return returnStatus;
 	}
 	
-	//Checking the compulsory course is registered as per priority
+	/*//Checking the compulsory course is registered as per priority - Old Method
 	public String compulsoryCoursePriorityCheck(Integer progGroupId, Integer studentBatch, Integer studentGradYear,
 						Integer semesterId, String semesterSubId, String registerNumber, String[] classGroupId,
 						String[] classType, String progSpecCode, Integer progSpecId, String progGroupCode, 
 						String oldRegisterNumber, List<String> compulsoryCourse, String costCentreCode, 
-						String regCourseCode, String[] courseSystem)
+						String regCourseCode, String[] courseSystem, int waitingListStatus)
 	{
 		String compCourseStatus = "NONE";
 		int checkCompFlag = 2, checkCompFlag2 = 2;
@@ -2175,13 +2257,19 @@ public class CourseRegistrationCommonFunction
 				checkCompFlag2 = 2;
 				
 				//Checking in the Registration & Waiting
-				courseRegistrationList = courseRegistrationService.getByRegisterNumberCourseCode(semesterSubId,
-											registerNumber, crsId);
+				courseRegistrationList = courseRegistrationService.getByRegisterNumberCourseCode(semesterSubId, registerNumber, crsId);
 				if (courseRegistrationList.isEmpty())
 				{
-					courseRegistrationWaitList = courseRegistrationWaitingService.getByRegisterNumberAndCourseCode(
-														semesterSubId, registerNumber, crsId);
-					if (courseRegistrationWaitList.isEmpty())
+					if (waitingListStatus == 1)
+					{
+						courseRegistrationWaitList = courseRegistrationWaitingService.getByRegisterNumberAndCourseCode(
+															semesterSubId, registerNumber, crsId);
+						if (courseRegistrationWaitList.isEmpty())
+						{
+							checkCompFlag = 1;
+						}
+					}
+					else
 					{
 						checkCompFlag = 1;
 					}
@@ -2216,8 +2304,75 @@ public class CourseRegistrationCommonFunction
 		logger.trace("\n compCourseStatus: "+ compCourseStatus);
 		
 		return compCourseStatus;
-	}	
+	}*/
 	
+	//Checking the compulsory course is registered as per priority - New Method
+	public String compulsoryCoursePriorityCheck(Integer progGroupId, Integer studentBatch, Integer studentGradYear,
+						Integer semesterId, String semesterSubId, String registerNumber, String[] classGroupId,
+						String[] classType, String progSpecCode, Integer progSpecId, String progGroupCode, 
+						String oldRegisterNumber, List<String> compulsoryCourse, String costCentreCode, 
+						String regCourseCode, String[] courseSystem, int waitingListStatus)
+	{
+		String compCourseStatus = "NONE";
+		int checkCompFlag = 2, checkCompFlag2 = 2;
+		
+		List<Object[]> objectList = new ArrayList<>();
+		List<String> registrationCourseList = new ArrayList<>();
+		List<String> allocationCourseList = new ArrayList<>();
+		
+		//logger.trace("\n compulsoryCourse: "+ compulsoryCourse);
+		if (!compulsoryCourse.isEmpty())
+		{
+			objectList = courseRegistrationService.getCompulsoryCourseRegistrationAndAllocationStatus(semesterSubId, registerNumber, 
+								compulsoryCourse, classGroupId, classType, progGroupCode, progSpecCode, costCentreCode, courseSystem);
+			if (!objectList.isEmpty())
+			{
+				registrationCourseList = objectList.stream().filter(p-> p[0].toString().equals("REG"))
+												.map(e-> e[1].toString()).distinct().collect(Collectors.toList());
+				allocationCourseList = objectList.stream().filter(p-> p[0].toString().equals("ALLOT"))
+												.map(e-> e[1].toString()).distinct().collect(Collectors.toList());
+			}
+			//logger.trace("\n registrationCourseList: "+ registrationCourseList);
+			//logger.trace("\n allocationCourseList: "+ allocationCourseList);
+			
+			for (String crCode : compulsoryCourse)
+			{
+				checkCompFlag = 2;
+				checkCompFlag2 = 2;
+				
+				//Checking in the Registration
+				if (!registrationCourseList.contains(crCode))
+				{
+					checkCompFlag = 1;
+				}
+				
+				//Checking in Course Allocation whether Seat is available or not
+				if (checkCompFlag == 1)
+				{
+					if (allocationCourseList.contains(crCode))
+					{
+						checkCompFlag2 = 1;
+					}
+				}
+
+				if ((checkCompFlag == 1) && (checkCompFlag2 == 1))
+				{
+					if (crCode.equals(regCourseCode))
+					{
+						compCourseStatus = "SUCCESS";
+					}
+					else
+					{
+						compCourseStatus = "Kindly register the compulsory course "+ crCode +" as per priority.";
+					}
+					break;
+				}
+			}
+		}
+		logger.trace("\n compCourseStatus: "+ compCourseStatus);
+		
+		return compCourseStatus;
+	}
 		
 		
 	public Integer findStudentSemester(String progGroupCode, Integer studentBatch)
@@ -2983,12 +3138,12 @@ public class CourseRegistrationCommonFunction
 		{
 			regularCourseStatus = 1;
 			NGradeCourseStatus = 1;
-			giCourseStatus = 1; 
-			auditCourseStatus = 1;
-			minHonCourseStatus = 1;
-			adlCourseStatus = 1;
-			peAdlCourseStatus = 1;
-			ueAdlCourseStatus = 1;
+			//giCourseStatus = 1; 
+			//auditCourseStatus = 1;
+			//minHonCourseStatus = 1;
+			//adlCourseStatus = 1;
+			//peAdlCourseStatus = 1;
+			//ueAdlCourseStatus = 1;
 		}
 		
 		return regularCourseStatus +"|"+ NGradeCourseStatus +"|"+ giCourseStatus +"|"+ auditCourseStatus 
@@ -2998,14 +3153,15 @@ public class CourseRegistrationCommonFunction
 	
 	public List<Object[]> getRegistrationOption(String programGroupCode, String courseSystem, int rgrCourseAllowStatus, 
 								int reRegCourseAllowStatus, int peueAllowStatus, Integer specializationId, Integer admissionYear, 
-								Float curriculumVersion)
+								Float curriculumVersion, int compulsoryCourseStatus)
 	{
 		List<Object[]> returnObjectList = new ArrayList<Object[]>();
 		List<ProgrammeSpecializationCurriculumCategoryCredit> pscccList = new ArrayList<ProgrammeSpecializationCurriculumCategoryCredit>();
 		logger.trace("\n programGroupCode: "+ programGroupCode +" | courseSystem: "+ courseSystem
 				 +" | rgrCourseAllowStatus: "+ rgrCourseAllowStatus +" | reRegCourseAllowStatus: "+ reRegCourseAllowStatus 
 				 +" | peueAllowStatus: "+ peueAllowStatus +" | specializationId: "+ specializationId 
-				 +" | admissionYear: "+ admissionYear +" | curriculumVersion: "+ curriculumVersion);
+				 +" | admissionYear: "+ admissionYear +" | curriculumVersion: "+ curriculumVersion 
+				 +" | compulsoryCourseStatus: "+ compulsoryCourseStatus);
 		
 		if ((programGroupCode == null) || programGroupCode.equals(""))
 		{
@@ -3057,6 +3213,11 @@ public class CourseRegistrationCommonFunction
 		else if ((!programGroupCode.equals("NONE")) && (!courseSystem.equals("NONE")) 
 						&& (!courseSystem.equals("NONFFCS")) && (!courseSystem.equals("FFCS")))
 		{
+			if (compulsoryCourseStatus == 1)
+			{
+				returnObjectList.add(new Object[] {"COMP", "Compulsory Course"});
+			}
+			
 			if (rgrCourseAllowStatus == 1)
 			{
 				pscccList = programmeSpecializationCurriculumCreditService.getBySpecializationIdAdmissionYearAndVersion( 
@@ -3076,6 +3237,7 @@ public class CourseRegistrationCommonFunction
 					}
 				}
 			}
+			
 			if (reRegCourseAllowStatus == 1)
 			{
 				returnObjectList.add(new Object[] {"RR", "Re - Registration"});
@@ -3172,7 +3334,7 @@ public class CourseRegistrationCommonFunction
 		{	
 			classIdList = registeredList.stream().map(e -> e[3].toString()).collect(Collectors.toList());
 			slotIdList = registeredList.stream().map(e -> Long.parseLong(e[2].toString())).collect(Collectors.toList());
-			sfiMapList = courseAllocationService.getSlotFixedInfoList();
+			//sfiMapList = courseAllocationService.getSlotFixedInfoList();
 			logger.trace("\n classIdLists: "+ classIdList +" | slotIdList: "+ slotIdList 
 					+" | sfiMapList size: "+ sfiMapList.size());
 			

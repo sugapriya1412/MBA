@@ -44,9 +44,9 @@ public interface ProgrammeSpecializationCurriculumDetailRepository extends
 					"as COURSE_ID, d.CODE, b.BASKET_CATEGORY, b.CREDITS from ACADEMICS.PRG_SPLZTN_CURRICULUM_DETAILS a, "+
 					"ACADEMICS.BASKET_DETAILS b, ACADEMICS.BASKET_COURSE_CATALOG c, ACADEMICS.COURSE_CATALOG d "+
 					"where a.PRGSPLZN_PRG_SPECIALIZATION_ID=?1 and a.ADMISSION_YEAR=?2 and a.CURRICULUM_VERSION=?3 "+
-					"and a.CATALOG_TYPE='BC' and a.LOCK_STATUS=0 and b.LOCK_STATUS=0 and c.LOCK_STATUS=0 and "+
-					"a.COURSE_BASKET_ID=b.BASKET_ID and a.COURSE_BASKET_ID=c.BASKET_DETAILS_BASKET_ID and "+
-					"b.BASKET_ID=c.BASKET_DETAILS_BASKET_ID and c.COURSE_CATALOG_COURSE_ID=d.COURSE_ID and d.CODE=?4)) a "+
+					"and a.CATALOG_TYPE='BC' and a.LOCK_STATUS=0 and a.COURSE_BASKET_ID=b.BASKET_ID and "+
+					"a.COURSE_BASKET_ID=c.BASKET_DETAILS_BASKET_ID and b.BASKET_ID=c.BASKET_DETAILS_BASKET_ID and "+
+					"c.COURSE_CATALOG_COURSE_ID=d.COURSE_ID and d.CODE=?4)) a "+
 					"order by a.COURSE_CATEGORY, a.CATALOG_TYPE, a.COURSE_ID", nativeQuery=true)
 	List<Object[]> findCurriculumByAdmsnYearCCVersionAndCourseCode(Integer specId, Integer admissionYear, Float ccVersion, 
 						String courseCode);
@@ -55,14 +55,14 @@ public interface ProgrammeSpecializationCurriculumDetailRepository extends
 					"(select b.CODE as COURSE_CODE from ACADEMICS.PRG_SPLZTN_CURRICULUM_DETAILS a, "+
 					"ACADEMICS.COURSE_CATALOG b where a.PRGSPLZN_PRG_SPECIALIZATION_ID=?1 and a.ADMISSION_YEAR=?2 and "+
 					"a.CURRICULUM_VERSION=?3 and a.CATALOG_TYPE='CC' and (a.COURSE_CATEGORY in (?4) or a.COURSE_CATEGORY in "+ 
-					"(select distinct course_category from academics.prgspl_curr_category_credit where PRGSPLZN_PRG_SPECIALIZATION_ID=?1 "+ 
+					"(select course_category from academics.prgspl_curr_category_credit where PRGSPLZN_PRG_SPECIALIZATION_ID=?1 "+ 
 					"and ADMISSION_YEAR=?2 and CURRICULUM_VERSION=?3 and total_credit_calc_status=2)) and a.LOCK_STATUS=0 and "+
 					"a.COURSE_BASKET_ID=b.COURSE_ID) "+
 					"union all "+
 					"(select d.CODE as COURSE_CODE from ACADEMICS.PRG_SPLZTN_CURRICULUM_DETAILS a, ACADEMICS.BASKET_DETAILS b, "+
 					"ACADEMICS.BASKET_COURSE_CATALOG c, ACADEMICS.COURSE_CATALOG d where a.PRGSPLZN_PRG_SPECIALIZATION_ID=?1 "+
 					"and a.ADMISSION_YEAR=?2 and a.CURRICULUM_VERSION=?3 and a.CATALOG_TYPE='BC' and (a.COURSE_CATEGORY in (?4) or "+
-					"a.COURSE_CATEGORY in (select distinct course_category from academics.prgspl_curr_category_credit where "+
+					"a.COURSE_CATEGORY in (select course_category from academics.prgspl_curr_category_credit where "+
 					"PRGSPLZN_PRG_SPECIALIZATION_ID=?1 and ADMISSION_YEAR=?2 and CURRICULUM_VERSION=?3 and total_credit_calc_status=2)) "+
 					"and a.LOCK_STATUS=0 and a.COURSE_BASKET_ID=b.BASKET_ID and a.COURSE_BASKET_ID=c.BASKET_DETAILS_BASKET_ID and "+
 					"b.BASKET_ID=c.BASKET_DETAILS_BASKET_ID and c.COURSE_CATALOG_COURSE_ID=d.COURSE_ID)) a order by a.COURSE_CODE", 

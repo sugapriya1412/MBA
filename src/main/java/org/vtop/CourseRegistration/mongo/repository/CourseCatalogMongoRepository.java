@@ -12,47 +12,51 @@ public interface CourseCatalogMongoRepository extends MongoRepository<CourseCata
 	@Query(value="{'courseId' : ?0}")
 	CourseCatalog findByCourseId(String courseId);
 	
-	@Query(value="{'courseSystem' : {$in : ?0}, $or : [{'programGroupId' : {$in : ?1}}, {'alternateProgramGroup' : ?2}, "
+	@Query(value="{'courseId' : {$in : ?8}, 'courseSystem' : {$in : ?0}, $or : [{'programGroupId' : {$in : ?1}}, {'alternateProgramGroup' : ?2}, "
 					+"{'alternateProgramGroup' : {$regex : ?4}}, {'alternateProgramGroup' : {$regex : ?5}}, {'alternateProgramGroup' : {$regex : ?6}}], "
-					+"'genericCourseType' : {$nin : ?7}, 'courseCode' : {$in : ?3}, 'courseId' : {$in : ?8}}", sort="{'courseId' : 1}")
+					+"'genericCourseType' : {$nin : ?7}, 'courseCode' : {$in : ?3}}", sort="{'courseId' : 1}")
 	List<CourseCatalog> findByCourseSystemGroupIdAndCourseCodeExceptCourseTypeAndEvalType(List<String> courseSystem, List<Integer> eligibleGroupId, 
 							String alternateProgramGroup, List<String> courseCode, String altProgGroupStart, String altProgGroupMid, 
 							String altProgGroupEnd, List<String> notGenericCourseType, List<String> courseId);
 	
-	@Query(value="{'courseSystem' : {$in : ?0}, $or : [{'programGroupId' : {$in : ?1}}, {'alternateProgramGroup' : ?2}, "
+	@Query(value="{'courseId' : {$in : ?9}, 'courseSystem' : {$in : ?0}, $or : [{'programGroupId' : {$in : ?1}}, {'alternateProgramGroup' : ?2}, "
 					+"{'alternateProgramGroup' : {$regex : ?4}}, {'alternateProgramGroup' : {$regex : ?5}}, {'alternateProgramGroup' : {$regex : ?6}}], "
-					+ "'genericCourseType' : {$nin : ?7}, 'evaluationType' : {$nin : ?8}, 'courseCode' : {$nin : ?3}, 'courseId' : {$in : ?9}}", 
-					sort="{'courseId' : 1}")
+					+ "'genericCourseType' : {$nin : ?7}, 'evaluationType' : {$nin : ?8}, 'courseCode' : {$nin : ?3}}", sort="{'courseId' : 1}")
 	List<CourseCatalog> findByCourseSystemGroupIdAndNINCourseCodeExceptCourseTypeAndEvalType(List<String> courseSystem, List<Integer> eligibleGroupId, 
 							String alternateProgramGroup, List<String> courseCode, String altProgGroupStart, String altProgGroupMid, String altProgGroupEnd, 
 							List<String> notGenericCourseType, List<String> notEvaluationType, List<String> courseId);
 		
-	@Query(value="{'courseSystem' : {$in : ?0}, $or : [{'programGroupId' : {$in : ?1}}, {'alternateProgramGroup' : ?2}, "
+	@Query(value="{'courseId' : {$in : ?8}, 'courseSystem' : {$in : ?0}, $or : [{'programGroupId' : {$in : ?1}}, {'alternateProgramGroup' : ?2}, "
 					+"{'alternateProgramGroup' : {$regex : ?4}}, {'alternateProgramGroup' : {$regex : ?5}}, {'alternateProgramGroup' : {$regex : ?6}}], "
-					+"'genericCourseType' : {$nin : ?7}, 'courseCode' : {$in : ?3}, 'courseId' : {$in : ?8}}", sort="{'courseId' : 1}")
+					+"'genericCourseType' : {$nin : ?7}, 'courseCode' : {$in : ?3}}", sort="{'courseId' : 1}")
 	List<CourseCatalog> findByCourseSystemGroupIdAndCourseCodeExceptCourseTypeForRR(List<String> courseSystem, List<Integer> eligibleGroupId, 
 							String alternateProgramGroup, List<String> courseCode, String altProgGroupStart, String altProgGroupMid, String altProgGroupEnd, 
 							List<String> notGenericCourseType, List<String> courseId);
 	
-	@Query(value="{'courseSystem' : {$in : ?0}, $or : [{'programGroupId' : {$in : ?1}}, {'alternateProgramGroup' : ?2}, "
+	@Query(value="{'courseId' : {$in : ?8}, 'courseSystem' : {$in : ?0}, $or : [{'programGroupId' : {$in : ?1}}, {'alternateProgramGroup' : ?2}, "
 					+"{'alternateProgramGroup' : {$regex : ?4}}, {'alternateProgramGroup' : {$regex : ?5}}, {'alternateProgramGroup' : {$regex : ?6}}], "
-					+"'genericCourseType' : {$nin : ?7}, 'courseCode' : {$in : ?3}, 'courseId' : {$in : ?8}}", sort="{'courseId' : 1}")
+					+"'genericCourseType' : {$nin : ?7}, 'courseCode' : {$in : ?3}}", sort="{'courseId' : 1}")
 	List<CourseCatalog> findByCourseSystemGroupIdAndCourseCodeExceptCourseTypeForFFCSToCAL(List<String> courseSystem, List<Integer> eligibleGroupId, 
 							String alternateProgramGroup, List<String> courseCode, String altProgGroupStart, String altProgGroupMid, String altProgGroupEnd, 
 							List<String> notGenericCourseType, List<String> courseId);
 	
-	@Query(value="{'courseSystem' : {$in : ?0}, $or : [{'programGroupId' : {$in : ?1}}, {'alternateProgramGroup' : ?2}, "
+	@Query(value="{'courseId' : {$in : ?8}, 'courseSystem' : {$in : ?0}, $or : [{'programGroupId' : {$in : ?1}}, {'alternateProgramGroup' : ?2}, "
 					+"{'alternateProgramGroup' : {$regex : ?4}}, {'alternateProgramGroup' : {$regex : ?5}}, {'alternateProgramGroup' : {$regex : ?6}}],"
-					+" 'genericCourseType' : {$nin : ?7}, 'courseCode' : {$nin : ?3}, 'courseId' : {$in : ?8}}", sort="{'courseId' : 1}")
+					+" 'genericCourseType' : {$nin : ?7}, 'courseCode' : {$nin : ?3}}", sort="{'courseId' : 1}")
 	List<CourseCatalog> findByCourseSystemGroupIdAndNINCourseCodeExceptCourseType(List<String> courseSystem, List<Integer> eligibleGroupId, 
 							String alternateProgramGroup, List<String> courseCode, String altProgGroupStart, String altProgGroupMid, String altProgGroupEnd, 
 							List<String> notGenericCourseType, List<String> courseId);
 	
-	@Query(value="{'courseSystem' : {$in : ?0}, $or : [{'programGroupId' : {$in : ?1}}, {'alternateProgramGroup' : ?2}, "
+	@Query(value="{'courseId' : {$in : ?9}, 'courseSystem' : {$in : ?0}, $or : [{'programGroupId' : {$in : ?1}}, {'alternateProgramGroup' : ?2}, "
 					+"{'alternateProgramGroup' : {$regex : ?5}}, {'alternateProgramGroup' : {$regex : ?6}}, {'alternateProgramGroup' : {$regex : ?7}}], "
-					+"'genericCourseType' : {$nin : ?8}, 'courseCode' : {$in : ?3}, 'courseCode' : {$nin : ?4}, 'courseId' : {$in : ?9}}", 
-					sort="{'courseId' : 1}")
+					+"'genericCourseType' : {$nin : ?8}, 'courseCode' : {$in : ?3}, 'courseCode' : {$nin : ?4}}", sort="{'courseId' : 1}")
 	List<CourseCatalog> findByCourseSystemGroupIdAndINWNINCourseCodeExceptCourseType(List<String> courseSystem, List<Integer> eligibleGroupId, 
 							String alternateProgramGroup, List<String> courseCode, List<String> notCourseCode, String altProgGroupStart, String altProgGroupMid, 
 							String altProgGroupEnd, List<String> notGenericCourseType, List<String> courseId);
+	
+	@Query(value="{'courseId' : {$in : ?6}, 'courseSystem' : {$in : ?0}, $or : [{'programGroupId' : {$in : ?1}}, {'alternateProgramGroup' : ?2}, "
+					+"{'alternateProgramGroup' : {$regex : ?3}}, {'alternateProgramGroup' : {$regex : ?4}}, {'alternateProgramGroup' : {$regex : ?5}}] }", 
+					sort="{'courseId' : 1}")
+	List<CourseCatalog> findByCourseIdCourseSystemAndGroupId(List<String> courseSystem, List<Integer> eligibleGroupId, String alternateProgramGroup, 
+							String altProgGroupStart, String altProgGroupMid, String altProgGroupEnd, List<String> courseId);
 }

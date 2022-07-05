@@ -1,7 +1,6 @@
 package org.vtop.CourseRegistration.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -88,8 +87,8 @@ public class CompulsoryCourseConditionDetailService
 						}
 					}
 				}
-				logger.trace("\n preReqType: "+ preReqType +" | preReqParam: "+ preReqParam 
-						+" | preReqParam2: "+ preReqParam2 +" | preReqParam3: "+ preReqParam3);
+				//logger.trace("\n preReqType: "+ preReqType +" | preReqParam: "+ preReqParam 
+				//		+" | preReqParam2: "+ preReqParam2 +" | preReqParam3: "+ preReqParam3);
 				
 				//Default
 				if (preReqType == 1)
@@ -175,7 +174,7 @@ public class CompulsoryCourseConditionDetailService
 				{
 					for (String prqp : preReqParam2.split("/"))
 					{
-						logger.trace("\n prqp: "+ prqp);
+						//logger.trace("\n prqp: "+ prqp);
 						tempObjectList2 = courseRegistrationService.getByRegisterNumberCourseCode3(preReqParam, 
 												registerNumber, prqp);
 						if (!tempObjectList2.isEmpty())
@@ -363,8 +362,8 @@ public class CompulsoryCourseConditionDetailService
 					}
 				}
 				
-				logger.trace("\n "+ Arrays.deepToString(e));
-				logger.trace("\n compCheckFlag: "+ compCheckFlag);
+				//logger.trace("\n "+ Arrays.deepToString(e));
+				//logger.trace("\n compCheckFlag: "+ compCheckFlag);
 				if (compCheckFlag == 1)
 				{
 					tempCompCourseList.add(courseId);

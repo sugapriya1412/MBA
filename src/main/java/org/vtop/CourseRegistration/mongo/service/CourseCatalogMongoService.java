@@ -8,10 +8,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.vtop.CourseRegistration.model.CourseCatalogModel;
 import org.vtop.CourseRegistration.mongo.model.CourseAllocation;
 import org.vtop.CourseRegistration.mongo.model.CourseCatalog;
 import org.vtop.CourseRegistration.mongo.model.CourseEquivalanceCatalog;
@@ -43,17 +40,7 @@ public class CourseCatalogMongoService
 	{
 		return courseCatalogMongoRepository.findByCourseId(courseId); 
 	}
-	
-	
-	/*public Page<CourseCatalog> getCompulsoryCoursePagination(String campusCode, String[] courseSystem, 
-									List<Integer> egbGroupId, String groupCode, String semesterSubId, 
-									String[] classGroupId, String[] classType, List<String> courseCode, 
-									String progGroupCode, String progSpecCode, String costCentreCode, 
-									Pageable pageable)
-	{
-		Page<CourseCatalog> returnModelList = new Page<CourseCatalog>();
-	}*/
-	
+		
 	public List<CourseCatalog> getCourseListForRegistration(String registrationOption, String campusCode, 
 										String[] courseSystem, List<Integer> egbGroupId, Integer programGroupId, 
 										String semesterSubId, Integer programSpecId, String[] classGroupId, 
@@ -61,7 +48,8 @@ public class CourseCatalogMongoService
 										String registerNumber, int searchType, String searchValue, 
 										Integer studentGraduateYear, String programGroupCode, 
 										String programSpecCode, String registrationMethod, String[] registerNumber2, 
-										int PEUEAllowStatus, int evalPage, int evalPageSize, String costCentreCode)
+										int PEUEAllowStatus, int evalPage, int evalPageSize, String costCentreCode, 
+										List<String> compulsoryCourseCode)
 	{
 		List<CourseCatalog> returnModelList = new ArrayList<>();
 		
@@ -142,7 +130,37 @@ public class CourseCatalogMongoService
 				programGroupEnd = ".*/"+ programGroup +"$.*";
 						
 				switch(registrationOption)
-				{						
+				{	
+					case "COMP":
+						if (!compulsoryCourseCode.isEmpty())
+						{
+							if (programGroupCode.equals("RP"))
+							{
+								courseAllocationList = courseAllocationMongoRepository.findCourseIdBySemesterSubIdClassGroupClassTypeAndCourseCode(semesterSubId, 
+															Arrays.asList(classGroupId), Arrays.asList(classType), compulsoryCourseCode);
+							}
+							else
+							{
+								courseAllocationList = courseAllocationMongoRepository.findCourseIdBySemesterSubIdClassGroupClassTypeClassOptionAndCourseCode(
+															semesterSubId, Arrays.asList(classGroupId), Arrays.asList(classType), programGroupCode, programSpecCode, 
+															costCentreCode, compulsoryCourseCode);
+							}
+														
+							if (!courseAllocationList.isEmpty())
+							{
+								courseIdList = courseAllocationList.stream().map(e-> e.getCourseId()).distinct().collect(Collectors.toList());
+							}
+							else
+							{
+								courseIdList.add("NONE");
+							}
+							logger.trace("\n COMP - courseIdList: "+ courseIdList);
+							
+							returnModelList = courseCatalogMongoRepository.findByCourseIdCourseSystemAndGroupId(Arrays.asList(courseSystem), egbGroupId, 
+													programGroup, programGroupStart, programGroupMid, programGroupEnd, courseIdList);
+						}
+						break;
+						
 					case "UE":
 						prgSplCurriculumDetailList = programSpecializationCurriculumDetailMongoRepository.findCourseCodeBySpecIdAndAdmissionYear(
 														programSpecId, admissionYear);
@@ -154,7 +172,7 @@ public class CourseCatalogMongoService
 						{
 							courseCodeList.add("NONE");
 						}
-						logger.trace("\n courseCodeList: "+ courseCodeList.toString());
+						logger.trace("\n UE - courseCodeList: "+ courseCodeList.toString());
 						
 						courseAllocationList = courseAllocationMongoRepository.findCourseIdBySemesterSubIdClassGroupClassTypeAndClassOption(semesterSubId, 
 													Arrays.asList(classGroupId), Arrays.asList(classType), programGroupCode, programSpecCode, costCentreCode);
@@ -166,7 +184,7 @@ public class CourseCatalogMongoService
 						{
 							courseIdList.add("NONE");
 						}
-						logger.trace("\n courseIdList: "+ courseIdList);
+						logger.trace("\n UE - courseIdList: "+ courseIdList);
 						
 						returnModelList = courseCatalogMongoRepository.findByCourseSystemGroupIdAndNINCourseCodeExceptCourseTypeAndEvalType(
 												Arrays.asList(courseSystem), egbGroupId, programGroup, courseCodeList, programGroupStart, 
@@ -185,7 +203,7 @@ public class CourseCatalogMongoService
 						{
 							notCourseCodeList.add("NONE");
 						}
-						logger.trace("\n notCourseCodeList (Leve - 1): "+ notCourseCodeList.toString());
+						logger.trace("\n RGR - notCourseCodeList (Level - 1): "+ notCourseCodeList.toString());
 						
 						courseEquivalanceList = courseEquivalanceCatalogMongoRepository.findByCourseCodeAndEquivalentCourseCode(notCourseCodeList);
 						if (!courseEquivalanceList.isEmpty())
@@ -196,13 +214,13 @@ public class CourseCatalogMongoService
 									|| (e.getEquivalentCourseCode().isEmpty())) ? "NONE" : e.getEquivalentCourseCode())
 									.distinct().collect(Collectors.toList()));
 						}
-						logger.trace("\n notCourseCodeList (Leve - 2): "+ notCourseCodeList.toString());
+						logger.trace("\n RGR - notCourseCodeList (Level - 2): "+ notCourseCodeList.toString());
 						
 						if (!notCourseCodeList.isEmpty())
 						{
 							notCourseCodeList = notCourseCodeList.stream().distinct().collect(Collectors.toList());
 						}
-						logger.trace("\n notCourseCodeList (Leve - 3): "+ notCourseCodeList.toString());
+						logger.trace("\n RGR - notCourseCodeList (Level - 3): "+ notCourseCodeList.toString());
 						
 						if (programGroupCode.equals("RP"))
 						{
@@ -222,7 +240,7 @@ public class CourseCatalogMongoService
 						{
 							courseIdList.add("NONE");
 						}
-						logger.trace("\n courseIdList: "+ courseIdList);
+						logger.trace("\n RGR courseIdList: "+ courseIdList);
 						
 						if ((programGroupCode.equals("RP")) && (admissionYear >= 2018))
 						{
@@ -235,6 +253,8 @@ public class CourseCatalogMongoService
 							{
 								courseCodeList.add("NONE");
 							}
+							logger.trace("\n RGR - Research courseCodeList: "+ courseCodeList);
+							
 							returnModelList = courseCatalogMongoRepository.findByCourseSystemGroupIdAndINWNINCourseCodeExceptCourseType(Arrays.asList(courseSystem), 
 													egbGroupId, programGroup, courseCodeList, notCourseCodeList, programGroupStart, programGroupMid, programGroupEnd, 
 													Arrays.asList("SS","ECA","OC"), courseIdList);
@@ -265,7 +285,7 @@ public class CourseCatalogMongoService
 						{
 							courseCodeList.add("NONE");
 						}
-						logger.trace("\n courseCodeList (Leve - 1): "+ courseCodeList.toString());
+						logger.trace("\n RR - courseCodeList (Level - 1): "+ courseCodeList.toString());
 						
 						courseEquivalanceList = courseEquivalanceCatalogMongoRepository.findByCourseCodeAndEquivalentCourseCode(courseCodeList);
 						if (!courseEquivalanceList.isEmpty())
@@ -276,13 +296,13 @@ public class CourseCatalogMongoService
 									|| (e.getEquivalentCourseCode().isEmpty())) ? "NONE" : e.getEquivalentCourseCode())
 									.distinct().collect(Collectors.toList()));
 						}
-						logger.trace("\n courseCodeList (Leve - 2): "+ courseCodeList.toString());
+						logger.trace("\n RR - courseCodeList (Level - 2): "+ courseCodeList.toString());
 						
 						if (!courseCodeList.isEmpty())
 						{
 							courseCodeList = courseCodeList.stream().distinct().collect(Collectors.toList());
 						}
-						logger.trace("\n courseCodeList (Leve - 3): "+ courseCodeList.toString());
+						logger.trace("\n RR - courseCodeList (Level - 3): "+ courseCodeList.toString());
 						
 						if (programGroupCode.equals("RP"))
 						{
@@ -302,7 +322,7 @@ public class CourseCatalogMongoService
 						{
 							courseIdList.add("NONE");
 						}
-						logger.trace("\n courseIdList: "+ courseIdList);
+						logger.trace("\n RR - courseIdList: "+ courseIdList);
 						
 						returnModelList = courseCatalogMongoRepository.findByCourseSystemGroupIdAndCourseCodeExceptCourseTypeForRR(Arrays.asList(courseSystem), 
 												egbGroupId, programGroup, courseCodeList, programGroupStart, programGroupMid, programGroupEnd, 
@@ -324,13 +344,13 @@ public class CourseCatalogMongoService
 									|| (e.getEquivalentCourseCode().isEmpty())) ? "NONE" : e.getEquivalentCourseCode())
 									.distinct().collect(Collectors.toList()));
 						}
-						logger.trace("\n courseCodeList (Leve - 1): "+ courseCodeList.toString());
+						logger.trace("\n RR - courseCodeList (Leve - 1): "+ courseCodeList.toString());
 						
 						if (!courseCodeList.isEmpty())
 						{
 							courseCodeList = courseCodeList.stream().distinct().collect(Collectors.toList());
 						}
-						logger.trace("\n courseCodeList (Leve - 2): "+ courseCodeList.toString());
+						logger.trace("\n RR - courseCodeList (Leve - 2): "+ courseCodeList.toString());
 						
 						courseAllocationList = courseAllocationMongoRepository.findCourseIdBySemesterSubIdClassGroupClassTypeAndClassOption(semesterSubId, 
 													Arrays.asList(classGroupId), Arrays.asList(classType), programGroupCode, programSpecCode, costCentreCode);
@@ -342,7 +362,7 @@ public class CourseCatalogMongoService
 						{
 							courseIdList.add("NONE");
 						}
-						logger.trace("\n courseIdList: "+ courseIdList);
+						logger.trace("\n RR - courseIdList: "+ courseIdList);
 						
 						returnModelList = courseCatalogMongoRepository.findByCourseSystemGroupIdAndCourseCodeExceptCourseTypeForFFCSToCAL(Arrays.asList("CAL"), 
 												egbGroupId, programGroup, courseCodeList, programGroupStart, programGroupMid, programGroupEnd, 
@@ -360,6 +380,7 @@ public class CourseCatalogMongoService
 						{
 							courseCodeList.add("NONE");
 						}
+						logger.trace("\n default - courseIdList: "+ courseIdList);
 						
 						courseAllocationList = courseAllocationMongoRepository.findCourseIdBySemesterSubIdClassGroupClassTypeAndClassOption(semesterSubId, 
 													Arrays.asList(classGroupId), Arrays.asList(classType), programGroupCode, programSpecCode, costCentreCode);
@@ -371,7 +392,7 @@ public class CourseCatalogMongoService
 						{
 							courseIdList.add("NONE");
 						}
-						logger.trace("\n courseIdList: "+ courseIdList);
+						logger.trace("\n default - courseIdList: "+ courseIdList);
 					
 						returnModelList = courseCatalogMongoRepository.findByCourseSystemGroupIdAndCourseCodeExceptCourseTypeAndEvalType(
 											Arrays.asList(courseSystem), egbGroupId, programGroup, courseCodeList, programGroupStart, 

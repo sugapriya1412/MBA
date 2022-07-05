@@ -184,7 +184,7 @@ public class CourseRegistrationCommonMongoService
 	//Registration Course Option
 	public List<Object[]> getRegistrationOption(String programGroupCode, String courseSystem, int rgrCourseAllowStatus, 
 								int reRegCourseAllowStatus, int peueAllowStatus, Integer specializationId, Integer admissionYear, 
-								Float curriculumVersion)
+								Float curriculumVersion, int compulsoryCourseStatus)
 	{
 		List<Object[]> returnObjectList = new ArrayList<Object[]>();
 		List<ProgramSpecializationCurriculumCategoryCredit> pscccList = new ArrayList<>();
@@ -243,6 +243,11 @@ public class CourseRegistrationCommonMongoService
 		else if ((!programGroupCode.equals("NONE")) && (!courseSystem.equals("NONE")) 
 						&& (!courseSystem.equals("NONFFCS")) && (!courseSystem.equals("FFCS")))
 		{
+			if (compulsoryCourseStatus == 1)
+			{
+				returnObjectList.add(new Object[] {"COMP", "Compulsory Course"});
+			}
+			
 			if (rgrCourseAllowStatus == 1)
 			{
 				pscccList = programSpecializationCurriculumCategoryCreditMongoRepository.findBySpecIdAndAdmissionYear(specializationId, 
@@ -262,6 +267,7 @@ public class CourseRegistrationCommonMongoService
 					}
 				}
 			}
+			
 			if (reRegCourseAllowStatus == 1)
 			{
 				returnObjectList.add(new Object[] {"RR", "Re - Registration"});
@@ -270,5 +276,32 @@ public class CourseRegistrationCommonMongoService
 		logger.trace("\n returnObjectList size: "+ returnObjectList.size());
 		
 		return returnObjectList;
+	}
+	
+	//Registration Option Description
+	public String getCourseOptionDescription(int specializationId, int admissionYear, String registrationOption)
+	{
+		String returnDescription = "";
+		
+		switch (registrationOption)
+		{
+			case "COMP":  returnDescription = "Compulsory Course(s)"; break;
+			case "RGR":  returnDescription = "Regular Course(s)"; break;
+			case "RR":  returnDescription = "Re-registration Course(s)"; break;
+			case "FFCSCAL":  returnDescription = "FFCS to CAL Course Equivalence"; break;
+			case "ExtraCur":  returnDescription = "Co-Extra Curricular Activity Courses(s)"; break;
+			
+			default:
+				ProgramSpecializationCurriculumCategoryCredit programSpecializationCurriculumCategoryCredit 
+						= programSpecializationCurriculumCategoryCreditMongoRepository.findBySpecIdAdmissionYearAndCategory
+								(specializationId, admissionYear, registrationOption);
+				if (programSpecializationCurriculumCategoryCredit != null)
+				{
+					returnDescription = programSpecializationCurriculumCategoryCredit.getCourseCategoryDescription();
+				}
+				break;
+		}
+				
+		return returnDescription;
 	}
 }

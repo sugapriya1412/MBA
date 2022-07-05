@@ -2,7 +2,6 @@ package org.vtop.CourseRegistration.service;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -251,7 +250,7 @@ public class CourseAllocationService
 					{
 						stmModelList.addAll(slotTimeMapList.get(key));
 					}
-					logger.trace("\n Clash=> key: "+ key +" | stmModelList size: "+ stmModelList.size());
+					//logger.trace("\n Clash=> key: "+ key +" | stmModelList size: "+ stmModelList.size());
 										
 					if (!stmModelList.isEmpty())
 					{
@@ -261,14 +260,14 @@ public class CourseAllocationService
 							clashStartTime = Long.parseLong(sdf.format(stm.getStmPkId().getSlotStartingTime()));
 							clashEndTime = Long.parseLong(sdf.format(stm.getStmPkId().getSlotEndingTime()));
 							clashSlotType = stm.getSlotType();
-							logger.trace("\n clashWeekDay: "+ clashWeekDay +" | clashStartTime: "+ clashStartTime 
-									+" | clashEndTime: "+ clashEndTime +" | clashSlotType: "+ clashSlotType);
+							//logger.trace("\n clashWeekDay: "+ clashWeekDay +" | clashStartTime: "+ clashStartTime 
+							//		+" | clashEndTime: "+ clashEndTime +" | clashSlotType: "+ clashSlotType);
 							
 							for (Object[] obj : allottedSlot)
 							{
 								allotPatternId = Integer.parseInt(obj[0].toString());
 								allotSlot = obj[1].toString();
-								logger.trace("\n allotPatternId: "+ allotPatternId +" | allotSlot: "+ allotSlot);
+								//logger.trace("\n allotPatternId: "+ allotPatternId +" | allotSlot: "+ allotSlot);
 								
 								for (String altSt : allotSlot.split("\\+"))
 								{
@@ -279,7 +278,7 @@ public class CourseAllocationService
 									{
 										stmModelList2.addAll(slotTimeMapList.get(key2));
 									}
-									logger.trace("\n Allot=> key2: "+ key2 +" | stmModelList2 size: "+ stmModelList2.size());
+									//logger.trace("\n Allot=> key2: "+ key2 +" | stmModelList2 size: "+ stmModelList2.size());
 									
 									if (!stmModelList2.isEmpty())
 									{
@@ -292,20 +291,20 @@ public class CourseAllocationService
 											allotStartTime = Long.parseLong(sdf.format(stm2.getStmPkId().getSlotStartingTime()));
 											allotEndTime = Long.parseLong(sdf.format(stm2.getStmPkId().getSlotEndingTime()));
 											allotSlotType = stm2.getSlotType();
-											logger.trace("\n allotWeekDay: "+ allotWeekDay +" | allotStartTime: "+ allotStartTime 
-													+" | allotEndTime: "+ allotEndTime +" | allotSlotType: "+ allotSlotType);
+											//logger.trace("\n allotWeekDay: "+ allotWeekDay +" | allotStartTime: "+ allotStartTime 
+											//		+" | allotEndTime: "+ allotEndTime +" | allotSlotType: "+ allotSlotType);
 											
 											if (altSt.equals(clhSt))
 											{
 												checkSlot = altSt;
-												logger.trace("\n Clash Check Level 1: Failed");
+												//logger.trace("\n Clash Check Level 1: Failed");
 											}
 											else if (allotWeekDay.equals(clashWeekDay) && allotSlotType.equals(clashSlotType) 
 															&& (((allotStartTime >= clashStartTime) && (allotStartTime <= clashEndTime))
 																	|| ((allotEndTime >= clashStartTime) && (allotEndTime <= clashEndTime))))
 											{
 												checkSlot = altSt;
-												logger.trace("\n Clash Check Level 2: Failed");
+												//logger.trace("\n Clash Check Level 2: Failed");
 											}
 											else if (allotWeekDay.equals(clashWeekDay) && (!allotSlotType.equals(clashSlotType))  
 															&& (clashSlotType.equals("GENERAL") || allotSlotType.equals("GENERAL")) 
@@ -313,13 +312,13 @@ public class CourseAllocationService
 																	|| ((allotEndTime >= clashStartTime) && (allotEndTime <= clashEndTime))))
 											{
 												checkSlot = altSt;
-												logger.trace("\n Clash Check Level 3: Failed");
+												//logger.trace("\n Clash Check Level 3: Failed");
 											}
 											else
 											{
 												clashStatus = 1;
 											}
-											logger.trace("\n clashStatus: "+ clashStatus);
+											//logger.trace("\n clashStatus: "+ clashStatus);
 											
 											if (clashStatus == 2) break;
 										}
@@ -382,7 +381,7 @@ public class CourseAllocationService
 					{
 						stmModelList.addAll(slotTimeMapList.get(key));
 					}
-					logger.trace("\n Clash=> key: "+ key +" | stmModelList size: "+ stmModelList.size());
+					//logger.trace("\n Clash=> key: "+ key +" | stmModelList size: "+ stmModelList.size());
 										
 					if (!stmModelList.isEmpty())
 					{
@@ -396,8 +395,8 @@ public class CourseAllocationService
 								allotPatternId = Integer.parseInt(obj[0].toString());
 								allotSlot = obj[1].toString();
 								allotBuildingId = Long.parseLong(obj[4].toString());
-								logger.trace("\n allotPatternId: "+ allotPatternId +" | allotSlot: "+ allotSlot 
-										+" | allotBuildingId: "+ allotBuildingId);
+								//logger.trace("\n allotPatternId: "+ allotPatternId +" | allotSlot: "+ allotSlot 
+								//		+" | allotBuildingId: "+ allotBuildingId);
 								
 								for (String altSt : allotSlot.split("\\+"))
 								{
@@ -408,7 +407,7 @@ public class CourseAllocationService
 									{
 										stmModelList2.addAll(slotTimeMapList.get(key2));
 									}
-									logger.trace("\n Allot=> key2: "+ key2 +" | stmModelList2 size: "+ stmModelList2.size());
+									//logger.trace("\n Allot=> key2: "+ key2 +" | stmModelList2 size: "+ stmModelList2.size());
 									
 									if (!stmModelList2.isEmpty())
 									{	
@@ -422,7 +421,7 @@ public class CourseAllocationService
 											diffValue = 0;
 																						
 											allotWeekDay = stm2.getStmPkId().getWeekdays();
-											logger.trace("\n allotWeekDay: "+ allotWeekDay);
+											//logger.trace("\n allotWeekDay: "+ allotWeekDay);
 											
 											if (allotWeekDay.equals(clashWeekDay))
 											{													
@@ -434,7 +433,7 @@ public class CourseAllocationService
 												{
 													diffValue = slotFixedInfoList.get(altSt +"_"+ slt);
 												}
-												logger.trace("\n diffValue: "+ diffValue);
+												//logger.trace("\n diffValue: "+ diffValue);
 												
 												if (allotBuildingId != buildingId) 
 												{
@@ -480,7 +479,7 @@ public class CourseAllocationService
 											}
 												
 											if (clashStatus == 2) break;
-											logger.trace("\n Block & Time Check Status: "+ clashStatus);
+											//logger.trace("\n Block & Time Check Status: "+ clashStatus);
 										}
 									}
 									
@@ -506,7 +505,7 @@ public class CourseAllocationService
 		return clashStatus +"|"+ message +"|"+ color;
 	}
 	
-	public Map<String, Integer> getSlotFixedInfoList()
+	/*public Map<String, Integer> getSlotFixedInfoList()
 	{
 		Map<String, Integer> returnMapList = new HashMap<String, Integer>();
 		
@@ -554,5 +553,5 @@ public class CourseAllocationService
 		returnMapList.put("C2_L58", 1);
 		
 		return returnMapList;
-	}
+	}*/
 }

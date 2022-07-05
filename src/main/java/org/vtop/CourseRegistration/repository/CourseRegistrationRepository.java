@@ -100,6 +100,13 @@ public interface CourseRegistrationRepository extends JpaRepository<CourseRegist
 			"a.courseAllocationModel.timeTableModel.slotName")
 	List<Object[]> findRegisteredSlotsByNotClassGroup(String semesterSubId, String registerNumber, List<String> classGroupId);
 	
+	@Query("select a.courseAllocationModel.timeTableModel.patternId, a.courseAllocationModel.timeTableModel.slotName from "+
+			"CourseRegistrationModel a where a.courseRegistrationPKId.semesterSubId in (?1) and a.courseRegistrationPKId.registerNumber=?2 "+
+			"and a.courseRegistrationPKId.courseType not in ('EPJ') and a.courseAllocationModel.slotId not in (0) and "+
+			"a.courseAllocationModel.clsGrpMasterGroupId not in (?3) order by a.courseAllocationModel.timeTableModel.patternId, "+
+			"a.courseAllocationModel.timeTableModel.slotName")
+	List<Object[]> findRegisteredSlotsBySemesterAndNotClassGroup(List<String> semesterSubId, String registerNumber, List<String> classGroupId);
+	
 		
 	@Query("select a.courseAllocationModel.timeTableModel.patternId, a.courseAllocationModel.timeTableModel.slotName from "+
 			"CourseRegistrationModel a where a.courseRegistrationPKId.semesterSubId=?1 and a.courseRegistrationPKId.registerNumber=?2 "+
@@ -113,6 +120,14 @@ public interface CourseRegistrationRepository extends JpaRepository<CourseRegist
 			"and a.courseAllocationModel.clsGrpMasterGroupId not in (?4) order by a.courseAllocationModel.timeTableModel.patternId, "+
 			"a.courseAllocationModel.timeTableModel.slotName")
 	List<Object[]> findRegisteredSlotsByNotClassGroupforUpdate(String semesterSubId, String registerNumber, String oldClassId, 
+						List<String> classGroupId);
+	
+	@Query("select a.courseAllocationModel.timeTableModel.patternId, a.courseAllocationModel.timeTableModel.slotName from "+
+			"CourseRegistrationModel a where a.courseRegistrationPKId.semesterSubId in (?1) and a.courseRegistrationPKId.registerNumber=?2 "+
+			"and a.classId not in (?3) and a.courseRegistrationPKId.courseType not in ('EPJ') and a.courseAllocationModel.slotId not in (0) "+ 
+			"and a.courseAllocationModel.clsGrpMasterGroupId not in (?4) order by a.courseAllocationModel.timeTableModel.patternId, "+
+			"a.courseAllocationModel.timeTableModel.slotName")
+	List<Object[]> findRegisteredSlotsBySemesterAndNotClassGroupforUpdate(List<String> semesterSubId, String registerNumber, String oldClassId, 
 						List<String> classGroupId);
 
 	
@@ -156,6 +171,26 @@ public interface CourseRegistrationRepository extends JpaRepository<CourseRegist
 					"and b.TIME_TABLE_SLOT_ID not in (0) and b.CLSSGRP_MASTER_CLASS_GROUP_ID not in (?3) and b.TIME_TABLE_SLOT_ID=c.SLOT_ID and "+
 					"b.BUILDING_MASTER_BUILDING_ID=d.BUILDING_ID)) a order by a.PATTERN_ID, a.SLOT_NAME", nativeQuery=true)
 	List<Object[]> findRegistrationAndWaitingByNotClassGroupSlotDetail(String semesterSubId, String registerNumber, List<String> classGroupId);
+	
+	@Query(value="select a.PATTERN_ID, a.SLOT_NAME, a.TIME_TABLE_SLOT_ID, a.COURSE_ALLOCATION_CLASS_ID, a.BUILDING_MASTER_BUILDING_ID, "+ 
+					"a.building_code from ("+ 
+					"(select c.PATTERN_ID, c.SLOT_NAME, b.TIME_TABLE_SLOT_ID, a.COURSE_ALLOCATION_CLASS_ID, b.BUILDING_MASTER_BUILDING_ID, "+ 
+					"d.CODE as building_code from ACADEMICS.COURSE_REGISTRATION a, ACADEMICS.COURSE_ALLOCATION b, ACADEMICS.TIME_TABLE c, "+ 
+					"estates.BUILDING_MASTER d where a.SEMSTR_DETAILS_SEMESTER_SUB_ID in (?1) and a.STDNTSLGNDTLS_REGISTER_NUMBER=?2 and "+ 
+					"a.CRSTYPCMPNTMASTER_COURSE_TYPE not in ('EPJ') and a.COURSE_ALLOCATION_CLASS_ID=b.CLASS_ID and "+ 
+					"a.SEMSTR_DETAILS_SEMESTER_SUB_ID=b.SEMSTR_DETAILS_SEMESTER_SUB_ID and a.COURSE_CATALOG_COURSE_ID=b.COURSE_CATALOG_COURSE_ID "+ 
+					"and a.CRSTYPCMPNTMASTER_COURSE_TYPE=b.CRSTYPCMPNTMASTER_COURSE_TYPE and b.TIME_TABLE_SLOT_ID not in (0) and "+ 
+					"b.CLSSGRP_MASTER_CLASS_GROUP_ID not in (?3) and b.TIME_TABLE_SLOT_ID=c.SLOT_ID and b.BUILDING_MASTER_BUILDING_ID=d.BUILDING_ID) "+ 
+					"union all "+ 
+					"(select c.PATTERN_ID, c.SLOT_NAME, b.TIME_TABLE_SLOT_ID, a.COURSE_ALLOCATION_CLASS_ID, b.BUILDING_MASTER_BUILDING_ID, "+ 
+					"d.CODE as building_code from ACADEMICS.COURSE_REGISTRATION_WAITING a, ACADEMICS.COURSE_ALLOCATION b, "+ 
+					"ACADEMICS.TIME_TABLE c, estates.BUILDING_MASTER d where a.SEMSTR_DETAILS_SEMESTER_SUB_ID in (?1) and "+ 
+					"a.STDNTSLGNDTLS_REGISTER_NUMBER=?2 and a.CRSTYPCMPNTMASTER_COURSE_TYPE not in ('EPJ') and a.WAITING_STATUS=0 "+ 
+					"and a.COURSE_ALLOCATION_CLASS_ID=b.CLASS_ID and a.SEMSTR_DETAILS_SEMESTER_SUB_ID=b.SEMSTR_DETAILS_SEMESTER_SUB_ID and "+ 
+					"a.COURSE_CATALOG_COURSE_ID=b.COURSE_CATALOG_COURSE_ID and a.CRSTYPCMPNTMASTER_COURSE_TYPE=b.CRSTYPCMPNTMASTER_COURSE_TYPE "+ 
+					"and b.TIME_TABLE_SLOT_ID not in (0) and b.CLSSGRP_MASTER_CLASS_GROUP_ID not in (?3) and b.TIME_TABLE_SLOT_ID=c.SLOT_ID and "+
+					"b.BUILDING_MASTER_BUILDING_ID=d.BUILDING_ID)) a order by a.PATTERN_ID, a.SLOT_NAME", nativeQuery=true)
+	List<Object[]> findRegistrationAndWaitingSlotDetailByNotClassGroup(List<String> semesterSubId, String registerNumber, List<String> classGroupId);
 
 		
 	@Query("select distinct a.courseRegistrationPKId.courseId from CourseRegistrationModel a where "+
@@ -769,4 +804,34 @@ public interface CourseRegistrationRepository extends JpaRepository<CourseRegist
 					"and CRSTYPCMPNTMASTER_COURSE_TYPE not in ('ECA') and a.COURSE_OPTION_MASTER_CODE not in ('AUD','GI','GICE') and "+
 					"a.RESULT_STATUS in (0,1) and a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID) a", nativeQuery=true)
 	Float findPreviousSemesterCreditByRegisterNumber(List<String> registerNumber);
+	
+	
+	//Compulsory Course Registration & Allocation Status
+	@Query(value="select a.tab_type, a.course_code from ( "+
+					"(select distinct 'REG' as tab_type, b.code as course_code from academics.course_registration a, "+ 
+					"academics.course_catalog b where a.semstr_details_semester_sub_id=?1 and "+ 
+					"a.stdntslgndtls_register_number=?2 and a.course_catalog_course_id=b.course_id and b.code in (?3)) "+ 
+					"union all "+ 
+					"(select distinct 'ALLOT' as tab_type, b.code as course_code from academics.course_allocation a, "+ 
+					"academics.course_catalog b where a.semstr_details_semester_sub_id=?1 and a.clssgrp_master_class_group_id in (?4) "+ 
+					"and a.class_type in (?5) and a.registered_seats<a.total_seats and a.lock_status=0 and a.course_catalog_course_id=b.course_id "+
+					"and b.code in (?3) and b.course_system in (?6)) ) a order by a.tab_type, a.course_code", nativeQuery=true)
+	List<Object[]> findCompulsoryCourseRegistrationAndAllocationForRP(String semesterSubId, String registerNumber, List<String> courseCode, 
+						String[] classGroupId, String[] classType, String[] courseSystem);
+	
+	@Query(value="select a.tab_type, a.course_code from ( "+
+					"(select distinct 'REG' as tab_type, b.code as course_code from academics.course_registration a, "+ 
+					"academics.course_catalog b where a.semstr_details_semester_sub_id=?1 and "+ 
+					"a.stdntslgndtls_register_number=?2 and a.course_catalog_course_id=b.course_id and b.code in (?3)) "+ 
+					"union all "+ 
+					"(select distinct 'ALLOT' as tab_type, b.code as course_code from academics.course_allocation a, "+ 
+					"academics.course_catalog b where a.semstr_details_semester_sub_id=?1 and "+ 
+					"a.clssgrp_master_class_group_id in (?4) and a.class_type in (?5) and (a.class_option=1 "+ 
+					"or (a.class_option=2 and a.specialization_batch=?6) or (a.class_option=3 and a.specialization_batch=?7) "+ 
+					"or (a.class_option=4 and a.specialization_batch=?8)) and a.registered_seats<a.total_seats and "+ 
+					"a.lock_status=0 and a.course_catalog_course_id=b.course_id and b.code in (?3) and b.course_system in (?9)) "+
+					") a order by a.tab_type, a.course_code", nativeQuery=true)
+	List<Object[]> findCompulsoryCourseRegistrationAndAllocation(String semesterSubId, String registerNumber, List<String> courseCode, 
+						String[] classGroupId, String[] classType, String progGroupCode, String progSpecCode, String costCentreCode, 
+						String[] courseSystem);
 }

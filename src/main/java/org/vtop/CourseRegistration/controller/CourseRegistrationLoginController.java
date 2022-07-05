@@ -39,7 +39,6 @@ public class CourseRegistrationLoginController
 	//@Autowired private WishlistRegistrationService wishlistRegistrationService;
 	//@Autowired private SemesterMasterService semesterMasterService;
 	@Autowired private CourseRegistrationReadWriteService courseRegistrationReadWriteService;
-	
 	@Autowired private CourseRegistrationCommonMongoService courseRegistrationCommonMongoService;
 	
 	private static final Logger logger = LogManager.getLogger(CourseRegistrationLoginController.class);
@@ -94,14 +93,14 @@ public class CourseRegistrationLoginController
 					+" | studentGraduateYear: "+ studentGraduateYear +" | studEMailId: "+ studEMailId);
 			
 			int regSlotCheckStatus = 2; //If Permitted Schedule-> 1: Date & Time / 2: Only Date
-			int historyCallStatus = 2; //Student History-> 1: Procedure/ 2: Table
-			int cgpaStatus = 2; //Student CGPA & Credit Detail-> 1: Dynamic/ 2: Static
+			int historyCallStatus = 1; //Student History-> 1: Procedure/ 2: Table
+			int cgpaStatus = 1; //Student CGPA & Credit Detail-> 1: Dynamic/ 2: Static
 			int wishListCheckStatus = 2; //Wish list Check Status-> 1: Enable/ 2: Disable
 			int PEUEAllowStatus = 1; //PE & UE Category Allow Status-> 1: Enable/ 2: Disable
 			int approvalStatus = 2; //Registration Status Approval-> 1: Enable/ 2: Disable
 			int waitingListStatus = 2; //Waiting List Allow Status-> 1: Enable/ 2: Disable
 			int OptionNAStatus = 1; //Option Not Allowed Status-> 1: Enable/ 2: Disable
-			int compulsoryCourseStatus = 2; //Compulsory Course Allow Status-> 1: Enable/ 2: Disable
+			int compulsoryCourseStatus = 1; //Compulsory Course Allow Status-> 1: Enable/ 2: Disable
 			int otpStatus = 2; //OTP Send Status-> 1: Enable/ 2: Disable
 			
 			int maxCredit = 27, minCredit = 16, academicYear = 0, academicGraduateYear = 0, cclTotalCredit = 0, 
@@ -205,14 +204,13 @@ public class CourseRegistrationLoginController
 				studentCgpaData = studentDetailOthers.getTotalCreditRegistered() +"|"+ studentDetailOthers.getTotalCreditEarned() 
 										+"|"+ studentDetailOthers.getCumulativeGradePointAverage();
 				
-				studentWishListStatus = (studentDetailOthers.getWishlistStatus() == null) 
-											? 2 : studentDetailOthers.getWishlistStatus();
+				studentWishListStatus = (studentDetailOthers.getWishlistStatus() == null) ? 2 : studentDetailOthers.getWishlistStatus();
 				
-				if ((compulsoryCourseStatus == 1) && (studentDetailOthers.getCompulsoryCourse() != null) 
-						&& (!studentDetailOthers.getCompulsoryCourse().equals("")))
-				{
-					compulsoryCourseList.addAll(Arrays.asList(studentDetailOthers.getCompulsoryCourse().split("\\|")));
-				}
+				//if ((compulsoryCourseStatus == 1) && (studentDetailOthers.getCompulsoryCourse() != null) 
+				//		&& (!studentDetailOthers.getCompulsoryCourse().equals("")))
+				//{
+				//	compulsoryCourseList.addAll(Arrays.asList(studentDetailOthers.getCompulsoryCourse().split("\\|")));
+				//}
 			}
 			logger.trace("\n oldRegNo: "+ oldRegNo +" | graduationStatus: "+ graduationStatus 
 						+" | exemptionStatus: "+ exemptionStatus);

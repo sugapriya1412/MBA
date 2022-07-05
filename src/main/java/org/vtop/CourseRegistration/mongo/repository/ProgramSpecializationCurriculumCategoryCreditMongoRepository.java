@@ -12,4 +12,8 @@ public interface ProgramSpecializationCurriculumCategoryCreditMongoRepository ex
 {
 	@Query(value="{'progSpecializationId':?0, 'admissionYear':?1}", sort="{'courseCategoryOrderNo' : 1}")
 	List<ProgramSpecializationCurriculumCategoryCredit> findBySpecIdAndAdmissionYear(int specializationId, int admissionYear);
+	
+	@Query(value="{'progSpecializationId':?0, 'admissionYear':?1, 'courseCategory':?2}")
+	ProgramSpecializationCurriculumCategoryCredit findBySpecIdAdmissionYearAndCategory(int specializationId, int admissionYear, 
+															String courseCategory);
 }

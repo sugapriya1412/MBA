@@ -62,7 +62,7 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 			//Date & Time Setting
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");		
 			Date startDate = sdf.parse("22-JUN-2022");
-			Date endDate = sdf.parse("05-JUL-2022");
+			Date endDate = sdf.parse("07-JUL-2022");
 			String startTime = "10:00:00", endTime = "23:59:59", allowStartTime = "10:00:00";
 			
 			//Assigning IP address

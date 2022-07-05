@@ -73,7 +73,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 			{
 				for (Object[] e : objectList)
 				{
-					logger.trace("\n "+ Arrays.deepToString(e));
+					//logger.trace("\n "+ Arrays.deepToString(e));
 					categoryCode = "UE";
 					catalogType = "CC";
 					basketCode = "NONE";
@@ -140,7 +140,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 						categoryCode = entry.getKey();
 						totalCredit = 0;
 						curriculumCreditCalculationDto = new CurriculumCreditCalculationDto();
-						logger.trace("\n entry key: "+ entry.getKey());
+						//logger.trace("\n entry key: "+ entry.getKey());
 						
 						if (ccCalculationMapList.containsKey(categoryCode))
 						{
@@ -150,7 +150,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 								totalCredit = curriculumCreditCalculationDto.getResultPublishedCredit();
 								for (Map.Entry<String, Float> entry2 : entry.getValue().entrySet())
 								{
-									logger.trace("\n entry2 key: "+ entry2.getKey() +" | entry2 value: "+ entry2.getValue());
+									//logger.trace("\n entry2 key: "+ entry2.getKey() +" | entry2 value: "+ entry2.getValue());
 									totalCredit = totalCredit + entry2.getValue();
 								}
 								
@@ -180,7 +180,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 			{
 				for (Object[] e : objectList)
 				{
-					logger.trace("\n "+ Arrays.deepToString(e));
+					//logger.trace("\n "+ Arrays.deepToString(e));
 					categoryCode = "UE";
 					catalogType = "CC";
 					basketCode = "NONE";
@@ -247,7 +247,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 						categoryCode = entry.getKey();
 						totalCredit = 0;
 						curriculumCreditCalculationDto = new CurriculumCreditCalculationDto();
-						logger.trace("\n entry key: "+ entry.getKey());
+						//logger.trace("\n entry key: "+ entry.getKey());
 						
 						if (ccCalculationMapList.containsKey(categoryCode))
 						{
@@ -257,7 +257,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 								totalCredit = curriculumCreditCalculationDto.getResultUnpublishedCredit();
 								for (Map.Entry<String, Float> entry2 : entry.getValue().entrySet())
 								{
-									logger.trace("\n entry2 key: "+ entry2.getKey() +" | entry2 value: "+ entry2.getValue());
+									//logger.trace("\n entry2 key: "+ entry2.getKey() +" | entry2 value: "+ entry2.getValue());
 									totalCredit = totalCredit + entry2.getValue();
 								}
 								
@@ -280,7 +280,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 			{
 				for (Object[] e : objectList)
 				{
-					logger.trace("\n "+ Arrays.deepToString(e));
+					//logger.trace("\n "+ Arrays.deepToString(e));
 					categoryCode = "UE";
 					catalogType = "CC";
 					basketCode = "NONE";
@@ -347,7 +347,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 						categoryCode = entry.getKey();
 						totalCredit = 0;
 						curriculumCreditCalculationDto = new CurriculumCreditCalculationDto();
-						logger.trace("\n entry key: "+ entry.getKey());
+						//logger.trace("\n entry key: "+ entry.getKey());
 						
 						if (ccCalculationMapList.containsKey(categoryCode))
 						{
@@ -357,7 +357,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 								totalCredit = curriculumCreditCalculationDto.getRegisteredCredit();
 								for (Map.Entry<String, Float> entry2 : entry.getValue().entrySet())
 								{
-									logger.trace("\n entry2 key: "+ entry2.getKey() +" | entry2 value: "+ entry2.getValue());
+									//logger.trace("\n entry2 key: "+ entry2.getKey() +" | entry2 value: "+ entry2.getValue());
 									totalCredit = totalCredit + entry2.getValue();
 								}
 								
@@ -377,12 +377,12 @@ public class ProgrammeSpecializationCurriculumCreditService
 			if (waitingListStatus == 1)
 			{
 				objectList = courseRegistrationService.getWaitingListSemesterCreditDetail(registerNumber, courseOption);
-				logger.trace("\n Waiting List Semester Data: "+ objectList.size());
+				//logger.trace("\n Waiting List Semester Data: "+ objectList.size());
 				if (!objectList.isEmpty())
 				{
 					for (Object[] e : objectList)
 					{
-						logger.trace("\n "+ Arrays.deepToString(e));
+						//logger.trace("\n "+ Arrays.deepToString(e));
 						categoryCode = "UE";
 						catalogType = "CC";
 						basketCode = "NONE";
@@ -449,7 +449,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 							categoryCode = entry.getKey();
 							totalCredit = 0;
 							curriculumCreditCalculationDto = new CurriculumCreditCalculationDto();
-							logger.trace("\n entry key: "+ entry.getKey());
+							//logger.trace("\n entry key: "+ entry.getKey());
 							
 							if (ccCalculationMapList.containsKey(categoryCode))
 							{
@@ -459,7 +459,7 @@ public class ProgrammeSpecializationCurriculumCreditService
 									totalCredit = curriculumCreditCalculationDto.getWaitingListCredit();
 									for (Map.Entry<String, Float> entry2 : entry.getValue().entrySet())
 									{
-										logger.trace("\n entry2 key: "+ entry2.getKey() +" | entry2 value: "+ entry2.getValue());
+										//logger.trace("\n entry2 key: "+ entry2.getKey() +" | entry2 value: "+ entry2.getValue());
 										totalCredit = totalCredit + entry2.getValue();
 									}
 									

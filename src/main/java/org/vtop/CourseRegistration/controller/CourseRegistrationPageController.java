@@ -272,21 +272,88 @@ public class CourseRegistrationPageController
 	public String doLogout(HttpSession session, HttpServletRequest request, HttpServletResponse response, 
 						Model model) throws ServletException, IOException 
 	{
-		String page = "", info = null;
+		String page = "", info = null, currentDateTimeStr = "",logoutMsg="";
+		int loAllowFlag = 2;
+		float regCredit=0, wlRegCredit=0, totalRegCredit=0;
 		
 		String registerNumber = (String) session.getAttribute("RegisterNumber");
 		String IpAddress=(String) session.getAttribute("IpAddress");
 		
 		try 
 		{
+			//int studyStartYear = (int) session.getAttribute("StudyStartYear");
+			Integer StudentGraduateYear = (Integer) session.getAttribute("StudentGraduateYear");
+			Integer academicGraduateYear = (Integer) session.getAttribute("acadGraduateYear");
+			String ProgramGroupCode = (String) session.getAttribute("ProgramGroupCode");
+			//Integer programSpecId = (Integer) session.getAttribute("ProgramSpecId");
+			String SemesterSubId = (String) session.getAttribute("SemesterSubId");
+			Integer minCredit = (Integer) session.getAttribute("minCredit");
+			Integer maxCredit = (Integer) session.getAttribute("maxCredit");			
+			//Float curriculumVersion = (Float) session.getAttribute("curriculumVersion");
+			List<String> ncCourseList = new ArrayList<String>();
+			Integer PEUEAllowStatus = (Integer) session.getAttribute("PEUEAllowStatus");
+			Integer waitingListStatus = (Integer) session.getAttribute("waitingListStatus");
+			
 			if ((registerNumber != null) && (registrationLogService.isExist(registerNumber)))
 			{
 				info = (String) session.getAttribute("info");
 				
-				courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
-				model.addAttribute("flag", 4);			
-				page = "redirectpage";
-				//page = "redirect:/logout";
+				//courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
+				//model.addAttribute("flag", 4);			
+				//page = "redirectpage";
+				
+				if (ProgramGroupCode.equals("RP") || ProgramGroupCode.equals("IEP"))
+				{
+					loAllowFlag = 1;
+				}
+				else if (StudentGraduateYear <= academicGraduateYear)
+				{
+					loAllowFlag = 1;
+				}
+				else if (PEUEAllowStatus == 1)
+				{
+					//ncCourseList = programmeSpecializationCurriculumDetailService.getNCCourseByYearAndCCVersion(programSpecId, 
+					//					studyStartYear, curriculumVersion);
+					ncCourseList.add("NONE");
+					regCredit = courseRegistrationService.getRegCreditByRegisterNumberAndNCCourseCode(SemesterSubId, registerNumber, 
+									ncCourseList);
+					if (waitingListStatus == 1)
+					{
+						wlRegCredit = courseRegistrationWaitingService.getRegCreditByRegisterNumberAndNCCourseCode(SemesterSubId, 
+											registerNumber, ncCourseList);
+					}
+					totalRegCredit = regCredit + wlRegCredit;
+					
+					//Minimum Credit Check	
+					if (totalRegCredit >= (float) minCredit)
+					{
+						loAllowFlag = 1;
+					}
+				}
+				else
+				{
+					loAllowFlag = 1;
+				}
+								
+				if (loAllowFlag == 1) 
+				{
+					courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(IpAddress,registerNumber);
+					model.addAttribute("flag", 4);			
+					page = "redirectpage";
+				}
+				else
+				{
+					currentDateTimeStr = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a").format(new Date());
+					logoutMsg="Minimum of "+minCredit+" credits needed for 'Sign Out'.";
+					model.addAttribute("CurrentDateTime", currentDateTimeStr);
+					model.addAttribute("regCredit", regCredit);
+					model.addAttribute("wlCredit", wlRegCredit);
+					model.addAttribute("maxCredit", maxCredit);
+					model.addAttribute("studentDetails", session.getAttribute("studentDetails"));
+					model.addAttribute("logoutMsg", logoutMsg);
+					
+					return "mainpages/MainPage";
+				}
 			}
 			else
 			{
@@ -321,7 +388,7 @@ public class CourseRegistrationPageController
 	}
 	
 
-	@PostMapping(value="ViewCredits")
+	/*@PostMapping(value="ViewCredits")
 	public String ViewCredits(Model model, String creditDetailshowFlag, HttpSession session, HttpServletRequest request) 
 	{
 		String registerNumber = (String) session.getAttribute("RegisterNumber");
@@ -363,7 +430,7 @@ public class CourseRegistrationPageController
 					model.addAttribute("wlCredit", wlCredit);
 					model.addAttribute("minCredit", minCredit);
 					model.addAttribute("maxCredit", maxCredit);
-					model.addAttribute("creditDetailshowFlag",creditDetailshowFlag);
+					model.addAttribute("creditDetailshowFlag", creditDetailshowFlag);
 					model.addAttribute("WaitingListStatus", WaitingListStatus);
 					
 					urlPage = "mainpages/MainPage::creditsFragment";
@@ -377,9 +444,8 @@ public class CourseRegistrationPageController
 			}
 			else
 			{
-				model.addAttribute("creditDetailshowFlag",creditDetailshowFlag);
+				model.addAttribute("creditDetailshowFlag", creditDetailshowFlag);
 				urlPage = "mainpages/MainPage::creditsFragment";
-				
 			}
 		}
 		catch(Exception e)
@@ -395,7 +461,7 @@ public class CourseRegistrationPageController
 		}		
 
 		return urlPage;
-	}
+	}*/
 	
 	@PostMapping("viewCurriculumCredits")
 	public String viewCurriculumCredits(HttpSession session,Model model)
@@ -478,10 +544,12 @@ public class CourseRegistrationPageController
 		List<Object[]> courseRegistrationWaitingModel = new ArrayList<Object[]>();
 		List<Object[]> courseRegistrationModel = new ArrayList<Object[]>();
 		List<Integer> patternIdList = new ArrayList<Integer>();
+		List<Object[]> regCreditList = new ArrayList<Object[]>();
+		List<String> ncCourseList = new ArrayList<String>();
 		
-		int allowStatus = 2, regCount = 0, wlCount = 0;
+		int allowStatus = 2, regCount = 0, wlCount = 0, ncCount = 0;
 		Integer updateStatus = 1;
-		float wlCredit = 0, regCredit = 0;
+		float wlCredit = 0, regCredit = 0, ncCredit = 0;
 						
 		try
 		{
@@ -508,15 +576,21 @@ public class CourseRegistrationPageController
 				switch(allowStatus)
 				{
 					case 1:
+												
+						regCreditList.add(new Object[] {"Minimum", minCredit, "-"});
+						regCreditList.add(new Object[] {"Maximum", maxCredit, "-"});
 
 						if ((semesterSubId !=null) &&(registerNumber !=null))
 						{
+							ncCourseList = programmeSpecializationCurriculumDetailService.getNCCourseByYearAndCCVersion(programSpecId, 
+													studyStartYear, curriculumVersion);
+							
 							courseRegistrationModel = courseRegistrationService.getByRegisterNumber3(semesterSubId, registerNumber);
 							if (!courseRegistrationModel.isEmpty())
 							{
 								for (Object[] obj : courseRegistrationModel) 
 								{
-									logger.trace("\n Pattern Id: "+ obj[29].toString() +" | Slot Id: "+obj[30].toString());
+									//logger.trace("\n Pattern Id: "+ obj[29].toString() +" | Slot Id: "+obj[30].toString());
 									
 									if ((Integer.parseInt(obj[30].toString()) > 0) && (!patternIdList.contains(Integer.parseInt(obj[29].toString()))))
 									{
@@ -525,14 +599,25 @@ public class CourseRegistrationPageController
 									
 									regCredit = regCredit + Float.parseFloat(obj[14].toString());
 									
+									if (ncCourseList.contains(obj[3].toString()))
+									{
+										ncCredit = ncCredit + Float.parseFloat(obj[14].toString());
+									}
+									
 									if (!obj[2].toString().equals(checkCourseId))
 									{
 										regCount++;
 										checkCourseId = obj[2].toString();
+										
+										if (ncCourseList.contains(obj[3].toString()))
+										{
+											ncCount++;
+										}
 									}
 								}
 							}
 						}
+						regCreditList.add(new Object[] {"Registered (Including Non-Credit Category)", regCredit, regCount});
 											
 						if (WaitingListStatus == 1)
 						{
@@ -553,6 +638,13 @@ public class CourseRegistrationPageController
 									}
 								}
 							}
+							
+							regCreditList.add(new Object[] {"Waiting (Including Non-Credit Category)", wlCredit, wlCount});
+						}
+						
+						if (!ncCourseList.isEmpty())
+						{
+							regCreditList.add(new Object[] {"Non-Credit Category", ncCredit, ncCount});
 						}
 											
 						List<Object[]> ttObjList = new ArrayList<Object[]>();
@@ -753,13 +845,15 @@ public class CourseRegistrationPageController
 						model.addAttribute("showFlag", 0);
 						model.addAttribute("curriculumMapList", programmeSpecializationCurriculumDetailService.
 								getCurriculumBySpecIdYearAndCCVersionAsMap(programSpecId, studyStartYear, curriculumVersion));
-						model.addAttribute("WaitingListStatus", WaitingListStatus);
-						model.addAttribute("regCredit", regCredit);
-						model.addAttribute("regCount", regCount);
-						model.addAttribute("wlCount", wlCount);
-						model.addAttribute("wlCredit", wlCredit);
-						model.addAttribute("minCredit", minCredit);
-						model.addAttribute("maxCredit", maxCredit);
+						//model.addAttribute("WaitingListStatus", WaitingListStatus);
+						//model.addAttribute("regCredit", regCredit);
+						//model.addAttribute("regCount", regCount);
+						//model.addAttribute("wlCount", wlCount);
+						//model.addAttribute("wlCredit", wlCredit);
+						//model.addAttribute("minCredit", minCredit);
+						//model.addAttribute("maxCredit", maxCredit);
+						
+						model.addAttribute("regCreditList", regCreditList);
 						
 						session.removeAttribute("registrationOption");
 						urlPage = "mainpages/ViewRegistered::section";
