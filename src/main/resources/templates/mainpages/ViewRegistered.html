@@ -26,6 +26,7 @@
 						
 							<table class="w3-table-all w3-card-4 w3-hoverable"
 								style="background-color: #e0f8f8; width: 30%">
+								
 								<thead>
 									<tr class="w3-blue">
 										<th style="white-space: nowrap; border: 1px solid #3c8dbc; 
@@ -36,55 +37,7 @@
 												text-align: center; width: 10%;">Courses</th>
 									</tr>
 								</thead>
-								
-								<!-- <tr>
-									<td style="text-align: left; border: 1px solid #3c8dbc; font-weight: bold;">
-										Minimum
-									</td>
-									<td style="text-align: center; border: 1px solid #3c8dbc;" 
-										th:text="${(minCredit == null) ? '0' : minCredit}">
-									</td>
-									<td style="text-align: center; border: 1px solid #3c8dbc;">
-										-
-									</td>
-								</tr>
-								
-								<tr>
-									<td style="text-align: left; border: 1px solid #3c8dbc; font-weight: bold;">
-										Maximum
-									</td>
-									<td style="text-align: center; border: 1px solid #3c8dbc;" 
-										th:text="${(maxCredit == null) ? '0' : maxCredit}">
-									</td>
-									<td style="text-align: center; border: 1px solid #3c8dbc;">
-										-
-									</td>
-								</tr>
-								
-								<tr>
-									<td style="text-align: left; border: 1px solid #3c8dbc; font-weight: bold;">
-										Registered
-									</td>
-									<td style="text-align: center; border: 1px solid #3c8dbc;" 
-										th:text="${(regCredit == null) ? '0' : regCredit}">
-									</td>
-									<td style="text-align: center; border: 1px solid #3c8dbc;" 
-										th:text="${(regCount == null) ? '0' : regCount}">
-									</td>
-								</tr>
-								
-								<tr th:if="${WaitingListStatus == 1}">
-									<td style="text-align: left; border: 1px solid #3c8dbc; font-weight: bold;">
-										Waiting
-									</td>
-									<td style="text-align: center; border: 1px solid #3c8dbc;" 
-										th:text="${(wlCredit == null) ? '0' : wlCredit}">
-									</td>
-									<td style="text-align: center; border: 1px solid #3c8dbc;" 
-										th:text="${(wlCount == null) ? '0' : wlCount}">
-									</td>
-								</tr> -->
-								
+																
 								<tr th:each="e : ${regCreditList}">
 									<td style="text-align: left; border: 1px solid #3c8dbc; 
 										font-weight: bold;">
