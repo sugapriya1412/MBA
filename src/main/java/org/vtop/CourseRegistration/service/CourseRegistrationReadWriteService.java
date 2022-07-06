@@ -243,7 +243,7 @@ public class CourseRegistrationReadWriteService
 				hours = Float.parseFloat(objectList.get(0)[2].toString());
 				logger.trace("\n days : "+ days +" | hours: "+ hours);
 				
-				if ((days >= 1) || (hours >= 6))
+				if ((days >= 1) || (hours >= 3))
 				{
 					executeStatus = true;
 				}
