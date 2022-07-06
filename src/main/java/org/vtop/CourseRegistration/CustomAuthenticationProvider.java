@@ -42,8 +42,7 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 		
 		//For getting captcha from session attribute					
 		String sessioncaptchaString = (String) session.getAttribute("CAPTCHA");
-		logger.trace("\n sessioncaptchaString: "+ sessioncaptchaString);
-		
+				
 		int testStatus = 2; //Login with Password & Captcha-> 1: Enable/ 2: Disable
 		int regTimeCheckStatus = 1; //Time-> 1: Open Hours/ 2: Permitted Schedule
 		
@@ -61,7 +60,7 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 		{
 			//Date & Time Setting
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");		
-			Date startDate = sdf.parse("22-JUN-2022");
+			Date startDate = sdf.parse("05-JUL-2022");
 			Date endDate = sdf.parse("07-JUL-2022");
 			String startTime = "10:00:00", endTime = "23:59:59", allowStartTime = "10:00:00";
 			

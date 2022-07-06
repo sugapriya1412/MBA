@@ -2926,13 +2926,19 @@ public class CourseRegistrationCommonFunction
 		try
 		{
 			slotDate = df.format(startDate);
-			logger.trace("\n StartDate: "+ startDate +" | slotDate: "+ slotDate);
-						
-			slotTimeList.add("09:00:00|10:30:00|08:55:00|"+ slotDate);
-			slotTimeList.add("11:00:00|12:30:00|10:55:00|"+ slotDate);
-			slotTimeList.add("14:00:00|15:30:00|13:55:00|"+ slotDate);
-			slotTimeList.add("16:00:00|17:30:00|15:55:00|"+ slotDate);
-			slotTimeList.add("18:30:00|23:30:00|18:25:00|"+ slotDate);
+			//logger.trace("\n StartDate: "+ startDate +" | slotDate: "+ slotDate);
+			
+			//slotTimeList.add("08:00:00|24:00:00|08:00:00|"+ slotDate);
+			
+			slotTimeList.add("09:00:00|09:45:00|09:00:00|"+ slotDate);
+			slotTimeList.add("10:00:00|10:45:00|10:00:00|"+ slotDate);
+			slotTimeList.add("11:00:00|11:45:00|11:00:00|"+ slotDate);
+			slotTimeList.add("12:00:00|12:45:00|12:00:00|"+ slotDate);
+			slotTimeList.add("14:00:00|14:45:00|14:00:00|"+ slotDate);
+			slotTimeList.add("15:00:00|15:45:00|15:00:00|"+ slotDate);
+			slotTimeList.add("16:00:00|16:45:00|16:00:00|"+ slotDate);
+			slotTimeList.add("17:00:00|17:45:00|17:00:00|"+ slotDate);
+			slotTimeList.add("18:00:00|18:45:00|18:00:00|"+ slotDate);
 									
 			presentDateTime = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").format(new Date());					
 			String[] presentDateTimeArr = presentDateTime.split(" ");
@@ -2954,9 +2960,9 @@ public class CourseRegistrationCommonFunction
 					startTimeVal = Long.parseLong(allowStartTime.replace(":", ""));
 					endTimeVal = Long.parseLong(endTime.replace(":", ""));
 					maxTimeVal = endTimeVal;
-					logger.trace("\n StartDate: "+ startDate +" | endTime: "+ endTime 
-							+" | allowStartTime: "+ allowStartTime +" | startTimeVal: "+ startTimeVal
-							+" | endTimeVal: "+ endTimeVal);
+					//logger.trace("\n StartDate: "+ startDate +" | endTime: "+ endTime 
+					//		+" | allowStartTime: "+ allowStartTime +" | startTimeVal: "+ startTimeVal
+					//		+" | endTimeVal: "+ endTimeVal);
 					
 					if (presentDate.equals(startDate) 
 							&& (presentTimeVal >= startTimeVal) && (presentTimeVal <= endTimeVal))
@@ -2991,8 +2997,7 @@ public class CourseRegistrationCommonFunction
 		{
 			logger.trace(ex);
 		}
-		logger.trace("\n tempStatus: "+ tempStatus);
-		
+				
 		return tempStatus;
 	}
 	

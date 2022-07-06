@@ -93,8 +93,8 @@ public class CourseRegistrationLoginController
 					+" | studentGraduateYear: "+ studentGraduateYear +" | studEMailId: "+ studEMailId);
 			
 			int regSlotCheckStatus = 2; //If Permitted Schedule-> 1: Date & Time / 2: Only Date
-			int historyCallStatus = 1; //Student History-> 1: Procedure/ 2: Table
-			int cgpaStatus = 1; //Student CGPA & Credit Detail-> 1: Dynamic/ 2: Static
+			int historyCallStatus = 2; //Student History-> 1: Procedure/ 2: Table
+			int cgpaStatus = 2; //Student CGPA & Credit Detail-> 1: Dynamic/ 2: Static
 			int wishListCheckStatus = 2; //Wish list Check Status-> 1: Enable/ 2: Disable
 			int PEUEAllowStatus = 1; //PE & UE Category Allow Status-> 1: Enable/ 2: Disable
 			int approvalStatus = 2; //Registration Status Approval-> 1: Enable/ 2: Disable
@@ -353,6 +353,9 @@ public class CourseRegistrationLoginController
 							endTime = registrationSchedule.getToTime();
 							allowStartTime = startTime;
 						}
+						logger.trace("\n startDate: "+ startDate +" | endDate: "+ endDate 
+								+" | startTime: "+ startTime +" | endTime: "+ endTime 
+								+" | allowStartTime: "+ allowStartTime);
 
 						if (schStatus == 0)
 						{
@@ -575,7 +578,7 @@ public class CourseRegistrationLoginController
 				}
 				else
 				{
-					courseRegistrationReadWriteService.updateRegistrationLogLogoutTimeStamp2(ipAddress, registerNo);
+					courseRegistrationReadWriteService.updateRegistrationLogLoginTimeStamp2(ipAddress, registerNo);
 				}
 								
 				//Cookie assignment
@@ -626,6 +629,12 @@ public class CourseRegistrationLoginController
 				
 				session.setAttribute("studentCgpaData", studentCgpaData);
 				session.setAttribute("compulsoryCourseList", compulsoryCourseList);
+				session.setAttribute("startDate", startDate);
+				session.setAttribute("endDate", endDate);
+				session.setAttribute("startTime", startTime);
+				session.setAttribute("endTime", endTime);
+				session.setAttribute("allowStartTime", allowStartTime);
+				
 				session.setAttribute("corAuthStatus", "NONE");
 				session.setAttribute("authStatus", "NONE");
 				session.setAttribute("CAPTCHA", "");
