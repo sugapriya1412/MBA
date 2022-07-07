@@ -2448,7 +2448,8 @@ public class CourseRegistrationCommonFunction
 			}
 			logger.trace("\n logStatus: "+ logStatus +" | timeDiff: "+ timeDiff);
 			
-			if ((logStatus == 1) && (timeDiff <= 500))
+			//if ((logStatus == 1) && (timeDiff <= 500))
+			if ((logStatus == 1) && (timeDiff <= 300))
 			{
 				activeStatus = 2;
 			}
