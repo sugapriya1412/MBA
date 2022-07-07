@@ -15,7 +15,6 @@ import org.vtop.CourseRegistration.mongo.model.ProgramSpecializationCurriculumCr
 import org.vtop.CourseRegistration.mongo.model.ProgramSpecializationCurriculumDetail;
 import org.vtop.CourseRegistration.mongo.model.RegistrationSchedule;
 import org.vtop.CourseRegistration.mongo.model.SemesterDetail;
-import org.vtop.CourseRegistration.mongo.model.StudentDetail;
 import org.vtop.CourseRegistration.mongo.model.StudentDetailOthers;
 import org.vtop.CourseRegistration.mongo.model.StudentHistory;
 import org.vtop.CourseRegistration.mongo.repository.CourseEligibleMongoRepository;
@@ -24,7 +23,6 @@ import org.vtop.CourseRegistration.mongo.repository.ProgramSpecializationCurricu
 import org.vtop.CourseRegistration.mongo.repository.ProgramSpecializationCurriculumDetailMongoRepository;
 import org.vtop.CourseRegistration.mongo.repository.RegistrationScheduleMongoRepository;
 import org.vtop.CourseRegistration.mongo.repository.SemesterDetailMongoRepository;
-import org.vtop.CourseRegistration.mongo.repository.StudentDetailMongoRepository;
 import org.vtop.CourseRegistration.mongo.repository.StudentDetailOthersMongoRepository;
 import org.vtop.CourseRegistration.mongo.repository.StudentHistoryMongoRepository;
 
@@ -32,7 +30,6 @@ import org.vtop.CourseRegistration.mongo.repository.StudentHistoryMongoRepositor
 @Service
 public class CourseRegistrationCommonMongoService
 {
-	@Autowired private StudentDetailMongoRepository studentDetailMongoRepository;
 	@Autowired private SemesterDetailMongoRepository semesterDetailMongoRepository;
 	@Autowired private StudentDetailOthersMongoRepository studentDetailOthersMongoRepository;
 	@Autowired private CourseEligibleMongoRepository courseEligibleMongoRepository;
@@ -44,19 +41,6 @@ public class CourseRegistrationCommonMongoService
 	
 	private static final Logger logger = LogManager.getLogger(CourseRegistrationCommonMongoService.class);
 		
-	
-	//Student Detail
-	public StudentDetail getStudentDetailByRegisterNumber(String registerNumber)
-	{
-		return studentDetailMongoRepository.findByRegisterNumber(registerNumber); 
-	}
-	
-	public StudentDetail getStudentDetailByNickName(String nickName)
-	{
-		return studentDetailMongoRepository.findByNickName(nickName); 
-	}
-	
-	
 	//Semester Detail
 	public SemesterDetail getSemesterDetailBySemesterSubId(String semesterSubId)
 	{

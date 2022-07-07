@@ -113,7 +113,7 @@ public class CourseRegistrationCommonFunction
 		List<Object[]> shmList2 = new ArrayList<Object[]>();
 		List<Object[]> psRegList = new ArrayList<Object[]>();
 		List<Object[]> ccCreditList = new ArrayList<Object[]>();
-		logger.trace("\n pRegisterNumber: "+ pRegisterNumber +" | pOldRegisterNumber: "+ pOldRegisterNumber);
+		//logger.trace("\n pRegisterNumber: "+ pRegisterNumber +" | pOldRegisterNumber: "+ pOldRegisterNumber);
 		
 		try
 		{							
@@ -151,10 +151,10 @@ public class CourseRegistrationCommonFunction
 				peAdlAllowStatus = Integer.parseInt(courseOptionStatusArray[6]);
 				ueAdlAllowStatus = Integer.parseInt(courseOptionStatusArray[7]);
 			}
-			logger.trace("\n regularAllowStatus: "+ regularAllowStatus +" | NGradeAllowStatus: "+ NGradeAllowStatus
-					+" | giAllowStatus: "+ giAllowStatus +" | auditAllowStatus: "+ auditAllowStatus 
-					+" | minHonAllowStatus: "+ minHonAllowStatus +" | adlAllowStatus: "+ adlAllowStatus 
-					+" | peAdlAllowStatus: "+ peAdlAllowStatus +" | ueAdlAllowStatus: "+ ueAdlAllowStatus);
+			//logger.trace("\n regularAllowStatus: "+ regularAllowStatus +" | NGradeAllowStatus: "+ NGradeAllowStatus
+			//		+" | giAllowStatus: "+ giAllowStatus +" | auditAllowStatus: "+ auditAllowStatus 
+			//		+" | minHonAllowStatus: "+ minHonAllowStatus +" | adlAllowStatus: "+ adlAllowStatus 
+			//		+" | peAdlAllowStatus: "+ peAdlAllowStatus +" | ueAdlAllowStatus: "+ ueAdlAllowStatus);
 														
 			//Checking the select course is valid or not
 			if ((pCourseId != null) && (!pCourseId.equals("")))
@@ -618,9 +618,9 @@ public class CourseRegistrationCommonFunction
 						historyflag = 1;
 					}
 				}
-				logger.trace("\n grade: "+ grade +" | courseMehtodType: "+ courseMehtodType 
-						+" | historyCourseId: "+ historyCourseId +" | historyGenericCourseType: "+ historyGenericCourseType 
-						+" | historyExamMonth: "+ historyExamMonth);
+				//logger.trace("\n grade: "+ grade +" | courseMehtodType: "+ courseMehtodType 
+				//		+" | historyCourseId: "+ historyCourseId +" | historyGenericCourseType: "+ historyGenericCourseType 
+				//		+" | historyExamMonth: "+ historyExamMonth);
 								
 				if (historyflag == 1)
 				{						
@@ -785,7 +785,7 @@ public class CourseRegistrationCommonFunction
 							}
 						}
 					}
-					logger.trace("\n allCompAllowFlag: "+ allCompAllowFlag +" | courseOption: "+ courseOption);
+					//logger.trace("\n allCompAllowFlag: "+ allCompAllowFlag +" | courseOption: "+ courseOption);
 										
 					if ((allCompAllowFlag == 1) && ((courseOption.equals("RR")) || (courseOption.equals("RRCE"))))
 					{
@@ -805,7 +805,7 @@ public class CourseRegistrationCommonFunction
 						{
 							historyCourseTypeList = semesterMasterService.getCourseTypeComponentByGenericType(historyGenericCourseType);
 						}
-						logger.trace("\n historyCourseTypeList: "+ historyCourseTypeList);
+						//logger.trace("\n historyCourseTypeList: "+ historyCourseTypeList);
 						
 						if (historyGenericCourseType.equals(genericCoursetype))
 						{
@@ -2055,7 +2055,8 @@ public class CourseRegistrationCommonFunction
 		else if ((!clashSlotList.isEmpty()) && (pSemesterSubId != null) && (pRegisterNumber != null))
 		{
 			//Get the Slot Time Master By Semester
-			slotTimeMapList = semesterMasterService.getSlotTimeMasterCommonTimeSlotBySemesterSubIdAsMap(Arrays.asList(pSemesterSubId));
+			//slotTimeMapList = semesterMasterService.getSlotTimeMasterCommonTimeSlotBySemesterSubIdAsMap(Arrays.asList(pSemesterSubId));
+			slotTimeMapList = semesterMasterService.getSlotTimeMasterCommonTimeSlotBySemesterSubIdAsMap(clashSemesterList);
 			
 			//Get list of Registration Slots based on Adding or Modifying the Course
 			if ((pRegType.equals("MODIFY")) && (!pOldClassId.equals("")) && (!pOldClassId.equals(null)))
@@ -3370,6 +3371,7 @@ public class CourseRegistrationCommonFunction
 					else if ((e.getSlotId() > 0) && (!e.getCourseType().equals("EPJ")))
 					{
 						clashStatusArray = courseAllocationService.getClashStatus(patternId, clashSlot, registeredList, slotTimeMapList).split("\\|");
+						//logger.trace("\n clashStatusArray: "+ Arrays.toString(clashStatusArray));
 						checkStatus = Integer.parseInt(clashStatusArray[0].toString());
 												
 						if (checkStatus == 1)

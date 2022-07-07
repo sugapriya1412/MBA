@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.vtop.CourseRegistration.model.CourseCatalogModel;
 import org.vtop.CourseRegistration.repository.CompulsoryCourseConditionDetailRepository;
 
 
@@ -19,18 +20,20 @@ public class CompulsoryCourseConditionDetailService
 	@Autowired private StudentHistoryService studentHistoryService;
 	@Autowired private CourseRegistrationService courseRegistrationService;
 	@Autowired private SemesterMasterService semesterMasterService;
+	@Autowired private CourseCatalogService courseCatalogService;
 	
 	private static final Logger logger = LogManager.getLogger(CompulsoryCourseConditionDetailService.class);
 		
 		
 	public List<String> getEligibleCompulsoryCourseList(String semesterSubId, Integer progGroupId, Integer studentBatch, 
 								Integer progSpecId, List<String> registerNumber, String progSpecCode, Integer costCenterId, 
-								Integer studentSemester)
+								Integer studentSemester, String[] classGroupId, String[] classType)
 	{
 		List<String> tempCompCourseList = new ArrayList<String>();
 		
 		int preReqType = 0, preReqValue = 0, preReqValue2 = 0, compCheckFlag = 2, mark = 0, allowCompFlag = 1;
-		String preReqParam = "", preReqParam2 = "", preReqParam3 = "", grade = "NONE", courseId = "", pcmbStatus = "";
+		String preReqParam = "", preReqParam2 = "", preReqParam3 = "", grade = "NONE", courseId = "", pcmbStatus = "", 
+					preRequisite = "", antiRequisite = "";
 		String[] preReqParamArray = new String[]{};
 		List<Object[]> tempObjectList = new ArrayList<Object[]>();
 		List<Object[]> tempObjectList2 = new ArrayList<Object[]>();
@@ -67,6 +70,7 @@ public class CompulsoryCourseConditionDetailService
 								
 				courseId = e[0].toString();
 				preReqType = Integer.parseInt(e[1].toString());
+				//logger.trace("\n courseId: "+ courseId +" | preReqType: "+ preReqType);
 				
 				if (e[2] != null)
 				{
@@ -87,8 +91,8 @@ public class CompulsoryCourseConditionDetailService
 						}
 					}
 				}
-				//logger.trace("\n preReqType: "+ preReqType +" | preReqParam: "+ preReqParam 
-				//		+" | preReqParam2: "+ preReqParam2 +" | preReqParam3: "+ preReqParam3);
+				//logger.trace("\n preReqParam: "+ preReqParam +" | preReqParam2: "+ preReqParam2 
+				//		+" | preReqParam3: "+ preReqParam3);
 				
 				//Default
 				if (preReqType == 1)
@@ -362,6 +366,33 @@ public class CompulsoryCourseConditionDetailService
 					}
 				}
 				
+				//Find Offered Course Version & Check the Pre-Requisite/ Anti-Requisite 
+				if (compCheckFlag == 1)
+				{
+					compCheckFlag = 2;
+					
+					//Getting Offered Course Detail
+					CourseCatalogModel courseCatalogModel = courseCatalogService.getOfferedCourseDetailByCourseCode(
+																semesterSubId, classGroupId, classType, courseId);
+					if (courseCatalogModel != null)
+					{
+						preRequisite = courseCatalogModel.getPrerequisite();
+						antiRequisite = courseCatalogModel.getAntirequisite();
+					}
+					//logger.trace("\n preRequisite: "+ preRequisite +" | antiRequisite: "+ antiRequisite);
+					
+					//Checking Pre-Requisite
+					compCheckFlag = checkPreReqAndAntiReqStatus(1, registerNumber, preRequisite);
+					//logger.trace("\n preRequisite Status: "+ compCheckFlag);
+					
+					//Checking Anti-Requisite
+					if (compCheckFlag == 1)
+					{
+						compCheckFlag = checkPreReqAndAntiReqStatus(2, registerNumber, antiRequisite);
+						//logger.trace("\n Anti-Requisite Status: "+ compCheckFlag);
+					}
+				}
+				
 				//logger.trace("\n "+ Arrays.deepToString(e));
 				//logger.trace("\n compCheckFlag: "+ compCheckFlag);
 				if (compCheckFlag == 1)
@@ -382,5 +413,67 @@ public class CompulsoryCourseConditionDetailService
 	public List<Object[]> getByCourseId(String semesterSubId, Integer progGroupId, Integer studentBatch, String courseId)
 	{
 		return compulsoryCourseConditionDetailRepository.findByCourseId(semesterSubId, progGroupId, studentBatch, courseId);
+	}
+	
+	
+	//requisiteType =>  1: Prerequisite/ 2: Anti-requisite
+	public int checkPreReqAndAntiReqStatus(int requisiteType, List<String> registerNumber, String requisiteCourse)
+	{
+		int returnCheckStatus = 2;
+		String tempRequisiteCourse = "";
+		List<String> courseCodeList = new ArrayList<>();
+		List<String> regCourseCodeList = new ArrayList<>();
+		
+		
+		if ((requisiteCourse == null) || requisiteCourse.trim().equals("") 
+				|| requisiteCourse.trim().equals("NONE") || requisiteCourse.trim().equals("NIL"))
+		{
+			returnCheckStatus = 1;
+		}
+		else
+		{
+			tempRequisiteCourse = requisiteCourse.replace(" ", "");
+			tempRequisiteCourse = requisiteCourse.replace("/", "|");
+			tempRequisiteCourse = tempRequisiteCourse.replace(",", "|");
+			//logger.trace("\n tempRequisiteCourse: "+ tempRequisiteCourse);
+			
+			for (String reqCode : tempRequisiteCourse.split("\\|"))
+			{
+				if ((reqCode != null) && (!reqCode.trim().equals("")))
+				{
+					courseCodeList.add(reqCode.trim());
+				}
+			}
+			
+			regCourseCodeList = courseRegistrationService.getByRegisterNumberAndCourseCodeForPARequisite(registerNumber, courseCodeList);
+			
+			if (requisiteType == 1)
+			{
+				for (String reqCode : requisiteCourse.split("/"))
+				{
+					for (String reqCode2 : reqCode.trim().split("\\,"))
+					{
+						if (regCourseCodeList.contains(reqCode2.trim()))
+						{
+							returnCheckStatus = 1;
+						}
+						else
+						{
+							returnCheckStatus = 2;
+							break;
+						}
+					}
+				}
+			}
+			else if (requisiteType == 2)
+			{
+				if (!regCourseCodeList.isEmpty())
+				{
+					returnCheckStatus = 1;
+				}
+			}
+		}
+				
+		return returnCheckStatus;
 	}
 }

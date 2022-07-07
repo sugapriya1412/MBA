@@ -3285,6 +3285,8 @@ public class CourseRegistrationFormController
 		List<Object[]> registeredObjectList = new ArrayList<Object[]>();
 		Map<String, List<SlotTimeMasterModel>> slotTimeMapList = new HashMap<String, List<SlotTimeMasterModel>>();
 		
+		clashCheckSemesterList.add(semesterSubId);
+		
 		//General
 		//registeredObjectList = courseRegistrationService.getRegistrationAndWaitingSlotDetail(semesterSubId, registerNumber);
 		
@@ -3292,10 +3294,11 @@ public class CourseRegistrationFormController
 		//registeredObjectList = courseRegistrationService.getRegistrationAndWaitingByNotClassGroupSlotDetail(semesterSubId, registerNumber, 
 		//							Arrays.asList("ST002"));
 		
-		registeredObjectList = courseRegistrationService.getegistrationAndWaitingSlotDetailByNotClassGroup(clashCheckSemesterList, registerNumber, 
+		registeredObjectList = courseRegistrationService.getRegistrationAndWaitingSlotDetailByNotClassGroup(clashCheckSemesterList, registerNumber, 
 									clashCheckNonClassGroupList);
 		
-		slotTimeMapList = semesterMasterService.getSlotTimeMasterCommonTimeSlotBySemesterSubIdAsMap(Arrays.asList(semesterSubId));
+		//slotTimeMapList = semesterMasterService.getSlotTimeMasterCommonTimeSlotBySemesterSubIdAsMap(Arrays.asList(semesterSubId));
+		slotTimeMapList = semesterMasterService.getSlotTimeMasterCommonTimeSlotBySemesterSubIdAsMap(clashCheckSemesterList);
 		
 		model.addAttribute("tlInfoMapList", courseRegCommonFn.getSlotInfo(registeredObjectList, courseAllocationList, slotTimeMapList));
 	}

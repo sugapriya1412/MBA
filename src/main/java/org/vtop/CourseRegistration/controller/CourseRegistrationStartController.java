@@ -34,6 +34,7 @@ public class CourseRegistrationStartController
 
 	private static final Logger logger = LogManager.getLogger(CourseRegistrationStartController.class);
 	private static final String RegErrorMethod = "FS2223REG";
+	private static final String[] classType = { "EFS" };
 	
 		
 	@PostMapping("checkRegistration")
@@ -154,6 +155,7 @@ public class CourseRegistrationStartController
 			Integer costCenterId = (Integer) session.getAttribute("costCenterId");
 			String studentStudySystem = (String) session.getAttribute("studentStudySystem");
 			String oldRegisterNumber = (String) session.getAttribute("OldRegNo");
+			String[] classGroupId = session.getAttribute("classGroupId").toString().split("/");
 						
 			@SuppressWarnings("unchecked")
 			List<String> registerNumberList = (List<String>) session.getAttribute("registerNumberList");
@@ -192,7 +194,8 @@ public class CourseRegistrationStartController
 				//Get the Compulsory Course List
 				compulsoryCourseList2 = compulsoryCourseConditionDetailService.getEligibleCompulsoryCourseList(
 											semesterSubId, programGroupId, studyStartYear, programSpecId, 
-											registerNumberList, programSpecCode, costCenterId, 0);
+											registerNumberList, programSpecCode, costCenterId, 0, classGroupId, 
+											classType);
 				
 				//Update Compulsory Course in Mongo Db
 				//courseRegistrationCommonMongoService.updateCompulsoryCourseByRegisterNumber(registerNumber, compulsoryCourseList2);

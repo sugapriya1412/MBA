@@ -35,13 +35,14 @@ public class CourseCatalogService
 	{
 		return courseCatalogRepository.findOfferedCourseDetailByCourseCode(semesterSubId, classGroupId, 
 					classType, courseCode);
-	}
+	}	
 			
 	//To get Course Owner's List
 	public List<Object[]> getCourseCostCentre (String campus)
 	{
 		return courseCatalogRepository.findCourseCostCentre(campus);
 	}
+	
 	
 	//Compulsory Course Pagination
 	public Page<CourseCatalogModel> getCompulsoryCoursePagination(String campusCode, String[] courseSystem, 

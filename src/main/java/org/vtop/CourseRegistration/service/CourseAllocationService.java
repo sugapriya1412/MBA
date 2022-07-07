@@ -142,7 +142,7 @@ public class CourseAllocationService
 		int filterType = 2; 
 		List<CourseAllocationModel> tempModelList = new ArrayList<CourseAllocationModel>();
 		List<String> classIdList = new ArrayList<String>();
-		logger.trace("\n ccCourseSystem: "+ ccCourseSystem +" | combineClassId: "+ combineClassId);
+		//logger.trace("\n ccCourseSystem: "+ ccCourseSystem +" | combineClassId: "+ combineClassId);
 		
 		if ((!camList.isEmpty()) && (employeeId != null) && (!employeeId.equals("")))
 		{
@@ -230,8 +230,8 @@ public class CourseAllocationService
 				
 		try
 		{
-			logger.trace("\n patternId: "+ patternId +" | clashSlot: "+ clashSlot);
-			logger.trace("\n allottedSlot size: "+ allottedSlot.size() +" | slotTimeMapList size: "+ slotTimeMapList.size());
+			//logger.trace("\n patternId: "+ patternId +" | clashSlot: "+ clashSlot);
+			//logger.trace("\n allottedSlot size: "+ allottedSlot.size() +" | slotTimeMapList size: "+ slotTimeMapList.size());
 			
 			if ((patternId != null) && (patternId > 0) && (clashSlot != null) && (!clashSlot.equals("")) 
 					&& (allottedSlot.isEmpty()))
@@ -358,11 +358,11 @@ public class CourseAllocationService
 				
 		try
 		{
-			logger.trace("\n patternId: "+ patternId +" | slot: "+ slot 
-					+" | buildingId: "+ buildingId +" | buildingCode: "+ buildingCode);
-			logger.trace("\n allottedSlot size: "+ allottedSlot.size() 
-					+" | slotTimeMapList size: "+ slotTimeMapList.size() 
-					+" | slotFixedInfoList size: "+ slotFixedInfoList.size());
+			//logger.trace("\n patternId: "+ patternId +" | slot: "+ slot 
+			//		+" | buildingId: "+ buildingId +" | buildingCode: "+ buildingCode);
+			//logger.trace("\n allottedSlot size: "+ allottedSlot.size() 
+			//		+" | slotTimeMapList size: "+ slotTimeMapList.size() 
+			//		+" | slotFixedInfoList size: "+ slotFixedInfoList.size());
 			
 			if ((patternId != null) && (patternId > 0) && (slot != null) && (!slot.equals("")) 
 					&& (allottedSlot.isEmpty()))
@@ -388,7 +388,7 @@ public class CourseAllocationService
 						for (SlotTimeMasterModel stm : stmModelList)
 						{
 							clashWeekDay = stm.getStmPkId().getWeekdays();
-							logger.trace("\n clashWeekDay: "+ clashWeekDay);
+							//logger.trace("\n clashWeekDay: "+ clashWeekDay);
 							
 							for (Object[] obj : allottedSlot)
 							{

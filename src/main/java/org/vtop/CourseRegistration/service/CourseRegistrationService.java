@@ -180,7 +180,7 @@ public class CourseRegistrationService
 		return courseRegistrationRepository.findRegistrationAndWaitingByNotClassGroupSlotDetail(semesterSubId, registerNumber, classGroupId);
 	}	
 	
-	public List<Object[]> getegistrationAndWaitingSlotDetailByNotClassGroup(List<String> semesterSubId, String registerNumber, List<String> classGroupId)
+	public List<Object[]> getRegistrationAndWaitingSlotDetailByNotClassGroup(List<String> semesterSubId, String registerNumber, List<String> classGroupId)
 	{
 		return courseRegistrationRepository.findRegistrationAndWaitingSlotDetailByNotClassGroup(semesterSubId, registerNumber, classGroupId);
 	}	
@@ -191,8 +191,7 @@ public class CourseRegistrationService
 		return courseRegistrationRepository.findRegisteredCourseByClassGroup(semesterSubId, registerNumber, classGroupId);
 	}
 	
-	public List<String> getPrevSemCourseRegistrationPARequisiteByRegisterNumber(List<String> registerNumber, 
-			List<String> courseCode)
+	public List<String> getPrevSemCourseRegistrationPARequisiteByRegisterNumber(List<String> registerNumber, List<String> courseCode)
 	{
 		return courseRegistrationRepository.findPrevSemCourseRegistrationPARequisiteByRegisterNumber(registerNumber, courseCode);
 	}
@@ -717,5 +716,10 @@ public class CourseRegistrationService
 		}
 		
 		return returnObjectList;
+	}
+	
+	public List<String> getByRegisterNumberAndCourseCodeForPARequisite(List<String> registerNumber, List<String> courseCode)
+	{
+		return courseRegistrationRepository.findByRegisterNumberAndCourseCodeForPARequisite(registerNumber, courseCode);
 	}
 }

@@ -834,4 +834,18 @@ public interface CourseRegistrationRepository extends JpaRepository<CourseRegist
 	List<Object[]> findCompulsoryCourseRegistrationAndAllocation(String semesterSubId, String registerNumber, List<String> courseCode, 
 						String[] classGroupId, String[] classType, String progGroupCode, String progSpecCode, String costCentreCode, 
 						String[] courseSystem);
+	
+	@Query(value="select distinct a.course_code from ( "+ 
+					"(select course_code from academics.student_history where stdntslgndtls_register_number in (?1) and "+ 
+					"(course_code in (?2) or course_code in (select EQUIVALENT_COURSE_CODE from ACADEMICS.COURSE_EQUIVALANCES "+ 
+					"where COURSE_CODE in (?2)) or course_code in (select COURSE_CODE from ACADEMICS.COURSE_EQUIVALANCES "+ 
+					"where EQUIVALENT_COURSE_CODE in (?2))) and grade in ('A','B','C','D','E','S','U','R','F','Fail','P','Pass'))"+ 
+					"union all "+ 
+					"(select code as course_code from ACADEMICS.COURSE_REGISTRATION a, ACADEMICS.COURSE_CATALOG b where "+ 
+					"a.SEMSTR_DETAILS_SEMESTER_SUB_ID in (select SEMESTER_SUB_ID from ACADEMICS.COURSE_REG_PREVIOUS_SEM_VIEW2) "+ 
+					"and a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID and "+ 
+					"(b.CODE in (?2) or b.CODE in (select EQUIVALENT_COURSE_CODE from ACADEMICS.COURSE_EQUIVALANCES "+ 
+					"where COURSE_CODE in (?2)) or b.CODE in (select COURSE_CODE from ACADEMICS.COURSE_EQUIVALANCES "+ 
+					"where EQUIVALENT_COURSE_CODE in (?2)))) ) a", nativeQuery=true)
+	List<String> findByRegisterNumberAndCourseCodeForPARequisite(List<String> registerNumber, List<String> courseCode);
 }
