@@ -92,8 +92,8 @@ public class CourseRegistrationLoginController
 					+" | studyStartYear: "+ studyStartYear +" | studentStudySystem: "+ studentStudySystem
 					+" | studentGraduateYear: "+ studentGraduateYear +" | studEMailId: "+ studEMailId);
 			
-			int regSlotCheckStatus = 2; //If Permitted Schedule-> 1: Date & Time / 2: Only Date
-			int historyCallStatus = 2; //Student History-> 1: Procedure/ 2: Table
+			int regSlotCheckStatus = 1; //If Permitted Schedule-> 1: Date & Time / 2: Only Date
+			int historyCallStatus = 1; //Student History-> 1: Procedure/ 2: Table
 			int cgpaStatus = 2; //Student CGPA & Credit Detail-> 1: Dynamic/ 2: Static
 			int wishListCheckStatus = 2; //Wish list Check Status-> 1: Enable/ 2: Disable
 			int PEUEAllowStatus = 1; //PE & UE Category Allow Status-> 1: Enable/ 2: Disable
@@ -101,7 +101,7 @@ public class CourseRegistrationLoginController
 			int waitingListStatus = 2; //Waiting List Allow Status-> 1: Enable/ 2: Disable
 			int OptionNAStatus = 1; //Option Not Allowed Status-> 1: Enable/ 2: Disable
 			int compulsoryCourseStatus = 1; //Compulsory Course Allow Status-> 1: Enable/ 2: Disable
-			int otpStatus = 2; //OTP Send Status-> 1: Enable/ 2: Disable
+			int otpStatus = 1; //OTP Send Status-> 1: Enable/ 2: Disable
 			
 			int maxCredit = 27, minCredit = 16, academicYear = 0, academicGraduateYear = 0, cclTotalCredit = 0, 
 					activeStatus = 2, allowStatus = 2;
