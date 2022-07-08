@@ -119,6 +119,22 @@ public class Sdc_common_functions
 		}
 		return key;
 	}
+    
+    public String getrandom4(int keylen) 
+	{
+		final String alphabet = "ABCDEFGHJKMNPRSTUVWXYZabcdefghjkmnprstuvwxyz23456789!@#$%&*";
+    	
+    	StringBuilder stringBuilder = new StringBuilder();
+		Random r = new Random();
+				
+		for (int i = 0; i < keylen; i++)
+		{
+			//stringBuilder.append(charRepository.charAt(random.nextInt(charRepository.length())));
+			stringBuilder.append(alphabet.charAt(r.nextInt(alphabet.length())));
+		}
+		
+		return stringBuilder.toString();
+	}
 	
 	public static String convertByteToHex(byte data[])
 	{

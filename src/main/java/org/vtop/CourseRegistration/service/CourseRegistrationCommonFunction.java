@@ -2031,8 +2031,7 @@ public class CourseRegistrationCommonFunction
 	
 	//Checking slot clash
 	public String checkClash(Integer patternId, List<String> clashSlotList, String pSemesterSubId, String pRegisterNumber, 
-						String pRegType, String pOldClassId, int waitingListStatus, List<String> clashSemesterList, 
-						List<String> clashNonClassGroupList)
+						String pRegType, String pOldClassId, int waitingListStatus, String prvSemesterSubId, List<String> prvNonClassGroupList)
 	{
 		int clashStatus = 2;
 		String message = "NONE", slot = "";
@@ -2041,8 +2040,6 @@ public class CourseRegistrationCommonFunction
 		List<String> tempStringList = new ArrayList<String>();
 		List<Object[]> objectList = new ArrayList<Object[]>();
 		Map<String, List<SlotTimeMasterModel>> slotTimeMapList = new HashMap<String, List<SlotTimeMasterModel>>();
-		
-		clashSemesterList.add(pSemesterSubId);
 				
 		logger.trace("\n patternId: "+ patternId +" | clashSlotList: "+ clashSlotList 
 				+" | pSemesterSubId: "+ pSemesterSubId +" | pRegisterNumber: "+ pRegisterNumber 
@@ -2056,7 +2053,7 @@ public class CourseRegistrationCommonFunction
 		{
 			//Get the Slot Time Master By Semester
 			//slotTimeMapList = semesterMasterService.getSlotTimeMasterCommonTimeSlotBySemesterSubIdAsMap(Arrays.asList(pSemesterSubId));
-			slotTimeMapList = semesterMasterService.getSlotTimeMasterCommonTimeSlotBySemesterSubIdAsMap(clashSemesterList);
+			slotTimeMapList = semesterMasterService.getSlotTimeMasterCommonTimeSlotBySemesterSubIdAsMap(Arrays.asList(pSemesterSubId, prvSemesterSubId));
 			
 			//Get list of Registration Slots based on Adding or Modifying the Course
 			if ((pRegType.equals("MODIFY")) && (!pOldClassId.equals("")) && (!pOldClassId.equals(null)))
@@ -2069,8 +2066,8 @@ public class CourseRegistrationCommonFunction
 				//					Arrays.asList("ST002"));
 				
 				//Based on Current & Previous Semester with Non class Group
-				objectList = courseRegistrationService.getRegisteredSlotsBySemesterAndNotClassGroupforUpdate(clashSemesterList, 
-									pRegisterNumber, pOldClassId, clashNonClassGroupList);
+				objectList = courseRegistrationService.getRegisteredSlotsBySemesterAndNotClassGroupforUpdate(Arrays.asList(pSemesterSubId, prvSemesterSubId), 
+									pRegisterNumber, pOldClassId, prvNonClassGroupList);
 			}
 			else
 			{
@@ -2081,8 +2078,8 @@ public class CourseRegistrationCommonFunction
 				//objectList = courseRegistrationService.getRegisteredSlotsByNotClassGroup(pSemesterSubId, pRegisterNumber, Arrays.asList("ST002"));
 				
 				//Based on Current & Previous Semester with Non class Group
-				objectList = courseRegistrationService.getRegisteredSlotsBySemesterAndNotClassGroup(clashSemesterList, pRegisterNumber, 
-								clashNonClassGroupList);
+				objectList = courseRegistrationService.getRegisteredSlotsBySemesterAndNotClassGroup(Arrays.asList(pSemesterSubId, prvSemesterSubId), 
+									pRegisterNumber, prvNonClassGroupList);
 			}
 			
 			//Checking the clash with Registered Slot
@@ -2449,7 +2446,7 @@ public class CourseRegistrationCommonFunction
 			logger.trace("\n logStatus: "+ logStatus +" | timeDiff: "+ timeDiff);
 			
 			//if ((logStatus == 1) && (timeDiff <= 500))
-			if ((logStatus == 1) && (timeDiff <= 300))
+			if ((logStatus == 1) && (timeDiff <= 200))
 			{
 				activeStatus = 2;
 			}
@@ -2633,8 +2630,7 @@ public class CourseRegistrationCommonFunction
 				
 		return regValidFlag;
 	}
-	
-	
+		
 	//Registration Status
 	public Integer getRegistrationStatus(Integer approvalStatus, String courseOption, String genericCourseType, 
 						String evaluationType, String studentCategory)

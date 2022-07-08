@@ -51,11 +51,8 @@ public class CourseRegistrationFormController
 	private static final Logger logger = LogManager.getLogger(CourseRegistrationFormController.class);	
 	private static final String[] classType = { "EFS" };
 	private static final String RegErrorMethod = "FS2223REG";
-	private static final List<String> crCourseOption = new ArrayList<String>(Arrays.asList("RGR","RGCE", 
-																"RGP","RGW","RPCE","RWCE","RR"));
-	private static final List<String> clashCheckSemesterList = new ArrayList<String>(Arrays.asList("VL20212207"));
-	private static final List<String> clashCheckNonClassGroupList = new ArrayList<String>(Arrays.asList("BVOC", "INT", "MBA", "ST002", "ST004"));
-		
+	private static final List<String> crCourseOption = new ArrayList<String>(Arrays.asList("RGR","RGCE","RGP","RGW","RPCE","RWCE","RR"));
+			
 	private static final String CAMPUSCODE = "VLR";	
 	private static final int BUTTONS_TO_SHOW = 5;
 	private static final int INITIAL_PAGE = 0;
@@ -1654,9 +1651,9 @@ public class CourseRegistrationFormController
 						
 						//Get Grade Category
 						gradeCategory = courseRegistrationService.getGradeCategory(studyStartYear, courseCategory, genericCourseType, ProgramGroupCode);
-							
+													
 						regStatusArr = courseRegCommonFn.checkClash(patternId, clashslot, semesterSubId, registerNumber, "ADD", "", WaitingListStatus, 
-											clashCheckSemesterList, clashCheckNonClassGroupList).split("/");
+											"VL20212207", Arrays.asList("BVOC", "INT", "MBA", "ST002", "ST004")).split("/");
 						regStatusFlag = Integer.parseInt(regStatusArr[0]);
 						logger.trace("\n regStatusFlag: "+ regStatusFlag +" | Message: "+ regStatusArr[1]);
 													
@@ -2725,7 +2722,7 @@ public class CourseRegistrationFormController
 							}
 							
 							regStatusArr = courseRegCommonFn.checkClash(patternId, clashslot, semesterSubId, registerNumber, "ADD", "", WaitingListStatus, 
-												clashCheckSemesterList, clashCheckNonClassGroupList).split("/");
+												"VL20212207", Arrays.asList("BVOC", "INT", "MBA", "ST002", "ST004")).split("/");
 							regStatusFlag = Integer.parseInt(regStatusArr[0]);
 							message = regStatusArr[1];
 																	
@@ -2991,7 +2988,7 @@ public class CourseRegistrationFormController
 				switch (allowStatus)
 				{
 					case 1:
-						logger.trace("\n courseId: "+ courseId);
+						//logger.trace("\n courseId: "+ courseId);
 						ccm = courseCatalogService.getOne(courseId);
 						if (ccm != null)
 						{
@@ -3006,7 +3003,7 @@ public class CourseRegistrationFormController
 							}
 						}
 						
-						logger.trace("\n genericCourseType: "+ genericCourseType);
+						//logger.trace("\n genericCourseType: "+ genericCourseType);
 						courseTypeList.addAll(semesterMasterService.getCourseTypeComponentByGenericType(genericCourseType));
 						if (!courseTypeList.isEmpty())
 						{
@@ -3046,12 +3043,13 @@ public class CourseRegistrationFormController
 								courseAllocationList.addAll(courseAllocationList2);
 							}
 						}
-						logger.trace("\n courseAllocationList size: "+ courseAllocationList.size());
+						//logger.trace("\n courseAllocationList size: "+ courseAllocationList.size());
 						
 						if (courseRegistrationService.getByRegisterNumberCourseCode(semesterSubId, registerNumber, courseCode).isEmpty())
 						{
 							checkEligibleStatus = 1;
 						}
+						//logger.trace("\n checkEligibleStatus: "+ checkEligibleStatus);
 																																										
 						model.addAttribute("CourseDetails", ccm);
 						model.addAttribute("CourseDetails2", ccm2);
@@ -3285,8 +3283,8 @@ public class CourseRegistrationFormController
 		List<Object[]> registeredObjectList = new ArrayList<Object[]>();
 		Map<String, List<SlotTimeMasterModel>> slotTimeMapList = new HashMap<String, List<SlotTimeMasterModel>>();
 		
-		clashCheckSemesterList.add(semesterSubId);
-		
+		//logger.trace("\n Inside callSlotInformation....");
+				
 		//General
 		//registeredObjectList = courseRegistrationService.getRegistrationAndWaitingSlotDetail(semesterSubId, registerNumber);
 		
@@ -3294,11 +3292,11 @@ public class CourseRegistrationFormController
 		//registeredObjectList = courseRegistrationService.getRegistrationAndWaitingByNotClassGroupSlotDetail(semesterSubId, registerNumber, 
 		//							Arrays.asList("ST002"));
 		
-		registeredObjectList = courseRegistrationService.getRegistrationAndWaitingSlotDetailByNotClassGroup(clashCheckSemesterList, registerNumber, 
-									clashCheckNonClassGroupList);
+		registeredObjectList = courseRegistrationService.getRegistrationAndWaitingSlotDetailByNotClassGroup(Arrays.asList(semesterSubId, "VL20212207"), 
+									registerNumber, Arrays.asList("BVOC", "INT", "MBA", "ST002", "ST004"));
 		
 		//slotTimeMapList = semesterMasterService.getSlotTimeMasterCommonTimeSlotBySemesterSubIdAsMap(Arrays.asList(semesterSubId));
-		slotTimeMapList = semesterMasterService.getSlotTimeMasterCommonTimeSlotBySemesterSubIdAsMap(clashCheckSemesterList);
+		slotTimeMapList = semesterMasterService.getSlotTimeMasterCommonTimeSlotBySemesterSubIdAsMap(Arrays.asList(semesterSubId, "VL20212207"));
 		
 		model.addAttribute("tlInfoMapList", courseRegCommonFn.getSlotInfo(registeredObjectList, courseAllocationList, slotTimeMapList));
 	}

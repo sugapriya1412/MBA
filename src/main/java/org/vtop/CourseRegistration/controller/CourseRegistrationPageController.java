@@ -105,7 +105,7 @@ public class CourseRegistrationPageController
 		return page;
 	}
 
-	@RequestMapping(value= "/", method = {RequestMethod.GET, RequestMethod.POST})
+	@RequestMapping(value="/", method = {RequestMethod.GET, RequestMethod.POST})
 	public String home(HttpServletRequest httpServletRequest, Model model, HttpSession session, 
 							HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{

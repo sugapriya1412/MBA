@@ -30,6 +30,9 @@ public class SemesterMasterService
 {
 	@Autowired private SemesterMasterRepository semesterMasterRepository;
 	
+	private static final int keyLength = 21;//Fixing the key length to generate hash value
+	
+	
 	public SemesterMasterModel getOne(Integer semesterId)
 	{
 		return semesterMasterRepository.findById(semesterId).orElse(null);
@@ -500,5 +503,35 @@ public class SemesterMasterService
 	public List<Object[]> getStudentDetailOthersByRegisterNumberAndSemesterSubId(String registerNumber, String semesterSubId)
 	{
 		return semesterMasterRepository.findStudentDetailOthersByRegisterNumberAndSemesterSubId(registerNumber, semesterSubId);
+	}
+	
+	//Generate Admin Password
+	public String generateAdminPassword()
+	{
+		String returnPassword = "", password = "NONE", hashPassword = "";
+		Sdc_common_functions scf = new Sdc_common_functions();
+		
+		password = scf.getrandom4(10);
+		hashPassword = scf.Encrypt_String3(password, keyLength);
+		
+		returnPassword = "Password: "+ password +" | Hash Password: "+ hashPassword;
+				
+		return returnPassword;
+	}
+	
+	//Validate Admin Password
+	public int validateAdminPassword(String password, String adminPassword)
+	{
+		int regValidFlag = 2;
+			
+		if ((password != null) && (!password.equals("")) && (!password.equals("NONE")) 
+				&& (adminPassword != null) && (!adminPassword.equals("")) && (!adminPassword.equals("NONE")))
+		{	
+			Sdc_common_functions scf3 = new Sdc_common_functions();
+			
+			regValidFlag = scf3.String_Validate3(password, adminPassword, keyLength);
+		}
+				
+		return regValidFlag;
 	}
 }

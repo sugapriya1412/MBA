@@ -38,11 +38,8 @@ public class CourseRegistrationEditController
 	@Autowired private CourseRegistrationFormController courseRegistrationFormController;
 	@Autowired private CourseRegistrationReadWriteService courseRegistrationReadWriteService;
 	
-	
 	private static final String[] classType = { "EFS" };
 	private static final String RegErrorMethod = "FS2223REG";
-	private static final List<String> clashCheckSemesterList = new ArrayList<String>(Arrays.asList("VL20212207"));
-	private static final List<String> clashCheckNonClassGroupList = new ArrayList<String>(Arrays.asList("BVOC", "INT", "MBA", "ST002", "ST004"));
 	private static final Logger logger = LogManager.getLogger(CourseRegistrationEditController.class);
 	
 
@@ -579,7 +576,7 @@ public class CourseRegistrationEditController
 						if (checkflag == 1) 
 						{
 							regStatusArr = courseRegCommonFn.checkClash(patternId, clashslot, semesterSubId, registerNumber, "MODIFY", oldClassId, 
-												waitingListStatus, clashCheckSemesterList, clashCheckNonClassGroupList).split("/");
+												waitingListStatus, "VL20212207", Arrays.asList("BVOC", "INT", "MBA", "ST002", "ST004")).split("/");
 							regStatusFlag = Integer.parseInt(regStatusArr[0]);
 							message = regStatusArr[1];
 							if (regStatusFlag == 2)

@@ -66,14 +66,17 @@
 					    	 placeholder="Enter Password" />
 				    </div>
 				    
-					<div th:fragment="test" id="test">
+					<div id="test" th:fragment="test">
 				    	<div class="pwd1">				    
 							<img id="captcha_id" name="imgCaptcha" th:src="${'data:image/jpeg;base64,'+res1}" height="40"></img>
-							<!-- <button type="button"
-								style="width:40px; border:none; background-color:inherit; background-repeat:no-repeat;"
-								onclick="doRefreshCaptcha();">		
+							<button type="button" id="refreshCaptchaProcess"
+								style="width: 40px; border: none; background-color: inherit; 
+											background-repeat: no-repeat;"
+								th:data-csrfname="${_csrf?.parameterName}" 
+								th:data-csrfvalue="${_csrf?.token}"
+								onclick="doRefreshCaptcha(this);">		
 								<img src="assets/img/refresh_img.png" width="25px"/>
-							</button> -->
+							</button>
 							<br/>	
 						</div>				
 						<span class="indo-msg-red" style="color:#fff; font-weight:normal;">Enter the above text </span>
@@ -81,8 +84,18 @@
 					</div>
 				    
 				    <div class="login-reset-btn">
-					  	<br/><button type="submit" style="font-weight: bold;" class="btn-success w3-btn w3-btn-green w3-round-large" onclick="return validateLogin();" >Login</button>
-					    &nbsp;&nbsp;&nbsp;&nbsp;<button type="reset" style="font-weight: bold;" class="btn-warning w3-btn w3-btn-red w3-round-large" onclick="resetPage();">Reset</button>	
+					  	<br/>
+					  	<div id="submitProcess" style= "display: block;">
+						  	<button type="submit" style="font-weight: bold;" class="btn-success w3-btn w3-btn-green w3-round-large" 
+						  			id="loginButton" onclick="return validateLogin();" >Login</button>
+						    &nbsp;&nbsp;&nbsp;&nbsp;
+						    <button type="reset" style="font-weight: bold;" class="btn-warning w3-btn w3-btn-red w3-round-large" 
+						    	id="resetButton" onclick="resetPage();">Reset</button>
+					    </div>
+					    
+					    <div id="waitingProcess" style= "display: none; font-size: 20px">
+							Processing please wait......
+						</div>
 					</div> 	    	        		    		    
 				  </div>								  	   
 			      <div class="notes">
@@ -197,6 +210,10 @@
 		}
 		else
 		{
+			document.getElementById("submitProcess").style.display = "none";
+			document.getElementById("refreshCaptchaProcess").style.display = "none";
+			document.getElementById("waitingProcess").style.display = "block";
+			
 			return true;
 		}
 	}

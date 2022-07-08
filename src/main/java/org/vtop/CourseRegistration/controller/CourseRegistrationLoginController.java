@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -51,8 +50,7 @@ public class CourseRegistrationLoginController
 	{	
 		String registerNo = (String) session.getAttribute("RegisterNumber");
 		String ipAddress = (String) session.getAttribute("IpAddress");
-		
-		logger.trace("\n registerNo: "+ registerNo +" | ipAddress: "+ ipAddress);
+		//logger.trace("\n registerNo: "+ registerNo +" | ipAddress: "+ ipAddress);
 		
 		String urlPage = "", msg = "", currentDateTimeStr = "";
 		Date currentDateTime = new Date();
@@ -69,9 +67,9 @@ public class CourseRegistrationLoginController
 			String endTime = (String) session.getAttribute("endTime");
 			String allowStartTime = (String) session.getAttribute("allowStartTime");
 						
-			logger.trace("\n testStatus: "+ testStatus +" | regTimeCheckStatus: "+ regTimeCheckStatus  
-					+" | startDate: "+ startDate +" | endDate: "+ endDate +" | startTime: "+ startTime 
-					+" | endTime: "+ endTime +" | allowStartTime: "+ allowStartTime +" | ipAddress: "+ ipAddress);
+			//logger.trace("\n testStatus: "+ testStatus +" | regTimeCheckStatus: "+ regTimeCheckStatus  
+			//		+" | startDate: "+ startDate +" | endDate: "+ endDate +" | startTime: "+ startTime 
+			//		+" | endTime: "+ endTime +" | allowStartTime: "+ allowStartTime +" | ipAddress: "+ ipAddress);
 			
 			String studentName = (String) session.getAttribute("studentName");
 			int specId = (Integer) session.getAttribute("ProgramSpecId");
@@ -81,16 +79,17 @@ public class CourseRegistrationLoginController
 			String programGroupCode = (String) session.getAttribute("ProgramGroupCode");				
 			int studyStartYear = (Integer) session.getAttribute("StudyStartYear");
 			int studentGraduateYear = (Integer) session.getAttribute("StudentGraduateYear");
-			String studentStudySystem = (String) session.getAttribute("studentStudySystem");				
+			//String studentStudySystem = (String) session.getAttribute("studentStudySystem");				
 			String programGroupMode = (String) session.getAttribute("programGroupMode");
-			String studEMailId = (String) session.getAttribute("studentEMailId");
+			//String studEMailId = (String) session.getAttribute("studentEMailId");
 			String costCentreCode = (String) session.getAttribute("costCentreCode");
+			int adminAuthenticationStatus = (Integer) session.getAttribute("adminAuthenticationStatus");
 			
-			logger.trace("\n registerNo: "+ registerNo +" | specId: "+ specId +" | specCode: "+ specCode 
-					+" | groupId: "+ groupId +" | programGroupCode: "+ programGroupCode 
-					+" | programGroupMode: "+ programGroupMode +" | costCentreCode: "+ costCentreCode 
-					+" | studyStartYear: "+ studyStartYear +" | studentStudySystem: "+ studentStudySystem
-					+" | studentGraduateYear: "+ studentGraduateYear +" | studEMailId: "+ studEMailId);
+			//logger.trace("\n registerNo: "+ registerNo +" | specId: "+ specId +" | specCode: "+ specCode 
+			//		+" | groupId: "+ groupId +" | programGroupCode: "+ programGroupCode 
+			//		+" | programGroupMode: "+ programGroupMode +" | costCentreCode: "+ costCentreCode 
+			//		+" | studyStartYear: "+ studyStartYear +" | studentStudySystem: "+ studentStudySystem
+			//		+" | studentGraduateYear: "+ studentGraduateYear +" | studEMailId: "+ studEMailId);
 			
 			int regSlotCheckStatus = 1; //If Permitted Schedule-> 1: Date & Time / 2: Only Date
 			int historyCallStatus = 1; //Student History-> 1: Procedure/ 2: Table
@@ -134,8 +133,7 @@ public class CourseRegistrationLoginController
 			//For getting captcha from session attribute					
 			sessioncaptchaString = (String) session.getAttribute("CAPTCHA");
 			logger.trace("\n sessioncaptchaString: "+ sessioncaptchaString);
-			
-																					
+																								
 			//Semester Sub Id Assignment & Student Graduation Status
 			if (programGroupCode.equals("MBA") || programGroupCode.equals("MBA5")) 
 			{
@@ -149,7 +147,7 @@ public class CourseRegistrationLoginController
 			{
 				semesterSubId = "VL20222301";						
 			}
-			logger.trace("\n semesterSubId: "+ semesterSubId);
+			//logger.trace("\n semesterSubId: "+ semesterSubId);
 
 			//Semester Sub Id Details
 			/*objectList.clear();
@@ -176,10 +174,9 @@ public class CourseRegistrationLoginController
 				
 				classGroupId = "ALL";
 			}
-			
-			logger.trace("\n semesterId: "+ semesterId +" | academicYear: "+ academicYear 
-					+" | academicGraduateYear: "+ academicGraduateYear +" | semesterDesc: "+ semesterDesc 
-					 +" | semesterShortDesc: "+ semesterShortDesc +" | classGroupId: "+ classGroupId);
+			//logger.trace("\n semesterId: "+ semesterId +" | academicYear: "+ academicYear 
+			//		+" | academicGraduateYear: "+ academicGraduateYear +" | semesterDesc: "+ semesterDesc 
+			//		 +" | semesterShortDesc: "+ semesterShortDesc +" | classGroupId: "+ classGroupId);
 					
 			
 			//Student Credit Transfer Detail/ Registration Exemption Status/ Graduation status
@@ -195,7 +192,6 @@ public class CourseRegistrationLoginController
 			}*/
 			
 			studentDetailOthers = courseRegistrationCommonMongoService.getStudentDetailOthersByRegisterNumber(registerNo);
-			logger.trace("\n studentDetailOthers: "+ studentDetailOthers.toString());
 			if (studentDetailOthers != null)
 			{
 				oldRegNo = studentDetailOthers.getOldRegisterNumber();
@@ -212,8 +208,8 @@ public class CourseRegistrationLoginController
 				//	compulsoryCourseList.addAll(Arrays.asList(studentDetailOthers.getCompulsoryCourse().split("\\|")));
 				//}
 			}
-			logger.trace("\n oldRegNo: "+ oldRegNo +" | graduationStatus: "+ graduationStatus 
-						+" | exemptionStatus: "+ exemptionStatus);
+			//logger.trace("\n oldRegNo: "+ oldRegNo +" | graduationStatus: "+ graduationStatus 
+			//			+" | exemptionStatus: "+ exemptionStatus);
 			
 			if ((oldRegNo != null) && (!oldRegNo.equals("")))
 			{
@@ -230,7 +226,7 @@ public class CourseRegistrationLoginController
 				registerNumberArray[0] = registerNo;
 				registerNumberArray[1] = "";
 			}
-			logger.trace("\n registerNumberList: "+ registerNumberList +" | registerNumberArray: "+ Arrays.toString(registerNumberArray));
+			//logger.trace("\n registerNumberList: "+ registerNumberList +" | registerNumberArray: "+ Arrays.toString(registerNumberArray));
 			
 				
 			//Student study system (i.e. FFCS or CAL or General)
@@ -249,9 +245,9 @@ public class CourseRegistrationLoginController
 				reRegFlag = Integer.parseInt(courseOptionStatusArray[1]);
 			}
 									
-			logger.trace("\n exemptionStatus: "+ exemptionStatus +" | programGroupMode: "+ programGroupMode
-					+" | registrationMethod: "+ registrationMethod +" | studentStudySystem: "+ studentStudySystem 
-					+" | regularFlag: "+ regularFlag +" | reRegFlag: "+ reRegFlag);
+			//logger.trace("\n exemptionStatus: "+ exemptionStatus +" | programGroupMode: "+ programGroupMode
+			//		+" | registrationMethod: "+ registrationMethod +" | studentStudySystem: "+ studentStudySystem 
+			//		+" | regularFlag: "+ regularFlag +" | reRegFlag: "+ reRegFlag);
 				
 			if (graduationStatus == 0) 
 			{
@@ -274,8 +270,7 @@ public class CourseRegistrationLoginController
 				{
 					msg = "Only regular students are eligible for Registration.";
 				}
-			}
-			
+			}			
 						
 			//Checking the Allowed Admission Year/ Programme Group/ Programme Specialization
 			if (checkFlag == 1)
@@ -307,7 +302,7 @@ public class CourseRegistrationLoginController
 			//Checking the Registration is based on Open Hours or Scheduled Date/Time
 			if (checkFlag2 == 1)
 			{	
-				if (regTimeCheckStatus == 2)
+				if ((regTimeCheckStatus == 2) && (adminAuthenticationStatus == 2))
 				{
 					/*objectList.clear();
 					objectList = semesterMasterService.getRegistrationScheduleByRegisterNumber(registerNo);
@@ -353,9 +348,9 @@ public class CourseRegistrationLoginController
 							endTime = registrationSchedule.getToTime();
 							allowStartTime = startTime;
 						}
-						logger.trace("\n startDate: "+ startDate +" | endDate: "+ endDate 
-								+" | startTime: "+ startTime +" | endTime: "+ endTime 
-								+" | allowStartTime: "+ allowStartTime);
+						//logger.trace("\n startDate: "+ startDate +" | endDate: "+ endDate 
+						//		+" | startTime: "+ startTime +" | endTime: "+ endTime 
+						//		+" | allowStartTime: "+ allowStartTime);
 
 						if (schStatus == 0)
 						{
@@ -386,7 +381,7 @@ public class CourseRegistrationLoginController
 					statusMsg = returnVal.split("/");
 					allowStatus = Integer.parseInt(statusMsg[0]);
 					msg = statusMsg[1];
-					logger.trace("\n allowStatus: "+ allowStatus +" | msg: "+ msg);
+					//logger.trace("\n allowStatus: "+ allowStatus +" | msg: "+ msg);
 	
 					if (allowStatus == 1)
 					{
@@ -445,7 +440,8 @@ public class CourseRegistrationLoginController
 					}
 					else
 					{
-						msg = "You have already logged in (or) not properly logged out.  Try again after 5 minutes.";
+						//msg = "You have already logged in (or) not properly logged out.  Try again after 5 minutes.";
+						msg = "You have already logged in (or) not properly logged out.  Try again after 2 minutes.";
 					}
 				}
 			}
@@ -505,7 +501,7 @@ public class CourseRegistrationLoginController
 				{
 					egbProgramInt.add(Integer.parseInt(e));									
 				}
-				logger.trace("\n egbProgram: "+ egbProgram +" | egbProgramInt: "+ egbProgramInt);
+				//logger.trace("\n egbProgram: "+ egbProgram +" | egbProgramInt: "+ egbProgramInt);
 												
 				//Fixing the Minimum & Maximum credit
 				String[] creditLimitArr = courseRegCommonFn.getMinimumAndMaximumCreditLimit(semesterSubId, registerNo, 
@@ -513,7 +509,7 @@ public class CourseRegistrationLoginController
 												academicGraduateYear, semesterId, specCode).split("\\|");
 				minCredit = Integer.parseInt(creditLimitArr[0]);
 				maxCredit = Integer.parseInt(creditLimitArr[1]);
-				logger.trace("\n minCredit: "+ minCredit +" | maxCredit: "+ maxCredit);
+				//logger.trace("\n minCredit: "+ minCredit +" | maxCredit: "+ maxCredit);
 												
 				currentDateTimeStr = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a").format(currentDateTime);	
 
@@ -535,8 +531,8 @@ public class CourseRegistrationLoginController
 					cclTotalCredit = programSpecializationCurriculumCredit.getTotalCredits();
 					checkCourseSystem = programSpecializationCurriculumCredit.getCourseSystem();
 				}
-				logger.trace("\n curriculumVersion: "+ cclVersion +" | cclTotalCredit: "+ cclTotalCredit 
-						+" | checkCourseSystem: "+ checkCourseSystem);
+				//logger.trace("\n curriculumVersion: "+ cclVersion +" | cclTotalCredit: "+ cclTotalCredit 
+				//		+" | checkCourseSystem: "+ checkCourseSystem);
 				
 				
 				//Check & Assign the course system
@@ -565,8 +561,8 @@ public class CourseRegistrationLoginController
 						registrationMethod = "FFCS";
 					}
 				}
-				logger.trace("\n courseSystem: "+ Arrays.toString(courseSystem) 
-						+" | registrationMethod (After): "+ registrationMethod);
+				//logger.trace("\n courseSystem: "+ Arrays.toString(courseSystem) 
+				//		+" | registrationMethod (After): "+ registrationMethod);
 				
 								
 				//Login status update

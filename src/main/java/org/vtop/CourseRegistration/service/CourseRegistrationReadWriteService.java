@@ -173,6 +173,9 @@ public class CourseRegistrationReadWriteService
 	public void addErrorLog(String exceptionMessage, String packageName, String programName, 
 					String userId, String ipAddress)
 	{
+		logger.trace("\n exceptionMessage: "+ exceptionMessage +" | packageName: "+ packageName 
+				+" | programName: "+ programName +" | userId: "+ userId +" | userId: "+ ipAddress);
+		
 		if (exceptionMessage.length() >= 1000)
 		{
 			exceptionMessage = exceptionMessage.substring(1, 999);
@@ -249,7 +252,7 @@ public class CourseRegistrationReadWriteService
 				}
 			}
 		}
-		logger.trace("\n executeStatus : "+ executeStatus);
+		//logger.trace("\n executeStatus : "+ executeStatus);
 		
 		if (executeStatus)
 		{
@@ -286,11 +289,11 @@ public class CourseRegistrationReadWriteService
 				presentTime = presentDateTimeArr[1];
 				presentTimeVal = Long.parseLong(presentTime.replace(":", ""));
 				
-				logger.trace("\n StartDate: "+ startDate +" | StartTime: "+ startTime 
-					+" | Start Time Value: " + startTimeVal);
-				logger.trace("\n EndDate: "+ endDate +" | EndTime: "+ endTime +" | EndTimeValue: " + endTimeVal);
-				logger.trace("\n PresentDate: "+ presentDate +" | PresentTime: "+ presentTime
-						 				+" | PresentTimeValue: " + presentTimeVal);
+				//logger.trace("\n StartDate: "+ startDate +" | StartTime: "+ startTime 
+				//	+" | Start Time Value: " + startTimeVal);
+				//logger.trace("\n EndDate: "+ endDate +" | EndTime: "+ endTime +" | EndTimeValue: " + endTimeVal);
+				//logger.trace("\n PresentDate: "+ presentDate +" | PresentTime: "+ presentTime
+				//		 				+" | PresentTimeValue: " + presentTimeVal);
 								
 				//Based on fixed Date & Time
 				if ((presentDate.compareTo(startDate) >= 0) && (presentDate.compareTo(endDate) <= 0))
