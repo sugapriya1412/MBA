@@ -11,9 +11,16 @@
 					<div class="container">
 										
 						<div style="text-align: center; font-weight: bolder; text-decoration: underline; 
-							margin-bottom: 8px;" th:if="${registrationOption!=null}">
+							margin-bottom: 8px;" th:if="${registrationOption != null}">
 							<label th:if="${(registrationOptionDesc != null) and (registrationOptionDesc != '')}" 
 								th:text="${registrationOptionDesc}"></label>
+						</div>
+						
+						<div th:if="${(registrationOption != null) and (registrationOption == 'COMP')}" 
+							 style="text-align: center;">
+							<span style="text-align: left; color: red; font-weight: bold;">Note:</span>
+							&nbsp;&nbsp;
+							<span>You must register ALL compulsory courses before moving to other category.</span>
 						</div>
 						
 						<div>
