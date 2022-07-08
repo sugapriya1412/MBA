@@ -194,7 +194,7 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 						message = "Invalid username / password";
 					}*/
 					
-					if ((testStatus == 2) || adminIpAddress.contains(ipAddress))
+					if (testStatus == 2)
 					{
 						studentDetail2 = studentDetailMongoService.getByRegisterNumber(userId);
 					}
@@ -226,7 +226,7 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 						
 						studentGraduateYear = studyStartYear + programDuration;
 												
-						if ((testStatus == 2) || adminIpAddress.contains(ipAddress))
+						if (testStatus == 2)
 						{
 							studEMailId = "NONE";	//Testing Purpose
 						}
