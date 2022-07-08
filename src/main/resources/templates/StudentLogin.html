@@ -81,6 +81,16 @@
 						</div>				
 						<span class="indo-msg-red" style="color:#fff; font-weight:normal;">Enter the above text </span>
 						<span class="full-center"><input class="input-captcha" type="text" name="captchaString" id="captchaString" maxlength="6"/></span>
+						
+						<script th:inline="javascript">
+						/*<![CDATA[*/
+							$(function() {							    
+							    $('#captchaString').keyup(function() {
+							        $(this).val($(this).val().toUpperCase());
+							    });
+							});
+						/*]]>*/		
+						</script>
 					</div>
 				    
 				    <div class="login-reset-btn">
