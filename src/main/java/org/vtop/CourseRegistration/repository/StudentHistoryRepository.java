@@ -609,10 +609,17 @@ public interface StudentHistoryRepository extends JpaRepository<StudentHistoryMo
 			nativeQuery=true)
 	List<Object[]> findStudentHistoryForCgpaNonCalCalc(String regNo, Short pgmSpecId, Date examMonth);
 	
+	
 	@Query(value="SELECT a.history_timestamp, DATE_PART('day', (current_timestamp - a.history_timestamp)) as days, "+ 
 					"DATE_PART('hour', (current_timestamp - a.history_timestamp)) as hours, "+ 
 					"DATE_PART('minute', (current_timestamp - a.history_timestamp)) as minutes from "+ 
 					"(select max(log_timestamp) as history_timestamp from academics.student_history where "+ 
 					"stdntslgndtls_register_number=?1 and log_timestamp is not null) a", nativeQuery=true)
 	List<Object[]> findLastUpdatedPeriodByRegisterNumber(String registerNumber);
+	
+	@Query("select a from StudentHistoryModel a where a.studentHistoryPKId.registerNumber in (?1) "+
+			"order by a.studentHistoryPKId.courseId, (case when (a.studentHistoryPKId.courseType = 'ETH') then 2 "+
+			"when (a.studentHistoryPKId.courseType = 'ELA') then 3 when (a.studentHistoryPKId.courseType = 'EPJ') "+
+			"then 4 else 1 end)")
+	List<StudentHistoryModel> findByRegisterNumber(List<String> registerNumber);
 }

@@ -1490,18 +1490,22 @@ public class CourseRegistrationCommonFunction
 							logger.trace("\n totCdtReg: "+ totCdtReg +" | totCdtEarn: "+ totCdtEarn 
 									+" | failCdt: "+ failCdt +" | psRegCredit: "+ psRegCredit);
 							logger.trace("\n totPjtCdt: "+ totPjtCdt +" | cdtRequired: "+ cdtRequired 
-									+" | cdtPer: "+ cdtPer +" | ceilCdtper: "+ ceilCdtper);
+									+" | cdtPer: "+ cdtPer +" | pjtPer: "+ pjtPer  +" | ceilCdtper: "+ ceilCdtper);
 														
-							if (ceilCdtper >= pjtPer)
+							if ((float) ceilCdtper >= (float)pjtPer)
 							{
 								cspeFlag2 = 1;
 							}
 							else
 							{
+								//msg = "You did not meet the required credits "+ cdtRequired +" ("+ pjtPer +"%) to "
+								//		+"take this cap stone project.  Whereas, your total credits are "+ totPjtCdt 
+								//		+" ("+ ceilCdtper +"%) only.\nDescription of your total credits:  "
+								//		+"Earned = "+ totCdtEarn +" | Failed = "+ failCdt +" | Current Semester = "+ psRegCredit +".";
 								msg = "You did not meet the required credits "+ cdtRequired +" ("+ pjtPer +"%) to "
 										+"take this cap stone project.  Whereas, your total credits are "+ totPjtCdt 
 										+" ("+ ceilCdtper +"%) only.\nDescription of your total credits:  "
-										+"Earned = "+ totCdtEarn +" | Failed = "+ failCdt +" | Current Semester = "+ psRegCredit +".";
+										+"Earned = "+ totCdtEarn +" | Failed = "+ failCdt +" | Unpublished Semester = "+ psRegCredit +".";
 							}
 				    	}
 				    	else

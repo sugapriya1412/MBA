@@ -3,6 +3,7 @@ package org.vtop.CourseRegistration.service;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.vtop.CourseRegistration.Common.service.MailUtility;
 import org.vtop.CourseRegistration.model.ProjectRegistrationModel;
 import org.vtop.CourseRegistration.model.ProjectRegistrationPKModel;
+import org.vtop.CourseRegistration.model.StudentHistoryModel;
+import org.vtop.CourseRegistration.mongo.service.CourseRegistrationCommonMongoService;
 import org.vtop.CourseRegistration.repository.CourseEquivalanceRegRepository;
 import org.vtop.CourseRegistration.repository.CourseRegistrationRepository;
 import org.vtop.CourseRegistration.repository.CourseRegistrationWaitingRepository;
@@ -34,6 +37,8 @@ public class CourseRegistrationReadWriteService
 	@Autowired private ProjectRegistrationRepository projectRegistrationRepository;
 	@Autowired private RegistrationLogRepository registrationLogRepository;
 	@Autowired private StudentHistoryRepository studentHistoryRepository;
+	
+	@Autowired private CourseRegistrationCommonMongoService courseRegistrationCommonMongoService;
 	
 	private static final Logger logger = LogManager.getLogger(CourseRegistrationReadWriteService.class);
 	private static final int keyLength = 21;//Fixing the key length to generate hash value
@@ -227,7 +232,9 @@ public class CourseRegistrationReadWriteService
 		String returnStatus = "SUCCESS";
 		float days = 0, hours = 0;
 		boolean executeStatus = false;
+		
 		List<Object[]> objectList = new ArrayList<>();
+		List<StudentHistoryModel> studentHistoryList = new ArrayList<>();
 		
 		objectList = studentHistoryRepository.findLastUpdatedPeriodByRegisterNumber(pRegisterNumber);
 		if (objectList.isEmpty())
@@ -244,7 +251,7 @@ public class CourseRegistrationReadWriteService
 			{
 				days = Float.parseFloat(objectList.get(0)[1].toString());
 				hours = Float.parseFloat(objectList.get(0)[2].toString());
-				logger.trace("\n days : "+ days +" | hours: "+ hours);
+				//logger.trace("\n days : "+ days +" | hours: "+ hours);
 				
 				if ((days >= 1) || (hours >= 3))
 				{
@@ -252,11 +259,21 @@ public class CourseRegistrationReadWriteService
 				}
 			}
 		}
-		//logger.trace("\n executeStatus : "+ executeStatus);
+		//logger.trace("\n Student History executeStatus : "+ executeStatus);
 		
 		if (executeStatus)
 		{
 			returnStatus = studentHistoryRepository.acad_student_history_insert_process2(pRegisterNumber, pCourseSystem, "NONE");
+			//logger.trace("\n Student History Process Status : "+ returnStatus);
+			if (returnStatus.equals("SUCCESS"))
+			{
+				studentHistoryList = studentHistoryRepository.findByRegisterNumber(Arrays.asList(pRegisterNumber));
+				if (!studentHistoryList.isEmpty())
+				{
+					courseRegistrationCommonMongoService.processStudentHistoryByRegisterNumber(pRegisterNumber, studentHistoryList);
+					//logger.trace("\n Student History Mongo Processsed.........!");
+				}
+			}
 		}		
 		
 		return returnStatus;
