@@ -335,14 +335,14 @@ public interface CourseRegistrationRepository extends JpaRepository<CourseRegist
 					"as semester_sub_id, c.DESCRIPTION as semester_desc, b.CODE as course_code, b.TITLE as course_title, "+ 
 					"b.GENERIC_COURSE_TYPE from ACADEMICS.COURSE_REGISTRATION a, ACADEMICS.COURSE_CATALOG b, "+ 
 					"academics.COURSE_REG_PREVIOUS_SEM_VIEW2 c where a.SEMSTR_DETAILS_SEMESTER_SUB_ID=c.SEMESTER_SUB_ID and "+ 
-					"a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and a.result_status in (0,1) and a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID "+ 
+					"a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and a.result_status not in (2) and a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID "+ 
 					"and b.CODE=?2) "+ 
 					"union all "+ 
 					"(select 2 as order_no, 'CEREG' as reg_type, c.START_DATE as semester_date, a.SEMSTR_DETAILS_SEMESTER_SUB_ID "+ 
 					"as semester_sub_id, c.DESCRIPTION as semester_desc, b.CODE as course_code, b.TITLE as course_title, "+ 
 					"b.GENERIC_COURSE_TYPE from ACADEMICS.COURSE_REGISTRATION a, ACADEMICS.COURSE_CATALOG b, "+ 
 					"academics.COURSE_REG_PREVIOUS_SEM_VIEW2 c where a.SEMSTR_DETAILS_SEMESTER_SUB_ID=c.SEMESTER_SUB_ID and "+ 
-					"a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and a.result_status in (0,1) and a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID "+ 
+					"a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and a.result_status not in (2) and a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID "+ 
 					"and (b.CODE in (select EQUIVALENT_COURSE_CODE from ACADEMICS.COURSE_EQUIVALANCES where COURSE_CODE=?2) "+ 
 					"or b.CODE in (select COURSE_CODE from ACADEMICS.COURSE_EQUIVALANCES where EQUIVALENT_COURSE_CODE=?2)))"+ 
 					") a order by a.order_no, a.semester_date, a.semester_sub_id, a.course_code", nativeQuery=true)
@@ -621,7 +621,7 @@ public interface CourseRegistrationRepository extends JpaRepository<CourseRegist
 					"ACADEMICS.COURSE_TYPE_COMPONENT_MASTER c where a.SEMSTR_DETAILS_SEMESTER_SUB_ID in "+ 
 					"(select SEMESTER_SUB_ID from ACADEMICS.RESULT_UNPUB_SEM_DETAIL_VIEW) and "+ 
 					"a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and a.COURSE_OPTION_MASTER_CODE in (?2) and  "+ 
-					"a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID and b.GENERIC_COURSE_TYPE=c.COURSE_TYPE and a.RESULT_STATUS in (0,1)) a  "+ 
+					"a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID and b.GENERIC_COURSE_TYPE=c.COURSE_TYPE and a.RESULT_STATUS not in (2)) a  "+ 
 					"group by a.SEMSTR_DETAILS_SEMESTER_SUB_ID, a.COURSE_CATALOG_COURSE_ID, a.course_code, a.course_title,  "+ 
 					"a.GENERIC_COURSE_TYPE, a.generic_course_type_desc, a.COURSE_OPTION_MASTER_CODE  "+ 
 					"order by a.SEMSTR_DETAILS_SEMESTER_SUB_ID, a.course_code", nativeQuery=true)
@@ -641,7 +641,7 @@ public interface CourseRegistrationRepository extends JpaRepository<CourseRegist
 					"ACADEMICS.COURSE_TYPE_COMPONENT_MASTER c where a.SEMSTR_DETAILS_SEMESTER_SUB_ID in "+ 
 					"(select SEMESTER_SUB_ID from ACADEMICS.REGISTERED_SEM_DETAIL_VIEW) and "+ 
 					"a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and a.COURSE_OPTION_MASTER_CODE in (?2) and  "+ 
-					"a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID and b.GENERIC_COURSE_TYPE=c.COURSE_TYPE and a.RESULT_STATUS in (0,1)) a  "+ 
+					"a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID and b.GENERIC_COURSE_TYPE=c.COURSE_TYPE and a.RESULT_STATUS not in (2)) a  "+ 
 					"group by a.SEMSTR_DETAILS_SEMESTER_SUB_ID, a.COURSE_CATALOG_COURSE_ID, a.course_code, a.course_title,  "+ 
 					"a.GENERIC_COURSE_TYPE, a.generic_course_type_desc, a.COURSE_OPTION_MASTER_CODE  "+ 
 					"order by a.SEMSTR_DETAILS_SEMESTER_SUB_ID, a.course_code", nativeQuery=true)
@@ -734,12 +734,12 @@ public interface CourseRegistrationRepository extends JpaRepository<CourseRegist
 					"union all "+
 					"(select b.CODE as course_code from ACADEMICS.COURSE_REGISTRATION a, ACADEMICS.COURSE_CATALOG b, "+
 					"academics.COURSE_REG_PREVIOUS_SEM_VIEW2 c where a.SEMSTR_DETAILS_SEMESTER_SUB_ID=c.SEMESTER_SUB_ID and "+
-					"a.STDNTSLGNDTLS_REGISTER_NUMBER in (?2) and a.result_status in (0,1) and a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID) "+
+					"a.STDNTSLGNDTLS_REGISTER_NUMBER in (?2) and a.result_status not in (2) and a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID) "+
 					"union all "+
 					"(select b.CODE as course_code from ACADEMICS.COURSE_REGISTRATION a, ACADEMICS.COURSE_CATALOG b, "+
 					"academics.COURSE_REG_PREVIOUS_SEM_VIEW2 c, ACADEMICS.COURSE_EQUIVALANCES d where "+
 					"a.SEMSTR_DETAILS_SEMESTER_SUB_ID=c.SEMESTER_SUB_ID and a.STDNTSLGNDTLS_REGISTER_NUMBER in (?2) and "+
-					"a.result_status in (0,1) and a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID and "+
+					"a.result_status not in (2) and a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID and "+
 					"(b.CODE=d.COURSE_CODE or b.CODE=d.EQUIVALENT_COURSE_CODE)) "+
 					") a order by a.course_code", nativeQuery=true)
 	List<String> findCourseFromRegistrationAndStudentHistoryBySemesterAndRegisterNoforCS(String semesterSubId, List<String> registerNumber);
@@ -754,13 +754,13 @@ public interface CourseRegistrationRepository extends JpaRepository<CourseRegist
 					"b.TITLE as course_title, a.CRSTYPCMPNTMASTER_COURSE_TYPE from ACADEMICS.COURSE_REGISTRATION a, "+ 
 					"ACADEMICS.COURSE_CATALOG b, academics.COURSE_REG_PREVIOUS_SEM_VIEW2 c where "+ 
 					"a.SEMSTR_DETAILS_SEMESTER_SUB_ID=c.SEMESTER_SUB_ID and a.STDNTSLGNDTLS_REGISTER_NUMBER "+ 
-					"in (?1) and a.result_status in (0,1) and a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID and b.CODE=?2) "+
+					"in (?1) and a.result_status not in (2) and a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID and b.CODE=?2) "+
 					"union all "+ 
 					"(select 3 as order_no, 'CEREG' as reg_type, a.COURSE_CATALOG_COURSE_ID, b.CODE as course_code, "+ 
 					"b.TITLE as course_title, a.CRSTYPCMPNTMASTER_COURSE_TYPE from ACADEMICS.COURSE_REGISTRATION a, "+ 
 					"ACADEMICS.COURSE_CATALOG b, academics.COURSE_REG_PREVIOUS_SEM_VIEW2 c where "+ 
 					"a.SEMSTR_DETAILS_SEMESTER_SUB_ID=c.SEMESTER_SUB_ID and a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) "+ 
-					"and a.result_status in (0,1) and a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID  "+ 
+					"and a.result_status not in (2) and a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID  "+ 
 					"and (b.CODE in (select EQUIVALENT_COURSE_CODE from ACADEMICS.COURSE_EQUIVALANCES where COURSE_CODE=?2)  "+ 
 					"or b.CODE in (select COURSE_CODE from ACADEMICS.COURSE_EQUIVALANCES where EQUIVALENT_COURSE_CODE=?2))) "+ 
 					") a order by a.order_no, a.COURSE_CATALOG_COURSE_ID", nativeQuery=true)
@@ -791,7 +791,7 @@ public interface CourseRegistrationRepository extends JpaRepository<CourseRegist
 	
 	@Query(value="select b.CODE from ACADEMICS.COURSE_REGISTRATION a, ACADEMICS.COURSE_CATALOG b where "+
 					"a.SEMSTR_DETAILS_SEMESTER_SUB_ID in (select SEMESTER_SUB_ID from ACADEMICS.COURSE_REG_PREVIOUS_SEM_VIEW2) "+
-					"and a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and a.RESULT_STATUS in (0,1) and a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID", 
+					"and a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) and a.RESULT_STATUS not in (2) and a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID", 
 					nativeQuery=true)
 	List<String> findPreviousSemesterCourseByRegisterNumber(List<String> registerNumber);
 	
@@ -802,7 +802,7 @@ public interface CourseRegistrationRepository extends JpaRepository<CourseRegist
 					"from ACADEMICS.COURSE_REGISTRATION a, ACADEMICS.COURSE_CATALOG b where a.SEMSTR_DETAILS_SEMESTER_SUB_ID in "+
 					"(select SEMESTER_SUB_ID from ACADEMICS.COURSE_REG_PREVIOUS_SEM_VIEW2) and a.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) "+ 
 					"and CRSTYPCMPNTMASTER_COURSE_TYPE not in ('ECA') and a.COURSE_OPTION_MASTER_CODE not in ('AUD','GI','GICE') and "+
-					"a.RESULT_STATUS in (0,1) and a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID) a", nativeQuery=true)
+					"a.RESULT_STATUS not in (2) and a.COURSE_CATALOG_COURSE_ID=b.COURSE_ID) a", nativeQuery=true)
 	Float findPreviousSemesterCreditByRegisterNumber(List<String> registerNumber);
 	
 	

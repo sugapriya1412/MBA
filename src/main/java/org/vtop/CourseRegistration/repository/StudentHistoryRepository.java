@@ -274,7 +274,7 @@ public interface StudentHistoryRepository extends JpaRepository<StudentHistoryMo
 					"d.CODE as course_code, d.TITLE as course_title, b.CRSTYPCMPNTMASTER_COURSE_TYPE as course_type, a.START_DATE "+ 
 					"from ACADEMICS.arrear_course_reg_view2 a, ACADEMICS.COURSE_ALLOCATION b, EXAMINATIONS.ARREAR_COURSE_REGISTRATION_FAR c, "+ 
 					"ACADEMICS.COURSE_CATALOG d where a.SEMESTER_SUB_ID=b.SEMSTR_DETAILS_SEMESTER_SUB_ID and c.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) "+ 
-					"and c.REGISTRATION_STATUS=2 and c.REGISTRATION_TYPE not in ('FAR_RFAT') and c.result_status in (0,1) and "+
+					"and c.REGISTRATION_STATUS=2 and c.REGISTRATION_TYPE not in ('FAR_RFAT') and c.result_status not in (2) and "+
 					"b.CLASS_ID=c.COURSE_ALLOCATION_CLASS_ID and b.COURSE_CATALOG_COURSE_ID=c.COURSE_CATALOG_COURSE_ID and "+
 					"b.CRSTYPCMPNTMASTER_COURSE_TYPE=c.CRSTYPCMPNTMASTER_COURSE_TYPE and b.COURSE_CATALOG_COURSE_ID=d.COURSE_ID and "+
 					"c.COURSE_CATALOG_COURSE_ID=d.COURSE_ID and d.CODE=?2)"+ 
@@ -283,7 +283,7 @@ public interface StudentHistoryRepository extends JpaRepository<StudentHistoryMo
 					"d.CODE as course_code, d.TITLE as course_title, b.CRSTYPCMPNTMASTER_COURSE_TYPE as course_type, a.START_DATE "+ 
 					"from ACADEMICS.arrear_course_reg_view2 a, EXAMINATIONS.ARREAR_COURSE_ALLOCATION_RAR b, EXAMINATIONS.ARREAR_COURSE_REGISTRATION_RAR c, "+ 
 					"ACADEMICS.COURSE_CATALOG d where a.SEMESTER_SUB_ID=b.SEMSTR_DETAILS_SEMESTER_SUB_ID and c.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) "+ 
-					"and c.REGISTRATION_STATUS=2 and c.REGISTRATION_TYPE not in ('RAR_RFAT') and c.result_status in (0,1) and "+
+					"and c.REGISTRATION_STATUS=2 and c.REGISTRATION_TYPE not in ('RAR_RFAT') and c.result_status not in (2) and "+
 					"b.CLASS_ID=c.ARREAR_CRSALLCATN_RAR_CLASS_ID and b.COURSE_CATALOG_COURSE_ID=c.COURSE_CATALOG_COURSE_ID and "+
 					"b.CRSTYPCMPNTMASTER_COURSE_TYPE=c.CRSTYPCMPNTMASTER_COURSE_TYPE and b.COURSE_CATALOG_COURSE_ID=d.COURSE_ID and "+
 					"c.COURSE_CATALOG_COURSE_ID=d.COURSE_ID and d.CODE=?2)"+ 
@@ -292,7 +292,7 @@ public interface StudentHistoryRepository extends JpaRepository<StudentHistoryMo
 					"d.CODE as course_code, d.TITLE as course_title, b.CRSTYPCMPNTMASTER_COURSE_TYPE as course_type, a.START_DATE "+ 
 					"from ACADEMICS.arrear_course_reg_view2 a, ACADEMICS.COURSE_ALLOCATION b, EXAMINATIONS.ARREAR_COURSE_REGISTRATION_FAR c, "+ 
 					"ACADEMICS.COURSE_CATALOG d where a.SEMESTER_SUB_ID=b.SEMSTR_DETAILS_SEMESTER_SUB_ID and c.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) "+ 
-					"and c.REGISTRATION_STATUS=2 and c.REGISTRATION_TYPE not in ('FAR_RFAT') and c.result_status in (0,1) and "+
+					"and c.REGISTRATION_STATUS=2 and c.REGISTRATION_TYPE not in ('FAR_RFAT') and c.result_status not in (2) and "+
 					"b.CLASS_ID=c.COURSE_ALLOCATION_CLASS_ID and b.COURSE_CATALOG_COURSE_ID=c.COURSE_CATALOG_COURSE_ID and "+
 					"b.CRSTYPCMPNTMASTER_COURSE_TYPE=c.CRSTYPCMPNTMASTER_COURSE_TYPE and b.COURSE_CATALOG_COURSE_ID=d.COURSE_ID and "+
 					"c.COURSE_CATALOG_COURSE_ID=d.COURSE_ID and (d.CODE in (select EQUIVALENT_COURSE_CODE from ACADEMICS.COURSE_EQUIVALANCES "+
@@ -302,7 +302,7 @@ public interface StudentHistoryRepository extends JpaRepository<StudentHistoryMo
 					"d.CODE as course_code, d.TITLE as course_title, b.CRSTYPCMPNTMASTER_COURSE_TYPE as course_type, a.START_DATE "+ 
 					"from ACADEMICS.arrear_course_reg_view2 a, EXAMINATIONS.ARREAR_COURSE_ALLOCATION_RAR b, EXAMINATIONS.ARREAR_COURSE_REGISTRATION_RAR c, "+ 
 					"ACADEMICS.COURSE_CATALOG d where a.SEMESTER_SUB_ID=b.SEMSTR_DETAILS_SEMESTER_SUB_ID and c.STDNTSLGNDTLS_REGISTER_NUMBER in (?1) "+ 
-					"and c.REGISTRATION_STATUS=2 and c.REGISTRATION_TYPE not in ('RAR_RFAT') and c.result_status in (0,1) and "+ 
+					"and c.REGISTRATION_STATUS=2 and c.REGISTRATION_TYPE not in ('RAR_RFAT') and c.result_status not in (2) and "+ 
 					"b.CLASS_ID=c.ARREAR_CRSALLCATN_RAR_CLASS_ID and b.COURSE_CATALOG_COURSE_ID=c.COURSE_CATALOG_COURSE_ID and "+ 
 					"b.CRSTYPCMPNTMASTER_COURSE_TYPE=c.CRSTYPCMPNTMASTER_COURSE_TYPE and b.COURSE_CATALOG_COURSE_ID=d.COURSE_ID and "+ 
 					"c.COURSE_CATALOG_COURSE_ID=d.COURSE_ID and (d.CODE in (select EQUIVALENT_COURSE_CODE from ACADEMICS.COURSE_EQUIVALANCES "+
