@@ -2941,6 +2941,7 @@ public class CourseRegistrationCommonFunction
 			slotTimeList.add("16:00:00|16:45:00|16:00:00|"+ slotDate);
 			slotTimeList.add("17:00:00|17:45:00|17:00:00|"+ slotDate);
 			slotTimeList.add("18:00:00|18:45:00|18:00:00|"+ slotDate);
+			slotTimeList.add("19:30:00|20:15:00|19:30:00|"+ slotDate);
 									
 			presentDateTime = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").format(new Date());					
 			String[] presentDateTimeArr = presentDateTime.split(" ");

@@ -66,7 +66,7 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");		
 			Date startDate = sdf.parse("09-JUL-2022");
 			Date endDate = sdf.parse("09-JUL-2022");
-			String startTime = "09:00:00", endTime = "18:45:00", allowStartTime = "09:00:00";
+			String startTime = "09:00:00", endTime = "20:15:00", allowStartTime = "09:00:00";
 			
 			int adminAuthenticationStatus = 2;
 			String adminPassWord = "ba63bbc5737179b9eb71f96381e1cbef92a84957237589cbc362a1cf957ab8c0e6258fdf078e25e13715c15f2e13f577eb1fb6ed6b626d41acbe339d73b0e6173bcf3923b9de3a986fd65";
