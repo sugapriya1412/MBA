@@ -1492,7 +1492,7 @@ public class CourseRegistrationCommonFunction
 							logger.trace("\n totPjtCdt: "+ totPjtCdt +" | cdtRequired: "+ cdtRequired 
 									+" | cdtPer: "+ cdtPer +" | pjtPer: "+ pjtPer  +" | ceilCdtper: "+ ceilCdtper);
 														
-							if ((float) ceilCdtper >= (float)pjtPer)
+							if ((float)ceilCdtper >= (float)pjtPer)
 							{
 								cspeFlag2 = 1;
 							}

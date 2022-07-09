@@ -47,8 +47,8 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 		//For getting captcha from session attribute					
 		String sessioncaptchaString = (String) session.getAttribute("CAPTCHA");
 				
-		int testStatus = 2; //Login with Password & Captcha-> 1: Enable/ 2: Disable
-		int regTimeCheckStatus = 1; //Time-> 1: Open Hours/ 2: Permitted Schedule
+		int testStatus = 1; //Login with Password & Captcha-> 1: Enable/ 2: Disable
+		int regTimeCheckStatus = 2; //Time-> 1: Open Hours/ 2: Permitted Schedule
 		
 		int validateDateTime = 2, validateCaptcha = 2, validateCredential = 2, validateAccount = 2;
 		int specId = 0, groupId = 0, programDuration = 0, costCenterId = 0, studyStartYear = 0, lockStatus = 0, 
