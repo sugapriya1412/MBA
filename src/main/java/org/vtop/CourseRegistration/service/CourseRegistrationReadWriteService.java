@@ -259,21 +259,21 @@ public class CourseRegistrationReadWriteService
 				}
 			}
 		}
-		//logger.trace("\n Student History executeStatus : "+ executeStatus);
+		logger.trace("\n Student History executeStatus : "+ executeStatus);
 		
 		if (executeStatus)
 		{
 			returnStatus = studentHistoryRepository.acad_student_history_insert_process2(pRegisterNumber, pCourseSystem, "NONE");
 			//logger.trace("\n Student History Process Status : "+ returnStatus);
-			if (returnStatus.equals("SUCCESS"))
-			{
-				studentHistoryList = studentHistoryRepository.findByRegisterNumber(Arrays.asList(pRegisterNumber));
-				if (!studentHistoryList.isEmpty())
-				{
-					courseRegistrationCommonMongoService.processStudentHistoryByRegisterNumber(pRegisterNumber, studentHistoryList);
-					//logger.trace("\n Student History Mongo Processsed.........!");
-				}
-			}
+			//if (returnStatus.equals("SUCCESS"))
+			//{
+			//	studentHistoryList = studentHistoryRepository.findByRegisterNumber(Arrays.asList(pRegisterNumber));
+			//	if (!studentHistoryList.isEmpty())
+			//	{
+			//		courseRegistrationCommonMongoService.processStudentHistoryByRegisterNumber(pRegisterNumber, studentHistoryList);
+			//		logger.trace("\n Student History Mongo Processsed.........!");
+			//	}
+			//}
 		}		
 		
 		return returnStatus;
