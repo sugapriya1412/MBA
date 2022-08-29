@@ -85,7 +85,7 @@ public class RegistrationLogMongoService
 					else if ((startDate.compareTo(endDate) == 0) && (presentDate.compareTo(startDate) == 0) 
 								&& (presentTimeVal > endTimeVal))
 					{
-						timeCheckMessage = "Registration closed.";
+						timeCheckMessage = "Registration closed123.";
 					}
 					else if ((startDate.compareTo(endDate) != 0) && (presentDate.compareTo(startDate) == 0) 
 								&& (presentTimeVal < startTimeVal))
@@ -112,14 +112,14 @@ public class RegistrationLogMongoService
 					}
 					else
 					{
-						timeCheckMessage = "Registration closed.";
+						timeCheckMessage = "Registration closed567.";
 					}
 				}
 				else
 				{
 					if (presentDate.compareTo(endDate) > 0)
 					{
-						timeCheckMessage = "Registration closed.";
+						timeCheckMessage = "Registration closed897.";
 					}
 					else
 					{

@@ -326,7 +326,7 @@ public class CourseRegistrationReadWriteService
 					else if ((startDate.compareTo(endDate) == 0) && (presentDate.compareTo(startDate) == 0) 
 								&& (presentTimeVal > endTimeVal))
 					{
-						timeCheckMessage = "Registration closed.";
+						timeCheckMessage = "Registration closed@@@@.";
 					}
 					else if ((startDate.compareTo(endDate) != 0) && (presentDate.compareTo(startDate) == 0) 
 								&& (presentTimeVal < startTimeVal))
@@ -353,14 +353,14 @@ public class CourseRegistrationReadWriteService
 					}
 					else
 					{
-						timeCheckMessage = "Registration closed.";
+						timeCheckMessage = "Registration closedttttt.";
 					}
 				}
 				else
 				{
 					if (presentDate.compareTo(endDate) > 0)
 					{
-						timeCheckMessage = "Registration closed.";
+						timeCheckMessage = "Registration closed!!!!!.";
 					}
 					else
 					{

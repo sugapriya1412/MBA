@@ -22,12 +22,12 @@ public class MailUtility
 	
 	public static String triggerMail(String subject, String body, String attachementFilePath, String to)
 	{
-		String FromEmailID = "noreply.sdc@vit.ac.in";
-		String FromEmailPass = "xM*$HZ87y7@^(5LS#.U*AgS";			
+		String FromEmailID = "xxxxx@vit.ac.in";
+		String FromEmailPass = "xxxxxxxxxxxxxxxxx";			
  
 		Properties props = new Properties();
-		props.put("mail.smtp.host", "smtp.vit.ac.in");
-		props.put("mail.smtp.port", "25"); 		  
+		props.put("mail.smtp.host", "xxxxxxxxxxxxxxxx");
+		props.put("mail.smtp.port", "xx"); 		  
 		props.put("mail.smtp.auth", "true");		 
 		props.put("mail.smtp.ssl.trust", "*");
 		

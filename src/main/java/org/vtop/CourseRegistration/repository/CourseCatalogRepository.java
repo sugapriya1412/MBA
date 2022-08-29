@@ -298,6 +298,17 @@ public interface CourseCatalogRepository extends JpaRepository<CourseCatalogMode
 	Page<CourseCatalogModel> findCompulsoryCourseAsPage(String campusCode, String[] courseSystem, List<Integer> egbGroupId, 
 								String groupCode, String semesterSubId, String[] classGroupId, String[] classType, 
 								List<String> courseCode, Pageable pageable);
+	
+	@Query("select a from CourseCatalogModel a where a.campusCode=?1 and a.courseSystem in (?2) and (a.groupId in (?3) "+
+			"or (a.groupCode=?4 or a.groupCode like ?4||'/%' or a.groupCode like '%/'||?4||'/%' or a.groupCode "+
+			"like '%/'||?4)) and a.code in (?8) and a.status=0 and a.courseId in "+
+			"(select distinct b.courseId from CourseAllocationModel b where b.semesterSubId=?5 and "+
+			"b.clsGrpMasterGroupId in (?6) and b.classType in (?7) and b.courseCatalogModel.code in (?8) and "+
+			"b.lockStatus=0) order by a.ownerCode, a.code, a.courseVersion")
+	List<CourseCatalogModel> findCompulsoryCourse(String campusCode, String[] courseSystem, List<Integer> egbGroupId, 
+								String groupCode, String semesterSubId, String[] classGroupId, String[] classType, 
+								List<String> courseCode);
+	
 		
 	@Query("select a from CourseCatalogModel a where a.campusCode=?1 and a.courseSystem in (?2) and (a.groupId in (?3) "+
 			"or (a.groupCode=?4 or a.groupCode like ?4||'/%' or a.groupCode like '%/'||?4||'/%' or a.groupCode "+
@@ -311,6 +322,19 @@ public interface CourseCatalogRepository extends JpaRepository<CourseCatalogMode
 								List<Integer> egbGroupId, String groupCode, String semesterSubId, String[] classGroupId, 
 								String[] classType, List<String> courseCode, String progGroupCode, String progSpecCode,	
 								String costCentreCode, Pageable pageable);
+	
+	@Query("select a from CourseCatalogModel a where a.campusCode=?1 and a.courseSystem in (?2) and (a.groupId in (?3) "+
+			"or (a.groupCode=?4 or a.groupCode like ?4||'/%' or a.groupCode like '%/'||?4||'/%' or a.groupCode "+
+			"like '%/'||?4)) and a.code in (?8) and a.status=0 and a.courseId in "+
+			"(select distinct b.courseId from CourseAllocationModel b where b.semesterSubId=?5 and "+
+			"b.clsGrpMasterGroupId in (?6) and b.classType in (?7) and b.courseCatalogModel.code in (?8) and "+
+			"(b.classOption=1 or (b.classOption=2 and b.specializationBatch=?9) or (b.classOption=3 and "+
+			"b.specializationBatch=?10) or (b.classOption=4 and b.specializationBatch=?11)) and b.lockStatus=0) "+
+			"order by a.ownerCode, a.code, a.courseVersion")
+	List<CourseCatalogModel> findCompulsoryCourseByClassOption(String campusCode, String[] courseSystem, 
+								List<Integer> egbGroupId, String groupCode, String semesterSubId, String[] classGroupId, 
+								String[] classType, List<String> courseCode, String progGroupCode, String progSpecCode,	
+								String costCentreCode);
 
 	
 	//Curriculum based course with out Search - Except UE category as List

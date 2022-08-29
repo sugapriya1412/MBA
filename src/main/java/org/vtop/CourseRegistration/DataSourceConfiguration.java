@@ -26,8 +26,8 @@ public class DataSourceConfiguration {
 		HikariConfig dataSrcConfig = new HikariConfig();
 
 		dataSrcConfig.setUsername("reguser");
-		dataSrcConfig.setPassword("H!ghC0nf!d9nc9");
-		dataSrcConfig.setJdbcUrl("jdbc:postgresql://10.10.3.236:5432/vtop");
+		dataSrcConfig.setPassword("reg#space*1");
+		dataSrcConfig.setJdbcUrl("jdbc:postgresql://172.16.1.59:5432/vtop");
 		dataSrcConfig.setMinimumIdle(1);
 		dataSrcConfig.setMaximumPoolSize(5);
 		dataSrcConfig.setConnectionTimeout(30000);
@@ -40,14 +40,14 @@ public class DataSourceConfiguration {
 		return dataSource;
 	}
 
-	@Bean
+	/* @Bean
 	public HikariDataSource slaveDataSource(DataSourceProperties slaveDataSourceProperties) throws SQLException {
 		
 		HikariConfig dataSrcConfig = new HikariConfig();
 
 		dataSrcConfig.setUsername("reguser");
-		dataSrcConfig.setPassword("H!ghC0nf!d9nc9");
-		dataSrcConfig.setJdbcUrl("jdbc:postgresql://10.10.3.236:5432/vtop");
+		dataSrcConfig.setPassword("xxxxxxxxxxx");
+		dataSrcConfig.setJdbcUrl("jdbc:postgresql://xxx.xxx.xxx.xxx:xxxx/vtop");
 		dataSrcConfig.setMinimumIdle(1);
 		dataSrcConfig.setMaximumPoolSize(5);
 		dataSrcConfig.setConnectionTimeout(30000);
@@ -58,7 +58,7 @@ public class DataSourceConfiguration {
 		HikariDataSource dataSource=new HikariDataSource(dataSrcConfig);
 
 		return dataSource;
-	}
+	}*/
 
 	@Bean
 	@Primary

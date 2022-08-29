@@ -173,11 +173,13 @@ public class CourseRegistrationStartController
 				studentHistoryStatus = "SUCCESS";
 			}
 			logger.trace("\n studentHistoryStatus: "+ studentHistoryStatus);
+			logger.trace("\n cgpaStatus: "+ cgpaStatus);
 			
 			//To get the Student CGPA Detail. 1- Dynamic/ 2- Static
 			//Data: Credit Registered | Credit Earned | CGPA
 			if (cgpaStatus == 1)
-			{										
+			{	
+				//System.out.println("cgpaStatusHELLO"+cgpaStatus);
 				studentCgpaData = studentHistoryService.studentCGPA(registerNumber, programSpecId, studentStudySystem);
 				if (((studentCgpaData == null) || (studentCgpaData.equals(""))) && (registerNumberList.size() >= 2))
 				{

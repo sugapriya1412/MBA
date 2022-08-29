@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<base th:href="@{${session.baseURL}}" />
+</head>
+<body class="hold-transition skin-blue-light sidebar-mini fixed">
+	<div class="wrapper">
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper" id="page-wrapper">
+			<div class="" th:fragment="section">
+				<div class="margin-homepage">
+					<div class="container" >
+
+						<form name="regForm" id="regForm">
+						
+						<input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
+											
+						<div class="table-responsive">
+							<table class="w3-table-all w3-card-4 w3-hoverable"
+								style="background-color: #e0f8f8;">
+								<thead>
+									<tr class="w3-blue">
+										<th style="text-align: center;">Course Detail</th>
+										<th style="text-align: center;">L T P J C</th>
+										<th style="text-align: center;">Course Category</th>
+									</tr>
+									<tr>
+										<td style="text-align: left;" 
+												th:text="${courseCatalogModel.getCode() 
+													+' - '+ courseCatalogModel.getTitle()
+													+' - '+ genericCourseTypeDisplay}"></td>
+										<td style="text-align: center;" 
+												th:text="${courseCatalogModel.getLectureHours() 
+													+' '+ courseCatalogModel.getTutorialHours()
+												 	+' '+ courseCatalogModel.getPracticalHours() 
+												 	+' '+ courseCatalogModel.getProjectHours() 
+												 	+' '+ courseCatalogModel.getCredits()}"></td>
+										<td style="text-align: center;" th:text="${tlCourseCategory}"></td>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						
+						<input type="hidden" name="programCode" id="programCode" th:value="${ProgramCode}" /> 
+						<input type="hidden" name="courseOption" id="courseOption" th:value="${courseOption}" />
+						<input type="hidden" name="evaluationType" id="evaluationType"	th:value="${courseCatalogModel.evaluationType}" />
+						<input	type="hidden" name="courseCodehid" id="courseCodehid" th:value="${courseCatalogModel.getCode()}" /> 
+						<input	type="hidden" name="courseTypehid" id="courseTypehid"	th:value="${courseCatalogModel.getGenericCourseType()}" /> 
+						<input	type="hidden" name="courseIdhid" id="courseIdhid" th:value="${courseCatalogModel.getCourseId()}" /> 
+						<input	type="hidden" id="page" name="page" th:value="${page}" />
+						<input type="hidden" id="searchType" name="searchType" th:value="${srhType}"/>
+						<input type="hidden" id="searchVal" name="searchVal" th:value="${srhVal}"/>
+							
+						<th:block th:if="${courseAllocationModells.getCourseTypeComponentModel().getCourseType() == 'PJT'}" 
+									th:each="courseAllocationModells : ${cam}">
+							<span th:if="${courseAllocationModells.getErpId() == 'ACAD'}">
+								<input type="hidden" id="slotId" name="slotId" th:value="${courseAllocationModells.getTimeTableModel().getSlotId()}" />
+								<input type="hidden" id="clashSlot" name="clashSlot" th:value="${courseAllocationModells.getTimeTableModel().getClashSlot()}" />
+								<input type="hidden" id="classId" name="classId" th:value="${courseAllocationModells.getClassId()}" />
+							</span>
+						</th:block>
+						</form>						
+
+						<div style="margin: 20px auto;text-align:center;" 
+								th:if="${(courseCatalogModel.evaluationType != 'GUIDE') and (courseCatalogModel.evaluationType != 'CAPSTONE')}">													
+							<button type="button" class="btn-success w3-btn w3-btn-green w3-round-large"
+								th:data-csrfname="${_csrf?.parameterName}" 
+								th:data-csrfvalue="${_csrf?.token}" 
+								onclick="RegisterProjectCourse('processRegisterProjectCourse', this);" >Register</button>			   					
+			   				&nbsp;&nbsp;
+			   				<button type="button" class="btn-warning w3-btn w3-btn-blue w3-round-large"
+			   					th:data-csrfname="${_csrf?.parameterName}" 
+								th:data-csrfvalue="${_csrf?.token}" 
+			   					onclick="goBack();">Go Back</button>
+			   			</div><br/>
+
+						<div>
+							
+						</div>			   			
+
+			   			<div class="container" style="text-align: center;" 
+			   				th:if="${(courseCatalogModel.evaluationType == 'GUIDE') or (courseCatalogModel.evaluationType == 'CAPSTONE')}">
+							<div class="inner-in-sec">
+							<div style="float:left;width:100%;border:4px solid rgb(60,141,188);border-radius: 10px;background-color:rgb(241,241,241); margin-bottom: 35px;">
+								<h4 style="text-align: left; padding: 5px 0; padding: 6px 10px; text-align: center; 
+									text-decoration: underline;">Project Registration</h4>
+
+							<div>
+								<label class="col-sm-3 control-label left-col" style="text-align: left;">Project Category</label>
+								<div style="text-align: left;">
+									<th:block th:each="courseAllocationModells : ${cam}">
+										<input th:if="${courseAllocationModells.getErpId() == 'ACAD'}" 
+											type="radio" id="projectOption"
+											name="projectOption" value="RGR" onclick="processRegOption();" 
+											th:text="${'General'}"/>
+										<input th:if="${courseAllocationModells.getErpId() == 'PAT'}" 
+											type="radio" id="projectOption" 
+											style="margin-left:12px;" name="projectOption" value="PAT" 
+											onclick="processRegOption();" th:text="${'PAT'}"/>
+									</th:block>
+									
+								</div>
+							</div>
+							<br/>
+							<div id="rgrDiv" style="display: none;">
+								<!-- Cost Centre -->
+								<div>
+									<label class="col-sm-3 control-label left-col" style="text-align: left;">School Wise</label>
+									<div class="right-col">
+										<select id="guideSchoolWise" name="guideSchoolWise"
+											th:data-csrfname="${_csrf?.parameterName}" 
+											th:data-csrfvalue="${_csrf?.token}"
+											onchange="getSchoolWiseGuide(this);" 
+											style="width: 100%;max-width: 50%;float: left;">
+											<option value="0">--Select School --</option>
+											<option th:each="courseCostCentrels : ${courseCostCentre}"
+												th:value="${courseCostCentrels[0]}"
+												th:text="${courseCostCentrels[1]}"></option>
+										</select>
+									</div>
+								</div>
+								<!-- Guide -->
+								<div>
+									<label class="col-sm-3 control-label left-col" style="text-align: left;">Project Guide</label>
+									<div class="right-col">
+										<div th:fragment="ProjectGuideFragment" id="ProjectGuideFragment">
+											<select id="guideId" name="guideId" style="width: 100%; max-width: 50%;float: left;">
+												<option value="NONE">--Select Guide --</option>
+												<option th:each="employeeLs : ${employeeList}"
+													th:value="${employeeLs.employeeId}"
+													th:text="${employeeLs.firstName}"></option>
+											</select>
+										</div>
+									</div>
+								</div>
+								<!-- Title -->
+								<div>
+									<label class="col-sm-3 control-label left-col" style="text-align: left;">Project Title</label>
+									<div class="right-col">
+										<input style="width: 100%; max-width: 80%;float: left; padding: 5px; margin-top: 1px;" 
+											type="text" id="projectTitle" name="projectTitle" maxlength="90"
+											onkeyup="this.value=this.value.toUpperCase()"/>
+									</div>
+								</div>
+								<!-- Duration -->
+								<label class="col-sm-3 control-label left-col" style="text-align: left;">Project Duration</label>
+								<div class="right-col" th:if="${courseCatalogModel.evaluationType == 'GUIDE'}">
+									<div style="text-align: left;">Project Duration is 6 Months</div>
+									<input type="hidden" name="projectDuration" id="projectDuration" value="6" />
+								</div>
+								<div class="col-sm-9 right-col" th:if="${courseCatalogModel.evaluationType == 'CAPSTONE'}" style="text-align: left;padding: 0;">									
+									<th:block th:if="${((ProgramCode != 'MTECH') and (ProgramCode != 'MCA') and (ProgramCode != 'BTECH')) 
+													and (courseCatalogModel.evaluationType == 'CAPSTONE')}">
+										<div style="text-align: left;">6 Months</div>
+										<input type="hidden" name="projectDuration" id="projectDuration" value="6" />
+									</th:block>
+								</div>
+										
+								<div class="right-col" th:if="${courseCatalogModel.evaluationType == 'CAPSTONE'}">
+									<th:block th:if="${((ProgramCode == 'MTECH') or (ProgramCode == 'MCA') or (ProgramCode == 'BTECH')) 
+												and (courseCatalogModel.evaluationType == 'CAPSTONE')}">
+										<div style="text-align: left;">12 Months</div>
+										<input type="hidden" name="projectDuration" id="projectDuration" value="12" />
+									</th:block>
+								</div>
+							</div>
+							
+							<div style="float: left;width: 100%;margin: 20px auto;">
+								<button type="button" class="btn-success w3-btn w3-btn-green w3-round-large" 
+									th:data-csrfname="${_csrf?.parameterName}" 
+									th:data-csrfvalue="${_csrf?.token}"
+									onclick="RegisterProjectCourse('processRegisterProjectCourse', this);">Register</button>							
+								&nbsp;&nbsp;
+								<button type="button" class="btn-warning w3-btn w3-btn-blue w3-round-large" 
+									th:data-csrfname="${_csrf?.parameterName}" 
+									th:data-csrfvalue="${_csrf?.token}"
+									onclick="goBack(this);">Go Back</button>
+							</div>
+						</div>
+						</div>
+						<br/><br/>
+						</div>
+						
+																						
+					</div>
+				</div>
+				<script type="text/javascript">
+				/*<![CDATA[*/	
+					function processRegOption()
+					{
+						var projectOption = $("input[name='projectOption']:checked").val();
+						if (projectOption === "PAT") {
+							document.getElementById("rgrDiv").style.display="none";
+						} else {
+							document.getElementById("rgrDiv").style.display="block";
+						}
+					}
+				/*]]>*/
+				</script>					
+			</div>
+		</div>	
+	</div>	
+
+	<!-- /.content-wrapper -->
+</body>
+</html>

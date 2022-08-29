@@ -286,7 +286,7 @@ public interface SemesterMasterRepository extends JpaRepository<SemesterMasterMo
 	List<Object[]> findEmployeeProfileByCampusCode(String campusCode);
 	
 	@Query ("select a from EmployeeProfile a where a.employmentType='FACULTY' and a.centreId=?1 and "+
-			"a.campusCode='VLR' and a.categoryId in (1) and a.employmentStatus in (0) and a.leaveStatus in (0) "+
+			"a.campusCode='CHN' and a.categoryId in (1) and a.employmentStatus in (0) and a.leaveStatus in (0) "+
 			"and a.employeeId not in ('ACAD','COE01','PAT','ETHNUS','FACE','SMART','CHANCEL') and "+
 			"(a.employeeId not like 'T%') order by a.firstName, a.employeeId")
 	List<EmployeeProfile> findEmployeeProfileByCentreId(Integer costCentreId);

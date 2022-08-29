@@ -13,6 +13,8 @@ import org.vtop.CourseRegistration.model.CourseCatalogModel;
 import org.vtop.CourseRegistration.repository.CourseCatalogRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.vtop.CourseRegistration.repository.CompulsoryCourseConditionDetailRepository;
+
 
 
 @Service
@@ -21,7 +23,7 @@ public class CourseCatalogService
 {
 	@Autowired private CourseCatalogRepository courseCatalogRepository;
 	@Autowired private StudentHistoryService studentHistoryService;
-	
+	@Autowired private CompulsoryCourseConditionDetailRepository compulsoryCourseConditionDetailRepository;
 	private static final Logger logger = LogManager.getLogger(CourseCatalogService.class);
 		
 		
@@ -72,10 +74,12 @@ public class CourseCatalogService
 										String registerNumber, int searchType, String searchValue, 
 										Integer studentGraduateYear, String programGroupCode, 
 										String programSpecCode, String registrationMethod, String[] registerNumber2, 
-										int PEUEAllowStatus, int evalPage, int evalPageSize, String costCentreCode)
+										int PEUEAllowStatus, int evalPage, int evalPageSize, String costCentreCode, 
+										List<String> compulsoryCourseList)
 	{
 		List<CourseCatalogModel> tempList = new ArrayList<CourseCatalogModel>();
-				
+		
+		
 		int dataListFlag = 2;
 		String programGroup = "";
 		List<String> courseCode = new ArrayList<String>();
@@ -139,8 +143,34 @@ public class CourseCatalogService
 		
 		if (dataListFlag == 1)
 		{
+			//System.out.println("**********registrationOption**********::::" + registrationOption);
 			switch(registrationOption)
-			{						
+			{
+				case "COMP":
+					//System.out.println("programGroupId"+programGroupId);
+					//System.out.println("admissionYear"+admissionYear);
+					//System.out.println("studentGraduateYear"+studentGraduateYear);
+					//System.out.println("registerNumber"+registerNumber);
+					//System.out.println("programSpecCode"+programSpecCode);
+					//System.out.println("programGroupCode"+programGroupCode);
+					//System.out.println("semesterSubId"+semesterSubId);
+					
+					//courseCode =compulsoryCourseConditionDetailRepository.findSoftSkillCourseList(semesterSubId, programGroupId, admissionYear); 
+				
+					if (programGroupCode.equals("RP"))
+					{
+						tempList = courseCatalogRepository.findCompulsoryCourse(campusCode, courseSystem, egbGroupId, 
+											programGroup, semesterSubId, classGroupId, classType, compulsoryCourseList);
+					}
+					else
+					{
+						
+						tempList = courseCatalogRepository.findCompulsoryCourseByClassOption(campusCode, courseSystem, 
+										egbGroupId, programGroup, semesterSubId, classGroupId, classType, compulsoryCourseList, 
+										programGroupCode, programSpecCode, costCentreCode);
+					}
+					break;
+					
 				case "UE":
 					switch(searchType)
 					{

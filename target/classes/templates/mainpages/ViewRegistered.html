@@ -1,0 +1,441 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body class="hold-transition skin-blue-light sidebar-mini fixed">
+	<div class="wrapper">
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper" id="page-wrapper">
+			<div class="" th:fragment="section">
+				<script th:inline="javascript">
+				/*<![CDATA[*/
+									
+					var showFlag = [[${showFlag}]];
+			
+				/*]]>*/
+				</script>
+
+				<div class="margin-homepage">
+					<div class="container">
+						
+						<div style="text-align: center; text-decoration: underline;">
+							<h3>REGISTERED CREDIT(S)</h3>
+						</div>
+						
+						<div class="table-responsive">
+						
+							<table class="w3-table-all w3-card-4 w3-hoverable"
+								style="background-color: #e0f8f8; width: 30%">
+								
+								<thead>
+									<tr class="w3-blue">
+										<th style="white-space: nowrap; border: 1px solid #3c8dbc; 
+												text-align: center; width: 10%;">&nbsp;</th>
+										<th style="white-space: nowrap; border: 1px solid #3c8dbc; 
+												text-align: center; width: 10%;">Credits</th>
+										<th style="white-space: nowrap; border: 1px solid #3c8dbc; 
+												text-align: center; width: 10%;">Courses</th>
+									</tr>
+								</thead>
+																
+								<tr th:each="e : ${regCreditList}">
+									<td style="text-align: left; border: 1px solid #3c8dbc; 
+										font-weight: bold;">
+										<span th:text="${e[0]}"></span>
+									</td>
+									<td style="text-align: center; border: 1px solid #3c8dbc;">
+										<span th:text="${e[1]}"></span>
+									</td>
+									<td style="text-align: center; border: 1px solid #3c8dbc;">
+										<span th:text="${e[2]}"></span>
+									</td>
+								</tr>
+								
+							</table>
+							
+						</div><br/>						
+						
+						
+						<div style="text-align: center; text-decoration: underline;">
+							<h3>REGISTERED COURSE(S)</h3>
+						</div>
+
+						<div align="center" style="color: Red; font-weight: bold;"
+							th:if="${courseRegistrationModel.size()==0}"
+							th:text="${'No Records Found'}"></div>
+						<div class="table-responsive">
+						
+							<table class="w3-table-all w3-card-4 w3-hoverable"
+								style="background-color: #e0f8f8;"
+								th:if="${not #lists.isEmpty(courseRegistrationModel)}">
+								
+								<thead>
+									<tr class="w3-blue">
+										<th style="white-space: nowrap; border: 1px solid #3c8dbc; 
+											text-align: center; width: 10%;">Group</th>
+										<th style="white-space: nowrap; border: 1px solid #3c8dbc; 
+											text-align: center; width: 15%;">Course Detail</th>
+										<th style="white-space: nowrap; border: 1px solid #3c8dbc; 
+											text-align: center; width: 10%;">L T P J</th>
+										<th style="white-space: nowrap; border: 1px solid #3c8dbc; 
+											text-align: center; width: 5%;">Credit</th>
+										<th style="white-space: nowrap; border: 1px solid #3c8dbc; 
+											text-align: center; width: 5%;">Course Category</th>
+										<th style="white-space: nowrap; border: 1px solid #3c8dbc; 
+											text-align: center; width: 5%;">Course Option</th>
+										<th style="white-space: nowrap; border: 1px solid #3c8dbc; 
+											text-align: center; width: 15%;">Class Detail</th>
+										<th style="white-space: nowrap; border: 1px solid #3c8dbc; 
+											text-align: center; width: 5%;">Faculty</th>
+										<th style="white-space: nowrap; border: 1px solid #3c8dbc; 
+											text-align: center; width: 10%;">Status</th>
+									</tr>
+								</thead>
+								
+								<tr th:each="RegisteredList, i :${courseRegistrationModel}">
+
+									<td th:text="${RegisteredList[1]}" style="text-align: center; 
+										border: 1px solid #3c8dbc;"></td>
+									<td style="text-align: center; border: 1px solid #3c8dbc;" 
+										th:text="${RegisteredList[3]+' - '+RegisteredList[4]+' - '+RegisteredList[9]}"></td>
+									<td style="text-align: center; border: 1px solid #3c8dbc;" 
+										th:text="${RegisteredList[10] +' '+ RegisteredList[11] 
+											+' '+ RegisteredList[12] +' '+ RegisteredList[13]}"></td>
+									<td style="text-align: center; border: 1px solid #3c8dbc;" 
+										th:text="${RegisteredList[14]}"></td>
+										
+									<td style="text-align: center; border: 1px solid #3c8dbc;">
+										<span th:if="${curriculumMapList.isEmpty()}" th:text="${'-'}"></span>
+										
+										<th:block th:if="${(!curriculumMapList.isEmpty()) 
+													and (curriculumMapList.containsKey(RegisteredList[3]))}" 
+												  th:each="e2 :${curriculumMapList.get(RegisteredList[3])}">
+											<span th:if="${e2[2] == 'CC'}" th:text="${e2[1]}"></span>
+											<span th:if="${e2[2] == 'BC'}" th:text="${e2[1] +' ('+ e2[7] +' Basket)'}"></span>
+										</th:block>
+										
+										<span th:if="${(!curriculumMapList.isEmpty()) 
+													and (!curriculumMapList.containsKey(RegisteredList[3]))}" 
+												th:text="${'University Elective'}"></span>
+									</td>
+										
+									<td style="border: 1px solid #3c8dbc;" th:text="${RegisteredList[7]}"></td>
+									<td style="border: 1px solid #3c8dbc; text-align: center;" >
+										<span th:text="${RegisteredList[16]+ ' - '}"> </span>
+										<span th:if="${(RegisteredList[8] != 'EPJ') and (RegisteredList[8] != 'PJT')}"
+												th:text="${RegisteredList[17] + ' - '}"></span>
+										<span th:if="${(RegisteredList[8] == 'EPJ') or (RegisteredList[8] == 'PJT')}" 
+												th:text="${'NIL' + ' - '}"></span>
+										<span th:text="${RegisteredList[18]}"></span>
+									</td>
+									<td style="white-space: nowrap; border: 1px solid #3c8dbc;"
+										th:text="${RegisteredList[20] +' - '+ RegisteredList[21]}"></td>
+									<td th:style="${'color:'+ RegisteredList[24] + ';' + 'border:1px solid #3c8dbc;'}"
+										th:text="${RegisteredList[23]}"></td>
+										
+								</tr>
+								
+							</table>
+						</div>
+						<br />
+						
+						<div th:if="${WaitingListStatus == 1}">
+						<div>
+							<h4 style="text-align: center; text-decoration: underline;">Waiting List Course(s)</h4>
+						</div>
+						<div align="center" style="color: Red; font-weight: bold;"
+							th:if="${courseRegistrationWaitingModel.size()==0}"
+							th:text="${'No Records Found'}">
+						</div>
+						<table class="w3-table-all w3-card-4 w3-hoverable"
+							style="background-color: #e0f8f8; margin-bottom: 20px;"
+							th:if="${not #lists.isEmpty(courseRegistrationWaitingModel)}">
+							<thead>
+								<tr class="w3-blue">
+									<th style="white-space: nowrap; text-align: center; 
+										border: 1px solid #3c8dbc; width: 10%;">Course Code</th>
+									<th style="white-space: nowrap; text-align: center; 
+										border: 1px solid #3c8dbc;">Course Title</th>
+									<th style="white-space: nowrap; text-align: center; 
+										border: 1px solid #3c8dbc; width: 10%;">Course Type</th>
+									<th style="white-space: nowrap; text-align: center; 
+										border: 1px solid #3c8dbc; width: 5%;">L T P J</th>
+									<th style="white-space: nowrap; text-align: center; 
+										border: 1px solid #3c8dbc; width: 5%;">Credit</th>
+									<th style="white-space: nowrap; text-align: center; 
+										border: 1px solid #3c8dbc; width: 10%;">Course Category</th>
+									<th style="white-space: nowrap; text-align: center; 
+										border: 1px solid #3c8dbc; width: 10%;">Course Option</th>
+									<th style="white-space: nowrap; text-align: center; 
+										border: 1px solid #3c8dbc; width: 8%;">Class No.</th>
+									<th style="white-space: nowrap; border: 1px solid #3c8dbc; 
+										text-align: center; width: 8%;">Slot</th>
+									<th style="white-space: nowrap; border: 1px solid #3c8dbc; 
+										text-align: center; width: 5%;">Venue</th>
+									<th style="white-space: nowrap; border: 1px solid #3c8dbc; 
+										text-align: center; width: 10%;">Faculty</th>
+									<th style="white-space: nowrap; border: 1px solid #3c8dbc; 
+										text-align: center; width: 5%;">Wait List No</th>
+								</tr>
+							</thead>
+							
+							<tr th:each="RegisteredWaitingList : ${courseRegistrationWaitingModel}">
+							
+								<td style="border: 1px solid #3c8dbc; text-align: center;"
+									th:text="${RegisteredWaitingList[2]}"></td>
+								<td style="border: 1px solid #3c8dbc;"
+									th:text="${RegisteredWaitingList[3]}"></td>
+								<td style="border: 1px solid #3c8dbc;"
+									th:text="${RegisteredWaitingList[5]}"></td>
+									
+								<td style="border: 1px solid #3c8dbc; text-align: center;">
+									<span th:text="${RegisteredWaitingList[6] +' '+ RegisteredWaitingList[7] 
+											+' '+ RegisteredWaitingList[8] +' '+ RegisteredWaitingList[9]}"></span></td>
+								<td style="border: 1px solid #3c8dbc; text-align: center;">
+									<span th:text="${RegisteredWaitingList[10]}"></span></td>
+									
+								<td style="border: 1px solid #3c8dbc; text-align: center;">
+									<span th:if="${curriculumMapList.isEmpty()}" th:text="${'-'}"></span>
+										
+									<th:block th:if="${(!curriculumMapList.isEmpty()) 
+												and (curriculumMapList.containsKey(RegisteredWaitingList[2]))}" 
+											  th:each="e2 :${curriculumMapList.get(RegisteredWaitingList[2])}">
+										<span th:if="${e2[2] == 'CC'}" th:text="${e2[1]}"></span>
+										<span th:if="${e2[2] == 'BC'}" th:text="${e2[1] +' ('+ e2[7] +' Basket)'}"></span>
+									</th:block>
+									
+									<span th:if="${(!curriculumMapList.isEmpty()) 
+											and (!curriculumMapList.containsKey(RegisteredWaitingList[2]))}" 
+											th:text="${'University Elective'}"></span>
+								</td>
+									
+								<td style="border: 1px solid #3c8dbc;"
+									th:text="${RegisteredWaitingList[12]}"></td>
+								<td style="border: 1px solid #3c8dbc; text-align: center;"
+									th:text="${RegisteredWaitingList[0]}"></td>
+								<td style="border: 1px solid #3c8dbc; text-align: center;"
+									th:text="${RegisteredWaitingList[14]}"></td>
+								<td style="border: 1px solid #3c8dbc; text-align: center;"
+									th:text="${RegisteredWaitingList[15]}"></td>
+								<td style="border: 1px solid #3c8dbc;"
+									th:text="${RegisteredWaitingList[17]}"></td>
+								<td style="border: 1px solid #3c8dbc; text-align: center;"
+									th:text="${RegisteredWaitingList[18]}"></td>
+							</tr>
+						</table>
+						
+						<br/>
+						</div>
+						<div>
+							<h3 style="text-align: center; text-decoration: underline;">Time Table</h3>
+						</div>
+						
+						<div style="text-align: center;">	
+							<p>Registered Slots / Hours are highlighted with green color.</p>
+							<p>If there is no green highlight it indicates that there are
+								no Registered List Slots / Hours.</p>
+						</div>
+
+						<div id="ttview" class="table-responsive"
+							style="margin-top: 20px; margin-bottom: 20px;">
+							<h3 style="text-align:center; text-decoration: underline;"> 
+								<span th:text="${sdm.getDescription()}"></span>
+							</h3>
+							
+							<h3 style="text-align:center;">Register Number :- <span th:text="${studentsLoginDetailsModel.getRegNo() +' / ' +studentsLoginDetailsModel.getStudentBaseModel().getStudentName()}"></span></h3>
+
+							<h3 style="text-align:center;">Date :- <span th:text="${cDate}"></span></h3>
+							
+							<th:block th:if="${!patternIdList.isEmpty()}" th:each="ttPid : ${patternIdList}">
+								<table id="timeTableStyle"
+								class="w3-table-all w3-card-4 w3-hoverable"
+								style="border: 2px solid #3c8dbc; text-align: center; font-size: 12px; margin-bottom: 20px;width:100%;">
+								
+								<th:block th:if="${slotTypeMapList.containsKey(ttPid)}" th:each="slotType : ${slotTypeMapList.get(ttPid)}">
+									
+								<tr>	
+									<td rowspan="2" bgcolor="#e2e2e2"
+										style="border: 1px solid #3c8dbc; text-align: center; 
+										vertical-align: middle; padding: 3px; width: 50px;"
+										th:text="${slotType}"></td>
+									
+									<td bgcolor="#e2e2e2"
+										style="border: 1px solid #3c8dbc; text-align: center; 
+										vertical-align: middle; padding: 3px; width: 50px;">Start</td>
+									
+									<th:block th:if="${ttSessionList.containsKey(ttPid)}" th:each="e : ${ttSessionList.get(ttPid)}">
+										
+										<td th:if="${(e[1] != 'LN') and (tmMapList.containsKey(ttPid +'_'+ slotType +'_'+ e[1]))}" 
+											th:each="e2 :${tmMapList.get(ttPid +'_'+ slotType +'_'+ e[1])}" 
+											th:text="${e2[4]}" 
+											th:bgcolor="${(slotType == 'THEORY') or (slotType == 'GENERAL')} ? '#CCCCFF' : '#99CCFF'"
+											style="border: 1px solid #3c8dbc; text-align: center; 
+											vertical-align: middle; padding: 3px; width: 50px;"></td>
+											
+										<td th:if="${((slotType == 'THEORY') or (slotType == 'GENERAL')) 
+													and (e[1] != 'LN') and (e[2] lt e[4])}"
+											th:each="n : ${#numbers.sequence(1, ((e[4] - e[2]) le 0 ? 1 : (e[4] - e[2])))}"
+											th:text="${'-'}" bgcolor="#CCCCFF"
+											style="border: 1px solid #3c8dbc; text-align: center; 
+											vertical-align: middle; padding: 3px; width: 50px;"></td>
+										<td th:if="${((slotType == 'THEORY') or (slotType == 'GENERAL')) 
+													and (e[1] == 'LN')}"  
+											th:text="${'Lunch'}" bgcolor="#CCCCFF"
+											style="border: 1px solid #3c8dbc; text-align: center; 
+											vertical-align: middle; padding: 3px; width: 50px;"></td>
+											
+										<td th:if="${(slotType == 'LAB') and (e[1] != 'LN') and (e[3] lt e[4])}" 
+											th:each="n : ${#numbers.sequence(1, ((e[4] - e[3]) le 0 ? 1 : (e[4] - e[3])))}"
+											th:text="${'-'}" bgcolor="#99CCFF"
+											style="border: 1px solid #3c8dbc; text-align: center; 
+											vertical-align: middle; padding: 3px; width: 50px;"></td>
+										<td th:if="${(slotType == 'LAB') and (e[1] == 'LN')}"  
+											th:text="${'Lunch'}" bgcolor="#99CCFF"
+											style="border: 1px solid #3c8dbc; text-align: center; 
+											vertical-align: middle; padding: 3px; width: 50px;"></td>
+										
+									</th:block>
+								</tr>
+								
+								<tr>
+									<td bgcolor="#e2e2e2"
+										style="border: 1px solid #3c8dbc; text-align: center; 
+										vertical-align: middle; padding: 3px; width: 50px;">End</td>
+																		
+									<th:block th:if="${ttSessionList.containsKey(ttPid)}" th:each="e : ${ttSessionList.get(ttPid)}">
+										<td th:if="${(e[1] != 'LN') and (tmMapList.containsKey(ttPid +'_'+ slotType +'_'+ e[1]))}" 
+											th:each="e2 :${tmMapList.get(ttPid +'_'+ slotType +'_'+ e[1])}" 
+											th:text="${e2[5]}" 
+											th:bgcolor="${(slotType == 'THEORY') or (slotType == 'GENERAL')} ? '#CCCCFF' : '#99CCFF'"
+											style="border: 1px solid #3c8dbc; text-align: center; 
+											vertical-align: middle; padding: 3px; width: 50px;"></td>
+											
+										<td th:if="${((slotType == 'THEORY') or (slotType == 'GENERAL')) 
+													and (e[1] != 'LN') and (e[2] lt e[4])}" 
+											th:each="n : ${#numbers.sequence(1, ((e[4] - e[2]) le 0 ? 1 : (e[4] - e[2])))}" 
+											th:text="${'-'}" bgcolor="#CCCCFF"
+											style="border: 1px solid #3c8dbc; text-align: center; 
+											vertical-align: middle; padding: 3px; width: 50px;"></td>
+										<td th:if="${((slotType == 'THEORY') or (slotType == 'GENERAL')) 
+													and (e[1] == 'LN')}"  
+											th:text="${'Lunch'}" bgcolor="#CCCCFF"
+											style="border: 1px solid #3c8dbc; text-align: center; 
+											vertical-align: middle; padding: 3px; width: 50px;"></td>
+											
+										<td th:if="${(slotType == 'LAB') and (e[1] != 'LN') and (e[3] lt e[4])}" 
+											th:each="n : ${#numbers.sequence(1, ((e[4] - e[3]) le 0 ? 1 : (e[4] - e[3])))}"
+											th:text="${'-'}" bgcolor="#99CCFF"
+											style="border: 1px solid #3c8dbc; text-align: center; 
+											vertical-align: middle; padding: 3px; width: 50px;"></td>
+										<td th:if="${(slotType == 'LAB') and (e[1] == 'LN')}"  
+											th:text="${'Lunch'}" bgcolor="#99CCFF"
+											style="border: 1px solid #3c8dbc; text-align: center; 
+											vertical-align: middle; padding: 3px; width: 50px;"></td>
+											
+									</th:block>
+									
+								</tr>
+								</th:block>
+								
+								<th:block th:if="${weekDayList.containsKey(ttPid)}" th:each="e : ${weekDayList.get(ttPid)}">
+									
+									<th:block th:if="${slotTypeMapList.containsKey(ttPid)}"  th:each="slotType, it2 : ${slotTypeMapList.get(ttPid)}">
+										
+									<tr style="background-color: #FFFFCC;">
+									
+										<td th:if="${it2.index == 0}"
+											th:rowspan="${slotTypeMapList.get(ttPid).size()}" 
+											th:text="${e[1]}" bgcolor="#e2e2e2"
+											style="border: 1px solid #3c8dbc; text-align: center; 
+											vertical-align: middle; padding: 3px; width: 50px;"></td>
+										<td bgcolor="#e2e2e2"
+											style="border: 1px solid #3c8dbc; text-align: center; 
+											vertical-align: middle; padding: 3px; width: 50px;" 
+											th:text="${slotType}"></td>
+											
+										
+										<th:block th:if="${wdsMapList.containsKey(ttPid +'_'+ slotType +'_'+ e[1])}" 
+											th:each="e2 : ${wdsMapList.get(ttPid +'_'+ slotType +'_'+ e[1])}">
+																						
+											<th:block th:if="${(e2[2] != 'LN') and (stmMapList.containsKey(ttPid +'_'+ slotType +'_'+ e[1] +'_'+ e2[2]))}" 
+												th:each="e3 : ${stmMapList.get(ttPid +'_'+ slotType +'_'+ e[1] +'_'+ e2[2])}">
+												
+												<td th:if="${regMapList.containsKey(ttPid +'_'+ slotType +'_'+ e[1] +'_'+ e3[3])}"  
+														th:utext="${#strings.replace(regMapList.get(ttPid +'_'+ slotType +'_'+ e[1] +'_'+ e3[3]),'/','&#60;br/&#62;&#60;br/&#62;')}"
+														th:bgcolor="${'#CCFF33'}"
+														style="border: 1px solid #3c8dbc; text-align: center; 
+														vertical-align: middle; padding: 3px; width: 50px;" >
+														</td>
+													
+												<td th:if="${!regMapList.containsKey(ttPid +'_'+ slotType +'_'+ e[1] +'_'+ e3[3])}"  
+														th:text="${e3[3]}" 
+														th:bgcolor="${(slotType == 'THEORY') or (slotType == 'GENERAL')} ? '' : '#f9efa4'"
+														style="border: 1px solid #3c8dbc; text-align: center; 
+														vertical-align: middle; padding: 3px; width: 50px;"></td>
+													
+											</th:block>
+											
+											<td th:if="${(e2[2] != 'LN') and (e2[4] lt e2[3])}" 
+												th:each="n : ${#numbers.sequence(1, ((e2[3] - e2[4]) le 0 ? 1 : (e2[3] - e2[4])))}"
+												th:text="${'-'}" 
+												th:bgcolor="${(slotType == 'THEORY') or (slotType == 'GENERAL')} ? '' : '#f9efa4'"
+												style="border: 1px solid #3c8dbc; text-align: center; 
+												vertical-align: middle; padding: 3px; width: 50px;"></td>
+											<td th:if="${e2[2] == 'LN'}"  
+												th:text="${'Lunch'}" th:bgcolor="${'#e2e2e2'}"
+												style="border: 1px solid #3c8dbc; text-align: center; 
+												vertical-align: middle; padding: 3px; width: 50px;"></td>
+										</th:block>
+										
+									</tr>
+									
+									
+									</th:block>
+								</th:block>
+							</table>
+							</th:block> 
+							
+							
+							
+							<h6>*Registered List Slots / Hours are also available in time table</h6>
+							
+							<h5 style="text-align:center; text-decoration:none;">&copy; 2021 Software Development Cell (VIT)</h5>
+						</div>
+						<div align="center">
+							<p style="float: center;">
+								<button style="text-align: center; font-weight: bold;" type="button" class="btn-warning w3-btn w3-btn-blue w3-round-large" onclick="viewRegOption();">Go Back</button>
+								&nbsp;&nbsp;<button style="text-align: center; font-weight: bold;" type="button" class="btn-warning w3-btn w3-btn-blue w3-round-large"
+																				id="print" onclick="printDiv();">Print Time Table</button>
+							</p>
+						</div>
+						
+						<script th:inline="javascript">
+						/*<![CDATA[*/
+							
+							function nWin() 
+							{
+								var w = window.open();
+								var html = $("#ttview").html();
+								$(w.document.body).html(html);
+								w.print();
+								w.close();
+							}
+						
+							function printDiv() 
+							{
+								nWin();	
+								
+							}
+							
+						/*]]>*/
+						</script>
+						<br/> <br/>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /.content-wrapper -->
+</body>
+</html>

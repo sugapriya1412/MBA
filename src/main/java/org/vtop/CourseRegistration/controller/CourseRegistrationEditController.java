@@ -576,7 +576,7 @@ public class CourseRegistrationEditController
 						if (checkflag == 1) 
 						{
 							regStatusArr = courseRegCommonFn.checkClash(patternId, clashslot, semesterSubId, registerNumber, "MODIFY", oldClassId, 
-												waitingListStatus, "VL20212207", Arrays.asList("BVOC", "INT", "MBA", "ST002", "ST004")).split("/");
+												waitingListStatus, "CH2022232", Arrays.asList("BVOC", "INT", "ST002", "ST004")).split("/");
 							regStatusFlag = Integer.parseInt(regStatusArr[0]);
 							message = regStatusArr[1];
 							if (regStatusFlag == 2)

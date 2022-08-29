@@ -67,6 +67,7 @@ public class CourseRegistrationCommonFunction
 						String costCentreCode, int academicGraduateYear, int cclTotalCredit, 
 						String cgpaProgGroupId)
 	{					
+		
 		int historyflag = 2, regflag = 2, compCourseFlag = 1;
 		int regAllowFlag = 2, wlAllowFlag = 2, audAllowFlag = 2, rgrAllowFlag = 2, minAllowFlag = 2, 
 				honAllowFlag = 2, adlAllowFlag = 2, RPEUEAllowFlag = 2, csAllowFlag = 2, RUCUEAllowFlag = 2, 
@@ -155,6 +156,7 @@ public class CourseRegistrationCommonFunction
 			//		+" | giAllowStatus: "+ giAllowStatus +" | auditAllowStatus: "+ auditAllowStatus 
 			//		+" | minHonAllowStatus: "+ minHonAllowStatus +" | adlAllowStatus: "+ adlAllowStatus 
 			//		+" | peAdlAllowStatus: "+ peAdlAllowStatus +" | ueAdlAllowStatus: "+ ueAdlAllowStatus);
+			//System.out.println("studCompulsoryCourse: "+ studCompulsoryCourse);
 														
 			//Checking the select course is valid or not
 			if ((pCourseId != null) && (!pCourseId.equals("")))
@@ -1334,7 +1336,7 @@ public class CourseRegistrationCommonFunction
 			//TARP Course Eligibility Checking
 			if (flag7 == 1)
 			{
-				int tarpCeilCdtper = 0, tarpPercentage = 65;
+				int tarpCeilCdtper = 0, tarpPercentage = 63;
 				float studTarpCredits = 0, psRegCredit = 0, tarpCdtRequired = 0, tarpCdtPer = 0;
 				
 				if (evaluationType.equals("TARP"))
@@ -1398,7 +1400,7 @@ public class CourseRegistrationCommonFunction
 					else if (pStudentGraduateYear == academicGraduateYear)
 					{
 						if (((pSemesterId == 1) || (pSemesterId == 2) || (pSemesterId == 3))
-								&& (pProgramGroupCode.equals("MTECH") || pProgramGroupCode.equals("MCA") 
+								&& (pProgramGroupCode.equals("MTECH") || pProgramGroupCode.equals("MCA") || pProgramGroupCode.equals("BBH")
 										|| (pProgramGroupCode.equals("MTECH5") && pProgramSpecCode.equals("MIS"))
 										|| (pProgramGroupCode.equals("MSC5") && pProgramSpecCode.equals("MSI"))
 										|| pProgramGroupCode.equals("BTECH")))
@@ -1417,6 +1419,8 @@ public class CourseRegistrationCommonFunction
 					}
 					else
 					{
+						System.out.println("pStudentGraduateYear"+pStudentGraduateYear);
+						System.out.println("academicGraduateYear"+academicGraduateYear);
 						msg = "Only final year and timed out students are allowed to register the cap stone project course.";
 					}
 					
@@ -1427,7 +1431,7 @@ public class CourseRegistrationCommonFunction
 						if (cclTotalCredit > 0)
 						{
 							totCredit = (float) cclTotalCredit;
-							pjtPer = 65F;
+							pjtPer = 60F;
 							cspeFlag = 1;
 						}
 						else
@@ -1663,6 +1667,8 @@ public class CourseRegistrationCommonFunction
 								}
 								else
 								{
+								//	System.out.println("studCompulsoryCourse"+studCompulsoryCourse);
+								//	System.out.println("courseCode"+courseCode);
 									msg = "Selected course "+ courseCode +" is under compulsory course list and " 
 											+"you are not eligible to take this course.";
 								}
@@ -2322,20 +2328,21 @@ public class CourseRegistrationCommonFunction
 		List<String> registrationCourseList = new ArrayList<>();
 		List<String> allocationCourseList = new ArrayList<>();
 		
-		//logger.trace("\n compulsoryCourse: "+ compulsoryCourse);
+		logger.trace("\n compulsoryCourse: "+ compulsoryCourse);
 		if (!compulsoryCourse.isEmpty())
 		{
 			objectList = courseRegistrationService.getCompulsoryCourseRegistrationAndAllocationStatus(semesterSubId, registerNumber, 
 								compulsoryCourse, classGroupId, classType, progGroupCode, progSpecCode, costCentreCode, courseSystem);
 			if (!objectList.isEmpty())
 			{
+			//	System.out.println("HELLO");
 				registrationCourseList = objectList.stream().filter(p-> p[0].toString().equals("REG"))
 												.map(e-> e[1].toString()).distinct().collect(Collectors.toList());
 				allocationCourseList = objectList.stream().filter(p-> p[0].toString().equals("ALLOT"))
 												.map(e-> e[1].toString()).distinct().collect(Collectors.toList());
 			}
-			//logger.trace("\n registrationCourseList: "+ registrationCourseList);
-			//logger.trace("\n allocationCourseList: "+ allocationCourseList);
+			logger.trace("\n registrationCourseList: "+ registrationCourseList);
+			logger.trace("\n allocationCourseList: "+ allocationCourseList);
 			
 			for (String crCode : compulsoryCourse)
 			{
@@ -2345,20 +2352,25 @@ public class CourseRegistrationCommonFunction
 				//Checking in the Registration
 				if (!registrationCourseList.contains(crCode))
 				{
+				//	System.out.println("1"+checkCompFlag +checkCompFlag2);
 					checkCompFlag = 1;
 				}
 				
 				//Checking in Course Allocation whether Seat is available or not
 				if (checkCompFlag == 1)
 				{
+					//System.out.println("3" +checkCompFlag +checkCompFlag2);
 					if (allocationCourseList.contains(crCode))
 					{
+						//System.out.println("2" +checkCompFlag +checkCompFlag2);
 						checkCompFlag2 = 1;
 					}
 				}
-
+				//System.out.println("2344" +checkCompFlag +checkCompFlag2);
 				if ((checkCompFlag == 1) && (checkCompFlag2 == 1))
 				{
+					//System.out.println("5"+regCourseCode);
+					//System.out.println("511"+crCode);
 					if (crCode.equals(regCourseCode))
 					{
 						compCourseStatus = "SUCCESS";
@@ -2383,9 +2395,9 @@ public class CourseRegistrationCommonFunction
 		
 		if (progGroupCode.equals("MBA") || progGroupCode.equals("MIB"))
 		{
-			if (studentBatch == 2020)
+			if (studentBatch == 2021)
 			{
-				tempStudentSemester = 3;
+				tempStudentSemester = 4;
 			} 
 			else if (studentBatch == 2019)
 			{
@@ -2963,9 +2975,9 @@ public class CourseRegistrationCommonFunction
 					startTimeVal = Long.parseLong(allowStartTime.replace(":", ""));
 					endTimeVal = Long.parseLong(endTime.replace(":", ""));
 					maxTimeVal = endTimeVal;
-					//logger.trace("\n StartDate: "+ startDate +" | endTime: "+ endTime 
-					//		+" | allowStartTime: "+ allowStartTime +" | startTimeVal: "+ startTimeVal
-					//		+" | endTimeVal: "+ endTimeVal);
+					logger.trace("\n StartDate: "+ startDate +" | endTime: "+ endTime 
+							+" | allowStartTime: "+ allowStartTime +" | startTimeVal: "+ startTimeVal
+							+" | endTimeVal: "+ endTimeVal);
 					
 					if (presentDate.equals(startDate) 
 							&& (presentTimeVal >= startTimeVal) && (presentTimeVal <= endTimeVal))
@@ -2988,11 +3000,11 @@ public class CourseRegistrationCommonFunction
 				}
 				else if	(presentDate.equals(startDate) && (presentTimeVal > maxTimeVal))
 				{
-					tempStatus = "Registration closed.";
+					tempStatus = "Registration closedxxx.";
 				}
 				else
 				{
-					tempStatus = "Registration closed.";
+					tempStatus = "Registration closedyyy.";
 				}
 			}
 		}
@@ -3011,7 +3023,7 @@ public class CourseRegistrationCommonFunction
 	{
 		int minCredit = 16, maxCredit = 27;
 		
-		if (programGroupCode.equals("MBA") || programGroupCode.equals("MBA5") 
+		if (programGroupCode.equals("MBA") || programGroupCode.equals("MBA5") || programGroupCode.equals("BBH") 
 				|| (programGroupCode.equals("RP") && costCentreCode.equals("VITBS")))
 		{
 			if (studentStartYear <= 2018)
@@ -3019,9 +3031,10 @@ public class CourseRegistrationCommonFunction
 				minCredit = 14;
 				maxCredit = 18;
 			}
+			
 			else
 			{
-				minCredit = 20;
+				minCredit = 16;
 				maxCredit = 27;
 			}
 		}
@@ -3163,6 +3176,7 @@ public class CourseRegistrationCommonFunction
 								int reRegCourseAllowStatus, int peueAllowStatus, Integer specializationId, Integer admissionYear, 
 								Float curriculumVersion, int compulsoryCourseStatus)
 	{
+		//System.out.println("INSIDE");
 		List<Object[]> returnObjectList = new ArrayList<Object[]>();
 		List<ProgrammeSpecializationCurriculumCategoryCredit> pscccList = new ArrayList<ProgrammeSpecializationCurriculumCategoryCredit>();
 		logger.trace("\n programGroupCode: "+ programGroupCode +" | courseSystem: "+ courseSystem

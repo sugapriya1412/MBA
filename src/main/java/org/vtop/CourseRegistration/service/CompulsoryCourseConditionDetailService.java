@@ -46,8 +46,7 @@ public class CompulsoryCourseConditionDetailService
 		if (allowCompFlag == 1)
 		{
 			tempObjectList = compulsoryCourseConditionDetailRepository.findCompulsoryCourseListByProgSpecId2(
-									semesterSubId, progGroupId, studentBatch, progSpecId.toString(), 
-									costCenterId.toString());
+									semesterSubId, progGroupId, studentBatch, progSpecId.toString(), costCenterId.toString());
 		}
 		
 		//Checking the Pre-requisite Condition is satisfied or not

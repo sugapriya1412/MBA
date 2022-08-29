@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -27,16 +28,21 @@ import org.vtop.CourseRegistration.mongo.service.CourseRegistrationCommonMongoSe
 import org.vtop.CourseRegistration.service.CourseRegistrationCommonFunction;
 import org.vtop.CourseRegistration.service.CourseRegistrationReadWriteService;
 import org.vtop.CourseRegistration.service.RegistrationLogService;
+import org.vtop.CourseRegistration.service.SemesterMasterService;
+import org.vtop.CourseRegistration.service.ProgrammeSpecializationCurriculumCreditService;
+
+import org.vtop.CourseRegistration.service.WishlistRegistrationService;
+
 
 
 @Controller
 public class CourseRegistrationLoginController 
 {	
 	@Autowired private CourseRegistrationCommonFunction courseRegCommonFn;
-	//@Autowired private ProgrammeSpecializationCurriculumCreditService programmeSpecializationCurriculumCreditService;
+	@Autowired private ProgrammeSpecializationCurriculumCreditService programmeSpecializationCurriculumCreditService;
 	@Autowired private RegistrationLogService registrationLogService;
-	//@Autowired private WishlistRegistrationService wishlistRegistrationService;
-	//@Autowired private SemesterMasterService semesterMasterService;
+	@Autowired private WishlistRegistrationService wishlistRegistrationService;
+	@Autowired private SemesterMasterService semesterMasterService;
 	@Autowired private CourseRegistrationReadWriteService courseRegistrationReadWriteService;
 	@Autowired private CourseRegistrationCommonMongoService courseRegistrationCommonMongoService;
 	
@@ -54,8 +60,8 @@ public class CourseRegistrationLoginController
 		
 		String urlPage = "", msg = "", currentDateTimeStr = "";
 		Date currentDateTime = new Date();
-		//SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+		//SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		
 		try
 		{
@@ -79,7 +85,7 @@ public class CourseRegistrationLoginController
 			String programGroupCode = (String) session.getAttribute("ProgramGroupCode");				
 			int studyStartYear = (Integer) session.getAttribute("StudyStartYear");
 			int studentGraduateYear = (Integer) session.getAttribute("StudentGraduateYear");
-			//String studentStudySystem = (String) session.getAttribute("studentStudySystem");				
+			String studentStudySystem = (String) session.getAttribute("studentStudySystem");				
 			String programGroupMode = (String) session.getAttribute("programGroupMode");
 			//String studEMailId = (String) session.getAttribute("studentEMailId");
 			String costCentreCode = (String) session.getAttribute("costCentreCode");
@@ -91,16 +97,16 @@ public class CourseRegistrationLoginController
 			//		+" | studyStartYear: "+ studyStartYear +" | studentStudySystem: "+ studentStudySystem
 			//		+" | studentGraduateYear: "+ studentGraduateYear +" | studEMailId: "+ studEMailId);
 			
-			int regSlotCheckStatus = 1; //If Permitted Schedule-> 1: Date & Time / 2: Only Date
+			int regSlotCheckStatus = 2; //If Permitted Schedule-> 1: Date & Time / 2: Only Date
 			int historyCallStatus = 1; //Student History-> 1: Procedure/ 2: Table
-			int cgpaStatus = 2; //Student CGPA & Credit Detail-> 1: Dynamic/ 2: Static
+			int cgpaStatus = 1; //Student CGPA & Credit Detail-> 1: Dynamic/ 2: Static
 			int wishListCheckStatus = 2; //Wish list Check Status-> 1: Enable/ 2: Disable
 			int PEUEAllowStatus = 1; //PE & UE Category Allow Status-> 1: Enable/ 2: Disable
-			int approvalStatus = 2; //Registration Status Approval-> 1: Enable/ 2: Disable
+			int approvalStatus =1; //Registration Status Approval-> 1: Enable/ 2: Disable
 			int waitingListStatus = 2; //Waiting List Allow Status-> 1: Enable/ 2: Disable
 			int OptionNAStatus = 1; //Option Not Allowed Status-> 1: Enable/ 2: Disable
 			int compulsoryCourseStatus = 1; //Compulsory Course Allow Status-> 1: Enable/ 2: Disable
-			int otpStatus = 1; //OTP Send Status-> 1: Enable/ 2: Disable
+			int otpStatus = 2; //OTP Send Status-> 1: Enable/ 2: Disable
 			
 			int maxCredit = 27, minCredit = 16, academicYear = 0, academicGraduateYear = 0, cclTotalCredit = 0, 
 					activeStatus = 2, allowStatus = 2;
@@ -137,20 +143,20 @@ public class CourseRegistrationLoginController
 			//Semester Sub Id Assignment & Student Graduation Status
 			if (programGroupCode.equals("MBA") || programGroupCode.equals("MBA5")) 
 			{
-				semesterSubId = "NONE";
+				semesterSubId = "CH2022232";
 			}
 			else if (programGroupCode.equals("RP") && costCentreCode.equals("VITBS"))
 			{
-				semesterSubId = "NONE";
+				semesterSubId = "CH2022232";
 			}
 			else
 			{
-				semesterSubId = "VL20222301";						
+				semesterSubId = "CH2022232";						
 			}
 			//logger.trace("\n semesterSubId: "+ semesterSubId);
 
 			//Semester Sub Id Details
-			/*objectList.clear();
+			objectList.clear();
 			objectList = semesterMasterService.getSemesterDetailBySemesterSubId2(semesterSubId);
 			if (!objectList.isEmpty())
 			{				
@@ -160,10 +166,10 @@ public class CourseRegistrationLoginController
 				semesterDesc = objectList.get(0)[1].toString();
 				semesterShortDesc = objectList.get(0)[2].toString();
 				
-				classGroupId = "ALL";
-			}*/
+				classGroupId = "MBA";
+			}
 			
-			semesterDetail = courseRegistrationCommonMongoService.getSemesterDetailBySemesterSubId(semesterSubId);
+		/*	semesterDetail = courseRegistrationCommonMongoService.getSemesterDetailBySemesterSubId(semesterSubId);
 			if (semesterDetail != null)
 			{
 				semesterId = semesterDetail.getSemesterId();
@@ -172,15 +178,15 @@ public class CourseRegistrationLoginController
 				semesterDesc = semesterDetail.getDescription();
 				semesterShortDesc = semesterDetail.getDescriptionShort();
 				
-				classGroupId = "ALL";
-			}
+				classGroupId = "MBA";
+			}*/
 			//logger.trace("\n semesterId: "+ semesterId +" | academicYear: "+ academicYear 
 			//		+" | academicGraduateYear: "+ academicGraduateYear +" | semesterDesc: "+ semesterDesc 
 			//		 +" | semesterShortDesc: "+ semesterShortDesc +" | classGroupId: "+ classGroupId);
 					
 			
 			//Student Credit Transfer Detail/ Registration Exemption Status/ Graduation status
-			/*objectList.clear();
+		objectList.clear();
 			objectList = semesterMasterService.getStudentDetailOthersByRegisterNumberAndSemesterSubId(registerNo, semesterSubId);
 			if (!objectList.isEmpty())
 			{
@@ -189,9 +195,9 @@ public class CourseRegistrationLoginController
 				oldRegNo = (objectList.get(0)[1] == null) ? "" : objectList.get(0)[1].toString();
 				graduationStatus = Integer.parseInt(objectList.get(0)[2].toString());
 				exemptionStatus = Integer.parseInt(objectList.get(0)[3].toString());
-			}*/
+			}
 			
-			studentDetailOthers = courseRegistrationCommonMongoService.getStudentDetailOthersByRegisterNumber(registerNo);
+		/*	studentDetailOthers = courseRegistrationCommonMongoService.getStudentDetailOthersByRegisterNumber(registerNo);
 			if (studentDetailOthers != null)
 			{
 				oldRegNo = studentDetailOthers.getOldRegisterNumber();
@@ -202,14 +208,14 @@ public class CourseRegistrationLoginController
 				
 				studentWishListStatus = (studentDetailOthers.getWishlistStatus() == null) ? 2 : studentDetailOthers.getWishlistStatus();
 				
-				//if ((compulsoryCourseStatus == 1) && (studentDetailOthers.getCompulsoryCourse() != null) 
-				//		&& (!studentDetailOthers.getCompulsoryCourse().equals("")))
-				//{
-				//	compulsoryCourseList.addAll(Arrays.asList(studentDetailOthers.getCompulsoryCourse().split("\\|")));
-				//}
+				if ((compulsoryCourseStatus == 1) && (studentDetailOthers.getCompulsoryCourse() != null) 
+						&& (!studentDetailOthers.getCompulsoryCourse().equals("")))
+				{
+					compulsoryCourseList.addAll(Arrays.asList(studentDetailOthers.getCompulsoryCourse().split("\\|")));
+				}
 			}
 			//logger.trace("\n oldRegNo: "+ oldRegNo +" | graduationStatus: "+ graduationStatus 
-			//			+" | exemptionStatus: "+ exemptionStatus);
+			//			+" | exemptionStatus: "+ exemptionStatus);*/
 			
 			if ((oldRegNo != null) && (!oldRegNo.equals("")))
 			{
@@ -275,14 +281,17 @@ public class CourseRegistrationLoginController
 			//Checking the Allowed Admission Year/ Programme Group/ Programme Specialization
 			if (checkFlag == 1)
 			{
-				if ((studyStartYear > 0) && (academicYear > 0) && (studyStartYear < academicYear))
+				System.out.println("studyStartYear"+studyStartYear);
+				System.out.println("academicYear"+academicYear);
+				if (studyStartYear<=2021)
 				{	
-					if (programGroupCode.equals("BSC4") || programGroupCode.equals("BDES") 
+					if (programGroupCode.equals("BSC4") || programGroupCode.equals("BDES") || programGroupCode.equals("BSC")
 							|| programGroupCode.equals("BARCH") || programGroupCode.equals("BVOC") 
-							|| programGroupCode.equals("MBA") || programGroupCode.equals("MBA5") 
-							|| programGroupCode.equals("MDES")
+							|| programGroupCode.equals("MTECH5")|| programGroupCode.equals("MSC")
+							|| programGroupCode.equals("BCOM")|| programGroupCode.equals("BBH")
+							|| programGroupCode.equals("MDES") || programGroupCode.equals("LAW")|| programGroupCode.equals("MTECH")
 							|| (programGroupCode.equals("RP") && costCentreCode.equals("VITBS"))
-							|| (programGroupCode.equals("BTECH") && specCode.equals("BBS"))
+							|| (programGroupCode.equals("BTECH"))|| programGroupCode.equals("MCA")
 							|| (programGroupCode.equals("BSC") && (specCode.equals("BAM") 
 									|| specCode.equals("BHM") || specCode.equals("BVC"))))
 					{
@@ -302,16 +311,23 @@ public class CourseRegistrationLoginController
 			//Checking the Registration is based on Open Hours or Scheduled Date/Time
 			if (checkFlag2 == 1)
 			{	
-				if ((regTimeCheckStatus == 2) && (adminAuthenticationStatus == 2))
+			//	if ((regTimeCheckStatus == 2) && (adminAuthenticationStatus == 2))
+				
+					if (regTimeCheckStatus == 2)
 				{
-					/*objectList.clear();
+					
+					objectList.clear();
 					objectList = semesterMasterService.getRegistrationScheduleByRegisterNumber(registerNo);
+					//System.out.println("objectList"+objectList);
 					if (!objectList.isEmpty())
-					{						
+					{	
+						//System.out.println("hai");
 						startDate = sdf.parse(objectList.get(0)[0].toString());
 						endDate = startDate;
+						//System.out.println("startDate"+startDate);
+						//System.out.println("endDate"+endDate);
 						schStatus = Integer.parseInt(objectList.get(0)[4].toString());
-						
+						//System.out.println("schStatus"+schStatus);
 						if (regSlotCheckStatus == 1)
 						{
 							startTime = objectList.get(0)[1].toString();
@@ -333,9 +349,9 @@ public class CourseRegistrationLoginController
 					{
 						checkFlag3 = 2;
 						msg = "Your dont have Registration Schedule.";
-					}*/
+					}
 					
-					registrationSchedule = courseRegistrationCommonMongoService.getRegistrationScheduleByRegisterNumber(registerNo);
+				/*	registrationSchedule = courseRegistrationCommonMongoService.getRegistrationScheduleByRegisterNumber(registerNo);
 					if (registrationSchedule != null)
 					{						
 						startDate = sdf.parse(registrationSchedule.getRegisterDate());
@@ -366,7 +382,7 @@ public class CourseRegistrationLoginController
 					{
 						checkFlag3 = 2;
 						msg = "Your dont have Registration Schedule.";
-					}
+					}*/
 				}
 				else
 				{
@@ -398,7 +414,7 @@ public class CourseRegistrationLoginController
 			//Checking the Student Eligibility Criteria
 			if (checkFlag3 == 1)
 			{
-				/*objectList.clear();
+				objectList.clear();
 				objectList = semesterMasterService.getCourseEligibleProgramByProgGroupId(groupId);
 				if (!objectList.isEmpty())
 				{					
@@ -409,9 +425,9 @@ public class CourseRegistrationLoginController
 				else
 				{
 					msg = "Your are not eligible for registration.";	
-				}*/
+				}
 				
-				courseEligible2 = courseRegistrationCommonMongoService.getCourseEligibleByProgGroupId(groupId);
+				/*courseEligible2 = courseRegistrationCommonMongoService.getCourseEligibleByProgGroupId(groupId);
 				if (courseEligible2 != null)
 				{
 					courseEligible = courseEligible2.getProgEligible();
@@ -421,7 +437,7 @@ public class CourseRegistrationLoginController
 				else
 				{
 					msg = "Your are not eligible for registration.";	
-				}
+				}*/
 			}
 						
 			//Checking whether the Student is already login or not. 
@@ -514,23 +530,23 @@ public class CourseRegistrationLoginController
 				currentDateTimeStr = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a").format(currentDateTime);	
 
 				//Getting Curriculum Detail
-				/*objectList.clear();
+				objectList.clear();
 				objectList = programmeSpecializationCurriculumCreditService.getMaxVerDetailBySpecIdAndAdmYear2(specId, studyStartYear);
 				if (!objectList.isEmpty())
 				{						
 					cclVersion = Float.parseFloat(objectList.get(0)[0].toString());
 					cclTotalCredit = Integer.parseInt(objectList.get(0)[5].toString());
 					checkCourseSystem = objectList.get(0)[8].toString();
-				}*/
+				}
 				
-				programSpecializationCurriculumCredit = courseRegistrationCommonMongoService.getPrgSpecCurriculumCreditBySpecIdAndAdmissionYear
+				/*programSpecializationCurriculumCredit = courseRegistrationCommonMongoService.getPrgSpecCurriculumCreditBySpecIdAndAdmissionYear
 															(specId, studyStartYear);
 				if (programSpecializationCurriculumCredit != null)
 				{
 					cclVersion = programSpecializationCurriculumCredit.getCurriculumVersion();
 					cclTotalCredit = programSpecializationCurriculumCredit.getTotalCredits();
 					checkCourseSystem = programSpecializationCurriculumCredit.getCourseSystem();
-				}
+				}*/
 				//logger.trace("\n curriculumVersion: "+ cclVersion +" | cclTotalCredit: "+ cclTotalCredit 
 				//		+" | checkCourseSystem: "+ checkCourseSystem);
 				
@@ -645,7 +661,9 @@ public class CourseRegistrationLoginController
 				model.addAttribute("regularFlag", regularFlag);
 				model.addAttribute("CurrentDateTime", currentDateTimeStr);	
 				model.addAttribute("studentDetails", studentDetails);
-				
+				//System.out.println("date"+new SimpleDateFormat("dd-MMM-yyyy").format(startDate));
+				//System.out.println("startTime"+startTime);
+				//System.out.println("endTime"+endTime);
 				model.addAttribute("startDate", new SimpleDateFormat("dd-MMM-yyyy").format(startDate));
 				model.addAttribute("startTime", startTime);
 				model.addAttribute("endTime", endTime);

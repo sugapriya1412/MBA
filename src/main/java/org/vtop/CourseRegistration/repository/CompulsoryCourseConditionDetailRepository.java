@@ -14,8 +14,8 @@ public interface CompulsoryCourseConditionDetailRepository extends JpaRepository
 					CompulsoryCourseConditionDetailModelPK>
 {		
 	@Query("select a.cccdmPkId.courseId from CompulsoryCourseConditionDetailModel a where "+
-			"a.cccdmPkId.semesterSubId not in (?1) and a.cccdmPkId.programGroupId=?2 and "+
-			"a.cccdmPkId.studentBatch=?3 and (a.cccdmPkId.courseId like 'STS%') and "+
+			"a.cccdmPkId.semesterSubId in (?1) and a.cccdmPkId.programGroupId=?2 and "+
+			"a.cccdmPkId.studentBatch=?3 and "+
 			"a.status=0 order by a.cccdmPkId.courseId")
 	List<String> findSoftSkillCourseList(String semesterSubId, Integer progGroupId, Integer studentBatch);
 	

@@ -33,7 +33,7 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 	@Autowired private CourseRegistrationReadWriteService courseRegistrationReadWriteService;
 	@Autowired private StudentDetailMongoService studentDetailMongoService;
 	
-	private static final List<String> adminIpAddress = new ArrayList<String>(Arrays.asList("10.10.95.106", "10.10.95.117"));
+	private static final List<String> adminIpAddress = new ArrayList<String>(Arrays.asList("xxx.xxx.xxx.xxx"));
 	
 	
 	@Override
@@ -42,13 +42,13 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 		String userId = authentication.getName().toUpperCase().trim();
 		String passwordInput = authentication.getCredentials().toString().trim();
 		String captchaInput = request.getParameter("captchaString").trim();
-		//List<Object[]> studentDetail = new ArrayList<>();
+		List<Object[]> studentDetail = new ArrayList<>();
 		
 		//For getting captcha from session attribute					
 		String sessioncaptchaString = (String) session.getAttribute("CAPTCHA");
 				
 		int testStatus = 1; //Login with Password & Captcha-> 1: Enable/ 2: Disable
-		int regTimeCheckStatus = 2; //Time-> 1: Open Hours/ 2: Permitted Schedule
+		int regTimeCheckStatus = 1; //Time-> 1: Open Hours/ 2: Permitted Schedule
 		
 		int validateDateTime = 2, validateCaptcha = 2, validateCredential = 2, validateAccount = 2;
 		int specId = 0, groupId = 0, programDuration = 0, costCenterId = 0, studyStartYear = 0, lockStatus = 0, 
@@ -64,12 +64,12 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 		{
 			//Date & Time Setting
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");		
-			Date startDate = sdf.parse("09-JUL-2022");
-			Date endDate = sdf.parse("09-JUL-2022");
-			String startTime = "09:00:00", endTime = "20:15:00", allowStartTime = "09:00:00";
+			Date startDate = sdf.parse("19-JUL-2022");
+			Date endDate = sdf.parse("19-JUL-2022");
+			String startTime = "10:30:00", endTime = "17:00:00", allowStartTime = "10:30:00";
 			
 			int adminAuthenticationStatus = 2;
-			String adminPassWord = "ba63bbc5737179b9eb71f96381e1cbef92a84957237589cbc362a1cf957ab8c0e6258fdf078e25e13715c15f2e13f577eb1fb6ed6b626d41acbe339d73b0e6173bcf3923b9de3a986fd65";
+			String adminPassWord = "xxxxxxxxxxxxxxxxxxxx";//Encrypted Password
 			
 			
 			//Assigning IP address
@@ -85,8 +85,8 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 			//Validate Date/Time Duration based on Open Hours or Permitted Schedule
 			if ((regTimeCheckStatus == 2) && (!adminIpAddress.contains(ipAddress)))
 			{
-				message = courseRegCommonFn.registrationSessionDateTimeCheck(startDate);
-				if (message.equals("SUCCESS"))
+				//message = courseRegCommonFn.registrationSessionDateTimeCheck(startDate);
+				//if (message.equals("SUCCESS"))
 				{
 					validateDateTime = 1;
 				}
@@ -139,7 +139,7 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 				}
 				else
 				{
-					/*if (testStatus == 2)
+					if (testStatus == 2)
 					{
 						studentDetail = semesterMasterService.getStudentLoginDetailByRegisterNumber2(userId);
 					}
@@ -192,9 +192,9 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 					else
 					{
 						message = "Invalid username / password";
-					}*/
-					
-					if (testStatus == 2)
+					}
+				//MANGO	
+				/*	if (testStatus == 2)
 					{
 						studentDetail2 = studentDetailMongoService.getByRegisterNumber(userId);
 					}
@@ -228,7 +228,8 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 												
 						if (testStatus == 2)
 						{
-							studEMailId = "NONE";	//Testing Purpose
+							//Testing Purpose
+							studEMailId = "NONE";	
 						}
 						else
 						{
@@ -249,11 +250,11 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 						{
 							message = "Invalid username / password";
 						}
-					}
-					else
+					}*/
+					/*else
 					{
 						message = "Invalid username / password";
-					}
+					}*/
 				}
 			}
 			
